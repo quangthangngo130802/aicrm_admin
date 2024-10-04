@@ -44,10 +44,25 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.transaction.index') }}">
-                        <i class="fas fa-user"></i>
+                    <a data-bs-toggle="collapse" href="#sidebargiaodich">
+                        <i class="fas fa-dollar"></i>
                         <p>Giao dịch</p>
+                        <span class="caret"></span>
                     </a>
+                    <div class="collapse" id="sidebargiaodich">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href = "{{ route('admin.transaction.index') }}">
+                                    <span class="sub-item">Nạp tiền</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href = "">
+                                    <span class="sub-item">Nhận tiền</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.campaign.index') }}">
@@ -64,7 +79,7 @@
                     <div class="collapse" id="sidebarcauhinh">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href = "{{route('admin.zalo.zns')}}">
+                                <a href = "{{ route('admin.zalo.zns') }}">
                                     <span class="sub-item">Cấu hình OA/ZNS</span>
                                 </a>
                             </li>
@@ -85,17 +100,17 @@
                     <div class="collapse" id="sidebarzns">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href = "{{route('admin.message.znsMessage')}}">
+                                <a href = "{{ route('admin.message.znsMessage') }}">
                                     <span class="sub-item">Tin nhắn ZNS</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{route('admin.message.znsQuota')}}">
+                                <a href = "{{ route('admin.message.znsQuota') }}">
                                     <span class="sub-item">Hạn mức ZNS</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{route('admin.message.znsTemplate')}}">
+                                <a href = "{{ route('admin.message.znsTemplate') }}">
                                     <span class="sub-item">Template ZNS</span>
                                 </a>
                             </li>

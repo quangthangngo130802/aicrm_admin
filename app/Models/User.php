@@ -29,12 +29,15 @@ class User extends Authenticatable
         'city_id',
         'tax_code',
         'store_name',
-        'field_id',
+        'field',
         'domain',
         'address',
         'storage_id',
         'wallet',
-        'source'
+        'source',
+        'expired_at',
+        'username',
+        'sub_wallet'
     ];
 
     protected $hidden = [
@@ -101,5 +104,10 @@ class User extends Authenticatable
     public function transaction()
     {
         return $this->hasMany(Transaction::class, 'user_id');
+    }
+
+    public function transfer()
+    {
+        return $this->hasMany(Transfer::class, 'user_id');
     }
 }
