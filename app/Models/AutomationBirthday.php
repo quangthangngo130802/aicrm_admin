@@ -2,24 +2,23 @@
 
 namespace App\Models;
 
+use App\Models\OaTemplate;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AutomationMarketing extends Model
+class AutomationBirthday extends Model
 {
     use HasFactory;
-    protected $table = 'sgo_automation_marketing'; // Tên bảng trong cơ sở dữ liệu
+    protected $table = 'sgo_automation_birthday'; // Tên bảng
 
     protected $fillable = [
         'name',
-        'template_id',
         'status',
+        'start_time',
+        'template_id'
     ];
-
-    // Nếu bạn muốn thiết lập quan hệ với Template
     public function template()
     {
         return $this->belongsTo(OaTemplate::class, 'template_id');
     }
 }
-

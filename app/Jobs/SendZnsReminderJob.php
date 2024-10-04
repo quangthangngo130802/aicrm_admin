@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\AutomationReminder;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,7 +15,7 @@ use App\Models\ZnsMessage;
 use App\Models\Campaign;
 use App\Models\OaTemplate;
 use App\Models\ZaloOa;
-use App\Services\Admins\ZaloOaService;
+use App\Services\ZaloOaService;
 use Carbon\Carbon;
 
 class SendZnsReminderJob implements ShouldQueue
@@ -24,6 +25,7 @@ class SendZnsReminderJob implements ShouldQueue
     protected $user;
     protected $campaignId;
     protected $zaloOaService;
+    protected $automationReminder;
 
     /**
      * Create a new job instance.
@@ -31,11 +33,12 @@ class SendZnsReminderJob implements ShouldQueue
      * @param User $user
      * @param int $campaignId
      */
-    public function __construct(User $user, $campaignId, ZaloOaService $zaloOaService)
+    public function __construct(User $user, $campaignId, ZaloOaService $zaloOaService, AutomationReminder $automationReminder)
     {
         $this->user = $user;
         $this->campaignId = $campaignId;
         $this->zaloOaService = $zaloOaService;
+        $this->automationReminder = $automationReminder;
     }
 
     /**
@@ -46,10 +49,17 @@ class SendZnsReminderJob implements ShouldQueue
     public function handle()
     {
         // Lấy thời gian gửi là 9h30 sáng của một tuần sau
-        $sendAt = Carbon::now()->addWeek()->startOfDay()->addHours(9)->addMinutes(30);
-
+        $reminder = $this->automationReminder->first();
+        $autotime = $reminder->sent_time;
+            $hour = $autotime->format('H'); // Lấy giờ
+            $c = $autotime->format('i');
+        // $sendAt = Carbon::now()->addWeek()->startOfDay()->addHours(9)->addMinutes(30);
+        $sendAt = Carbon::now()->addDays($reminder->numbertime)->startOfDay()->addHours($hour)->addMinutes($hour);
         if (now()->lessThan($sendAt)) {
             // Nếu thời gian hiện tại chưa đến thời gian gửi, bỏ qua job
+            return;
+        }
+        if($reminder->status !=0){
             return;
         }
 

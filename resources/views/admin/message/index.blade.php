@@ -50,7 +50,7 @@
     </style>
 
     <div class="container-fluid">
-        <h2>Danh sách tin nhắn đã gửi</h2>
+        <h2>{{ $title }}</h2>
 
         @if ($messages->isEmpty())
             <div class="no-data-message">Không có tin nhắn nào để hiển thị.</div>

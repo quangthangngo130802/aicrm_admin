@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AutomationMarketing extends Model
+class AutomationUser extends Model
 {
     use HasFactory;
-    protected $table = 'sgo_automation_marketing'; // Tên bảng trong cơ sở dữ liệu
+    protected $table = 'sgo_automation_user'; // Tên bảng trong cơ sở dữ liệu
 
     protected $fillable = [
         'name',
@@ -22,4 +22,3 @@ class AutomationMarketing extends Model
         return $this->belongsTo(OaTemplate::class, 'template_id');
     }
 }
-

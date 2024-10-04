@@ -24,7 +24,7 @@
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
                 <li class="nav-item active">
-                    <a href="">
+                    <a href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -73,6 +73,21 @@
                                     <span class="sub-item">Automation Marketing</span>
                                 </a>
                             </li>
+                            <li>
+                                <a href = "{{ route('admin.automation.user') }}">
+                                    <span class="sub-item">Khách hàng</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href = "{{ route('admin.automation.birthday') }}">
+                                    <span class="sub-item">Sinh nhật</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href = "{{ route('admin.automation.reminder') }}">
+                                    <span class="sub-item">Nhắc nhở</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -86,7 +101,7 @@
                         <ul class="nav nav-collapse">
                             <li>
                                 <a href = "{{route('admin.message.znsMessage')}}">
-                                    <span class="sub-item">Tin nhắn ZNS</span>
+                                    <span class="sub-item">Report ZNS</span>
                                 </a>
                             </li>
                             <li>

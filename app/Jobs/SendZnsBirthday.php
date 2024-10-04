@@ -2,12 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Models\AutomationBirthday;
 use App\Models\Campaign;
 use App\Models\OaTemplate;
 use App\Models\User;
 use App\Models\ZaloOa;
 use App\Models\ZnsMessage;
-use App\Services\Admins\ZaloOaService;
+use App\Services\ZaloOaService;
+use App\Services\ZaloOaService as ServicesZaloOaService;
 use Carbon\Carbon;
 use Exception;
 use GuzzleHttp\Client;
@@ -25,6 +27,7 @@ class SendZnsBirthday implements ShouldQueue
     protected $user;
     protected $campaignId;
     protected $zaloOaService;
+    protected $automationBirthday;
 
     /**
      * Tạo một đối tượng công việc mới.
@@ -32,11 +35,12 @@ class SendZnsBirthday implements ShouldQueue
      * @param \App\Models\User $user
      * @param int $campaignId
      */
-    public function __construct(User $user, $campaignId, ZaloOaService $zaloOaService)
+    public function __construct(User $user, $campaignId, ZaloOaService $zaloOaService, AutomationBirthday $automationBirthday)
     {
         $this->user = $user;
         $this->campaignId = $campaignId;
         $this->zaloOaService = $zaloOaService;
+        $this->automationBirthday = $automationBirthday;
     }
 
     /**
@@ -44,20 +48,23 @@ class SendZnsBirthday implements ShouldQueue
      */
     public function handle()
     {
+        //////////////////////Birth day
         try {
             // Kiểm tra ngày sinh nhật của người dùng
             $dob = Carbon::parse($this->user->dob);
             $today = Carbon::now();
 
             $birthdayThisYear = Carbon::createFromDate($today->year, $dob->month, $dob->day);
-
             // Nếu ngày sinh nhật đã qua thì cộng thêm 1 năm
             if ($birthdayThisYear->isPast()) {
                 $birthdayThisYear->addYear();
             }
-
+            $birthday = $this->automationBirthday->first();
+            $autotime = $birthday->time;
+            $hour = $autotime->format('H'); // Lấy giờ
+            $minute = $autotime->format('i'); // lấy phút
             // Đặt thời gian gửi tin nhắn
-            $sendAt = $birthdayThisYear->hour(9)->minute(30);
+            $sendAt = $birthdayThisYear->hour($hour)->minute($minute);
 
             // Nếu chưa đến thời gian gửi tin nhắn
             if (now()->lessThan($sendAt)) {
@@ -65,7 +72,13 @@ class SendZnsBirthday implements ShouldQueue
                 return;
             }
 
-            // Lấy thông tin chiến dịch
+            // Kiểm tra trạng thái birtday
+            if ($birthday->status != 1) {
+                Log::info("Birthday  hiện không hoạt động.");
+                return;
+            }
+
+            ////////////////////// Lấy thông tin chiến dịch
             $campaign = Campaign::find($this->campaignId);
 
             // Kiểm tra sự tồn tại của chiến dịch
@@ -73,6 +86,7 @@ class SendZnsBirthday implements ShouldQueue
                 Log::error("Chiến dịch ID: {$this->campaignId} không tồn tại.");
                 return;
             }
+
 
             // Kiểm tra trạng thái chiến dịch
             if ($campaign->status != 1) {
@@ -90,7 +104,8 @@ class SendZnsBirthday implements ShouldQueue
             // Chuẩn bị dữ liệu để gửi tin nhắn Zalo
             $payload = [
                 'phone' => preg_replace('/^0/', '84', $this->user->phone),
-                'template_id' => $template,
+                // 'template_id' => $template,
+                'template_id' => $birthday->template_id,
                 'template_data' => [
                     'date' => Carbon::now()->format('d/m/Y'),
                     'name' => $this->user->name,

@@ -5,21 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AutomationMarketing extends Model
+class AutomationReminder extends Model
 {
     use HasFactory;
-    protected $table = 'sgo_automation_marketing'; // Tên bảng trong cơ sở dữ liệu
+    protected $table = 'sgo_automation_reminder';
 
+    // Các trường được phép cập nhật
     protected $fillable = [
         'name',
-        'template_id',
         'status',
+        'sent_time',
+        'template_id',
+        'numbertime'
     ];
 
-    // Nếu bạn muốn thiết lập quan hệ với Template
+    // Định nghĩa quan hệ với bảng templates
     public function template()
     {
         return $this->belongsTo(OaTemplate::class, 'template_id');
     }
 }
-
