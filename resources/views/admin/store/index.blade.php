@@ -172,7 +172,7 @@
                             <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
                                 <div class="row">
                                     <div class="col-sm-12 col-md-6">
-                                        <form action="{{ route('super.store.findByPhone') }}" method="GET">
+                                        <form action="{{ route('admin.store.findByPhone') }}" method="GET">
                                             <div class="dataTables_filter">
                                                 <label>Tìm kiếm</label>
                                                 <input type="text" name="phone" class="form-control form-control-sm"

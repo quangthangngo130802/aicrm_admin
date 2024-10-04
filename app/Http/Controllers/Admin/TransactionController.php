@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
 use App\Models\SuperAdmin;
+use App\Models\Transaction;
 use App\Services\TransactionService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
@@ -122,5 +123,18 @@ class TransactionController extends Controller
         $description = 'SGO_' . $randomNumbers;
 
         return $description;
+    }
+
+    public function updateNotification($id)
+    {
+        try {
+            $transaction = Transaction::find($id);
+            $transaction->notification = 3;
+            $transaction->save();
+            return to_route('admin.transaction.index');
+        } catch (Exception $e) {
+            Log::erro('failed to update mark-as-read this transaction: ' . $e->getMessage());
+            return ApiResponse::error('Failed to mark-as-read this transaction', 500);
+        }
     }
 }

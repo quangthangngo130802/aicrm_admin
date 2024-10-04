@@ -82,13 +82,9 @@
                     </p>
                 </div> --}}
                 <div class="row mt-3">
-                    <div class="form-group col-6">
-                        <input type="text" id="money" class="form-control" name="money"
+                    <div class="form-group col-12">
+                        <input type="text" id="amount" class="form-control" name="amount"
                             placeholder="Nhập tiền" />
-                    </div>
-                    <div class="form-group col-6">
-                        <input type="text" id="amount" class="form-control" name="amount" placeholder="Tổng tiền"
-                            readonly />
                     </div>
 
                     <div class="form-group col-12 mt-3">
@@ -264,21 +260,17 @@
     </script>
     <script>
         $(document).ready(function() {
-            $('input[name="money"]').on('input', function() {
-                var money = parseFloat($(this).val()) || 0; // Lấy giá trị nhập vào
-                var isInvoiceRequested = $('#requestInvoice').is(
-                    ':checked'); // Kiểm tra xem checkbox đã được chọn chưa
+            $('#amount').on('input', function() {
+                let value = $(this).val();
 
-                // Cập nhật ô tổng tiền
-                if (isInvoiceRequested) {
-                    // Nếu đã chọn xuất hóa đơn, cộng thêm 10%
+                // Loại bỏ các ký tự không phải số
+                value = value.replace(/[^\d]/g, '');
 
-                    var totalAmount = money + (money * 0.10);
-                    $('input[name="amount"]').val(totalAmount); // Cập nhật ô tổng cộng
+                // Định dạng số với dấu phẩy
+                if (value) {
+                    $(this).val(Number(value).toLocaleString());
                 } else {
-
-                    // Nếu không, giữ nguyên giá trị
-                    $('input[name="amount"]').val(money); // Cập nhật ô tổng cộng
+                    $(this).val(''); // Nếu không có giá trị, đặt lại ô input
                 }
             });
 
@@ -315,6 +307,10 @@
                 // Lấy dữ liệu cần thiết từ input (giả sử bạn đã có các input name="amount" và name="description")
                 var amount = $('input[name="amount"]').val();
                 var description = $('input[name="description"]').val();
+                amount = parseInt(amount.replace(/,/g, '').replace(/\./g, ''), 10);
+                if ($("#requestInvoice").is(":checked")) {
+                    amount += (amount * 0.1);
+                }
 
                 // Gọi AJAX để lấy mã QR
                 $.ajax({

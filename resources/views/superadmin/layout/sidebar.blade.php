@@ -38,12 +38,33 @@
 
 
                 <li class="nav-item">
-                    <a href="{{ route('super.store.index') }}">
+                    <a href="{{ route('super.user.index') }}">
                         <i class="fas fa-user"></i>
                         <p>Khách hàng</p>
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a data-bs-toggle="collapse" href="#sidebargiaodich">
+                        <i class="fas fa-dollar"></i>
+                        <p>Giao dịch</p>
+                        <span class="caret"></span>
+                    </a>
+                    <div class="collapse" id="sidebargiaodich">
+                        <ul class="nav nav-collapse">
+                            <li>
+                                <a href = "{{ route('super.transaction.index') }}">
+                                    <span class="sub-item">Nạp tiền</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href = "{{ route('super.transfer.index') }}">
+                                    <span class="sub-item">Chuyển tiền</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                {{-- <li class="nav-item">
                     <a href="{{ route('super.campaign.index') }}">
                         <i class="fas fa-user"></i>
                         <p>Chiến dịch</p>
@@ -54,7 +75,7 @@
                         <i class="fas fa-user"></i>
                         <p>Giao dịch</p>
                     </a>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#sidebarcauhinh">
                         <i class="fas fa-cogs"></i>
@@ -64,7 +85,7 @@
                     <div class="collapse" id="sidebarcauhinh">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href = "{{route('super.zalo.zns')}}">
+                                <a href = "{{ route('super.zalo.zns') }}">
                                     <span class="sub-item">Cấu hình OA/ZNS</span>
                                 </a>
                             </li>
@@ -80,17 +101,17 @@
                     <div class="collapse" id="sidebarzns">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href = "{{route('super.message.znsMessage')}}">
+                                <a href = "{{ route('super.message.znsMessage') }}">
                                     <span class="sub-item">Tin nhắn ZNS</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{route('super.message.znsQuota')}}">
+                                <a href = "{{ route('super.message.znsQuota') }}">
                                     <span class="sub-item">Hạn mức ZNS</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{route('super.message.znsTemplate')}}">
+                                <a href = "{{ route('super.message.znsTemplate') }}">
                                     <span class="sub-item">Template ZNS</span>
                                 </a>
                             </li>

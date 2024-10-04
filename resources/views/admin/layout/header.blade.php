@@ -41,8 +41,7 @@
                     </a>
                 </li>
                 <li class="nav-item topbar-user dropdown hidden-caret">
-                    <a class="dropdown-toggle profile-pic" target="_blank"
-                        href="" aria-expanded="false">
+                    <a class="dropdown-toggle profile-pic" target="_blank" href="" aria-expanded="false">
                         <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
                             class="fa-solid fa-wallet"></i> Ví phụ: {{ number_format(\Auth::user()->sub_wallet) }} đ
 
@@ -137,7 +136,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-bell"></i>
-                        <span class="notification">{{ $adminNotifications->count() ?? '' }}</span>
+                        <span class="notification">{{ $adminNotifications->count() ?? '0' }}</span>
                     </a>
                     <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
                         <li>
@@ -157,12 +156,11 @@
                                                     ->locale('vi')
                                                     ->diffForHumans();
                                             @endphp
-                                            <a href="{{ route('admin.transaction.index') }}"
-                                                class="notification-item mark-as-read" data-id="{{ $item->id }}"
-                                                data-href="{{ route('admin.transaction.index') }}">
+                                            <a href="{{ route('admin.transaction.updateNotification', ['id' => $item->id]) }}"
+                                                class="notification-item mark-as-read">
                                                 <!-- Thêm data-href -->
                                                 <div class="notif-icon notif-primary">
-                                                    <i class="fas fa-shopping-cart"></i>
+                                                    <i class="fas fa-bell"></i>
                                                 </div>
                                                 <div class="notif-content">
                                                     <span class="block">
@@ -391,28 +389,4 @@
         </div>
     </div>
 </div>
-{{-- <script>
-    $(document).on('click', '.mark-as-read', function(e) {
-        e.preventDefault(); // Ngăn chặn chuyển hướng ngay lập tức
-        var transactionId = $(this).data('id');
-        var href = $(this).data('href'); // Lấy đường dẫn href từ thuộc tính data-href
-
-        // Gửi AJAX để cập nhật notification thành 3
-        $.ajax({
-            url: '{{ route('admin.transaction.updateNotification') }}', // Đường dẫn đến route xử lý cập nhật
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}', // Bảo vệ CSRF
-                transaction_id: transactionId
-            },
-            success: function(response) {
-                // Sau khi thành công, chuyển hướng đến href đã ghi
-                window.location.href = href;
-            },
-            error: function(xhr, status, error) {
-                console.log('Error:', error);
-                alert('Có lỗi xảy ra, vui lòng thử lại.'); // Thông báo lỗi cho người dùng
-            }
-        });
-    });
-</script> --}}
+<script></script>
