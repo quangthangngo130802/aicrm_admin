@@ -21,7 +21,6 @@ class SupperAdminService
 
     public function authenticateSupper($credentials)
     {
-
         $supper = SuperAdmin::where('email', $credentials['email'])->orwhere('phone', $credentials['email'])->first();
         if (!$supper) {
             throw new Exception('Not an supper');

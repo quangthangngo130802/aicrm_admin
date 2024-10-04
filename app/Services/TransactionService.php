@@ -23,6 +23,7 @@ class TransactionService
         try {
             $queryBuilder = Transaction::with('user');
 
+            // Kiểm tra tên hoặc số điện thoại
             if ($query) {
                 $queryBuilder->whereHas('user', function ($q) use ($query) {
                     $q->where('name', 'like', "%{$query}%")
@@ -30,14 +31,17 @@ class TransactionService
                 });
             }
 
-            if ($status) {
+            // Kiểm tra trạng thái
+            if ($status !== null && $status !== '') {  // Kiểm tra nếu có giá trị
                 $queryBuilder->where('status', $status);
             }
 
+            // Kiểm tra ngày bắt đầu
             if ($startDate) {
                 $queryBuilder->whereDate('created_at', '>=', $startDate);
             }
 
+            // Kiểm tra ngày kết thúc
             if ($endDate) {
                 $queryBuilder->whereDate('created_at', '<=', $endDate);
             }
@@ -50,6 +54,8 @@ class TransactionService
             throw new Exception('Failed to get paginated transaction for super admin');
         }
     }
+
+
 
     public function getPaginatedTransactionsForAdmin($id, $status, $startDate, $endDate)
     {
@@ -166,4 +172,6 @@ class TransactionService
             throw new Exception('Failed to get transaction notification for admin');
         }
     }
+
+
 }

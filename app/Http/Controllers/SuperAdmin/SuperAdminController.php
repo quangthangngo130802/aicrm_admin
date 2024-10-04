@@ -69,8 +69,9 @@ class SuperAdminController extends Controller
             $credentials = $request->only(['email', 'password']);
             $result = $this->supperAdminService->authenticateSupper($credentials);
             session()->put('authSuper', $result['supper']);
-            return redirect()->route('super.store.index');
+            return redirect()->route('super.user.index');
         } catch (Exception $e) {
+            Log::error('Failed to login: ' . $e->getMessage());
             return $this->handleLoginError($request, $e);
         }
     }

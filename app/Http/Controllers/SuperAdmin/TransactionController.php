@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Responses\ApiResponse;
 use App\Models\Transaction;
 use App\Services\TransactionService;
+use App\Services\UserService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +16,11 @@ use function PHPSTORM_META\map;
 
 class TransactionController extends Controller
 {
-    protected $transactionService;
-    public function __construct(TransactionService $transactionService)
+    protected $transactionService, $userService;
+    public function __construct(TransactionService $transactionService, UserService $userService)
     {
         $this->transactionService = $transactionService;
+        $this->userService = $userService;
     }
 
     public function index(Request $request)
@@ -57,15 +59,16 @@ class TransactionController extends Controller
 
             if ($request->ajax()) {
                 $html = view('superadmin.transaction.table', compact('transactions'))->render();
-                $pagination = $transactions->appends(['query' => $query, 'start_date' => $startDate, 'end_date' => $endDate])->links('pagination::custom')->render();
+                $pagination = $transactions->appends(['query' => $query, 'start_date' => $startDate, 'end_date' => $endDate, 'status' => $status])->links('pagination::custom')->render();
                 return response()->json(['html' => $html, 'pagination' => $pagination]);
             }
             return view('superadmin.transaction.index', compact('transactions'));
         } catch (Exception $e) {
             Log::error('Failed to search Transaction: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to search Transactions'], 500);
+            return response()->json(['error' => 'Failed to search Transactions: ' . $e->getMessage()], 500);
         }
     }
+
 
     public function confirmTransaction($id)
     {
@@ -91,16 +94,16 @@ class TransactionController extends Controller
         }
     }
 
-    public function updateNotification(Request $request)
+    public function updateNotification($id)
     {
-        $transaction = Transaction::find($request->transaction_id);
-
-        if ($transaction) {
-            $transaction->notification = 3; // Cập nhật thành 3
+        try {
+            $transaction = Transaction::find($id);
+            $transaction->notification = 3;
             $transaction->save();
-            return response()->json(['success' => true]);
+            return to_route('super.transaction.index');
+        } catch (Exception $e) {
+            Log::erro('failed to update mark-as-read this transaction: ' . $e->getMessage());
+            return ApiResponse::error('Failed to mark-as-read this transaction', 500);
         }
-
-        return response()->json(['error' => 'Transaction not found'], 404);
     }
 }

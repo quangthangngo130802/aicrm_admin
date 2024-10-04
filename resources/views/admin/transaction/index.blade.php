@@ -181,35 +181,13 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title" style="color: white">Tất cả các giao dịch</h4>
+                        <h4 class="card-title" style="color: white">Tất cả các giao dịch nạp tiền</h4>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
                                 <div class="row">
                                     <div class="col-sm-12 col-md-6">
-                                        {{-- <form action="{{ route('admin.transaction.search') }}" method="GET">
-                                            <div class="dataTables_filter">
-                                                <div class="input-group">
-                                                    <select name="city_id" id="city_id"
-                                                        class="form-control form-control-sm">
-                                                        <option value="">Khu vực</option>
-                                                        @foreach ($cities as $city)
-                                                            <option value="{{ $city->id }}"
-                                                                {{ request('city_id') == $city->id ? 'selected' : '' }}>
-                                                                {{ $city->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    <input type="text" name="name_filter"
-                                                        class="form-control form-control-sm" placeholder="Nhập tên NCC"
-                                                        value="{{ old('name') }}">
-                                                    <span class="input-group-btn">
-                                                        <button class="btn btn-primary" type="submit">Tìm kiếm</button>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </form> --}}
                                     </div>
                                 </div>
                                 <div class="row">
