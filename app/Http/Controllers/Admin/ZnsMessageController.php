@@ -23,6 +23,7 @@ class ZnsMessageController extends Controller
     }
     public function znsMessage()
     {
+        $title = 'Danh sách tin nhắn đã gửi';
         // Lấy tất cả các OA đang hoạt động
         $activeOas = ZaloOa::where('is_active', 1)->pluck('id');
 
@@ -38,7 +39,7 @@ class ZnsMessageController extends Controller
             });
         });
 
-        return view('admin.message.index', compact('messages', 'totalFeesByOa'));
+        return view('admin.message.index', compact('messages', 'totalFeesByOa', 'title'));
     }
 
 
@@ -220,4 +221,30 @@ class ZnsMessageController extends Controller
     //         Log::error('Failed to test: ' . $e->getMessage());
     //     }
     // }
+
+    public function status($id)
+    {
+        // Lấy tất cả các OA đang hoạt động
+        if($id == 1){
+            $title = 'Danh sách tin nhắn gửi thành công';
+        }else{
+            $title = 'Danh sách tin nhắn đã gửi thất bại';
+        }
+        $activeOas = ZaloOa::where('is_active', 1)->pluck('id');
+
+        // Lấy tất cả các tin nhắn từ các OA đang hoạt động
+        $messages = ZnsMessage::whereIn('oa_id', $activeOas)
+            ->where('status', $id)
+            ->orderByDesc('sent_at')
+            ->get();
+        // dd($messages);
+        // Tính tổng phí cho mỗi OA
+        $totalFeesByOa = $messages->groupBy('oa_id')->map(function ($messagesByOa) {
+            return $messagesByOa->sum(function ($message) {
+                return $message->status == 1 ? ($message->template->price ?? 0) : 0;
+            });
+        });
+
+        return view('admin.message.index', compact('messages', 'totalFeesByOa', 'title'));
+    }
 }

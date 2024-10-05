@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AutomationController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\CategorieController;
@@ -126,6 +127,7 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
         Route::get('refresh', [AdminZnsMessageController::class, 'refreshTemplates'])->name('znsTemplateRefresh');
         Route::get('detail', [AdminZnsMessageController::class, 'getTemplateDetail'])->name('znsTemplateDetail');
         Route::get('test', [AdminZnsMessageController::class, 'test'])->name('test');
+        Route::get('/status_{id}', [AdminZnsMessageController::class, 'status'])->name('status');
     });
     Route::get('/detail/{id}', [AdminController::class, 'getAdminInfor'])->name('detail');
     Route::post('/update/{id}', [AdminController::class, 'updateAdminInfor'])->name('update');
@@ -139,6 +141,20 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
         Route::get('/delete/{id}', [AdminStoreController::class, 'delete'])->name('delete');
         Route::post('/store', [AdminStoreController::class, 'store'])->name('store');
     });
+
+    Route::prefix('automation')->name('automation.')->group(function () {
+        Route::get('/user', [AutomationController::class, 'user'])->name('user');
+        Route::post('/user', [AutomationController::class, 'userupdate'])->name('user.update');
+
+        Route::get('/birthday', [AutomationController::class, 'birthday'])->name('birthday');
+        Route::post('/birthday', [AutomationController::class, 'birthdayupdate'])->name('birthday.update');
+
+        Route::get('/reminder', [AutomationController::class, 'reminder'])->name('reminder');
+        Route::post('/birtreminderhday', [AutomationController::class, 'reminderupdate'])->name('reminder.update');
+
+    });
+
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 })->middleware('checkRole:1');
 

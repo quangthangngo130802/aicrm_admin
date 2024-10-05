@@ -101,6 +101,7 @@ class SignUpService
 
             // $sendBirthdayAt = $birthdayThisYear->hour(9)->minute(30);
             // SendZnsBirthday::dispatch($user, $campaignId2)->delay($sendBirthdayAt);
+            
             // Lấy access token hợp lệ
             // $accessToken = $this->getAccessToken();
             // $oa_id = ZaloOa::where('is_active', 1)->first()->id;
