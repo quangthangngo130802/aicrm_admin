@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\View\Composers\NotificationComposer;
 use App\Models\Transaction;
+use App\Models\Transfer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -38,6 +39,15 @@ class AppServiceProvider extends ServiceProvider
 
                 // Truyền biến vào view
                 $view->with('adminNotifications', $adminNotifications);
+            }
+        });
+
+        View::composer('admin.layout.header', function ($view) {
+            if (Auth::check()) {
+                $id = Auth::id();
+                $adminTransferNotifications = Transfer::orderByDesc('created_at')
+                    ->where('notification', 1)->where('user_id', $id)->get();
+                $view->with('adminTransferNotifications', $adminTransferNotifications);
             }
         });
 

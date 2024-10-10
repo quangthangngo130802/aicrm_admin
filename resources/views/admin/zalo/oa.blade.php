@@ -97,8 +97,10 @@
             const oaId = zaloOaInfo.value;
 
             if (oaId) {
-                const url = `{{ route('super.zalo.updateOaStatus', ['oaId' => '__oaId__']) }}`.replace('__oaId__',
-                    oaId);
+                const url =
+                    `{{ route('admin.{username}.zalo.updateOaStatus', ['username' => Auth::user()->username, 'oaId' => '__oaId__']) }}`
+                    .replace('__oaId__', oaId);
+
 
                 // Lấy token CSRF
                 const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
@@ -140,7 +142,7 @@
         });
 
         refreshTokenBtn.addEventListener('click', function() {
-            const url = `{{ route('super.zalo.refreshAccessToken') }}`;
+            const url = `{{ route('admin.{username}.zalo.refreshAccessToken', ['username' => Auth::user()->username]) }}`;
 
             // Lấy token CSRF
             const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');

@@ -54,7 +54,7 @@ class StoreController extends Controller
     public function detail($id)
     {
         try {
-            $stores = $this->storeService->findStoreByID($id);
+            $stores = $this->storeService->findStoreByID(request()->id);
             return view('admin.store.edit', compact('stores'));
         } catch (Exception $e) {
             Log::error('Cannot find store info: ' . $e->getMessage());
@@ -65,7 +65,8 @@ class StoreController extends Controller
     public function delete($id)
     {
         try {
-            $this->storeService->deleteStore($id);
+            // dd($id);
+            $this->storeService->deleteStore(request()->id);
             session()->flash('success', 'Xóa thông tin khách hàng thànhc công');
             return redirect()->back();
         } catch (\Exception $e) {
@@ -83,6 +84,7 @@ class StoreController extends Controller
                 'address' => 'required',
                 'source' => 'nullable',
             ]);
+            // dd($request->user_id);
             $client = $this->storeService->addNewStore($validated);
 
             return response()->json([

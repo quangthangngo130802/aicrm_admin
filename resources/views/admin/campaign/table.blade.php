@@ -27,8 +27,10 @@
                     </td>
                     <td>
                         <a class="btn btn-warning"
-                            href="{{ route('admin.campaign.detail', ['id' => $campaign->id]) }}"><i class="fa-solid fa-wrench"></i></a>
-                        <a class="btn btn-danger btn-delete" data-id="{{ $campaign->id }}" href="#"><i class="fa-solid fa-trash"></i></a>
+                            href="{{ route('admin.{username}.campaign.detail', ['username' => Auth::user()->username, 'id' => $campaign->id]) }}"><i
+                                class="fa-solid fa-wrench"></i></a>
+                        <a class="btn btn-danger btn-delete" data-id="{{ $campaign->id }}" href="#"><i
+                                class="fa-solid fa-trash"></i></a>
                     </td>
                 </tr>
             @endforeach

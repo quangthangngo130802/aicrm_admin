@@ -202,7 +202,8 @@
                                 <div class="row">
                                     <div class="col-sm-12 col-md-6">
                                         <div class="dataTables_length" id="basic-datatables_length">
-                                            <a class="btn btn-primary" href="{{ route('admin.campaign.add') }}">
+                                            <a class="btn btn-primary"
+                                                href="{{ route('admin.{username}.campaign.add', ['username' => Auth::user()->username]) }}">
                                                 Thêm chiến dịch mới
                                             </a>
                                         </div>
@@ -247,15 +248,19 @@
             });
 
             // Sự kiện nhấp vào nút xóa
-            $('.btn-delete').click(function(e) {
+            $(document).on('click', '.btn-delete', function(e) {
                 e.preventDefault();
                 const id = $(this).data('id');
 
                 if (confirm('Bạn có chắc chắn muốn xóa chiến dịch này?')) {
                     $.ajax({
-                        url: '{{ route('admin.campaign.delete', '') }}/' + id,
-                        type: 'DELETE',
-                        dataType: 'json',
+                        url: '{{ route('admin.{username}.campaign.delete', ['username' => Auth::user()->username]) }}',
+                        type: 'POST',
+                        data: {
+                            id
+                        },
+                        // console.log(id);
+
                         success: function(response) {
                             if (response.success) {
                                 // Re-fetch the table content and update pagination
@@ -308,7 +313,7 @@
             // Function to fetch and render campaigns
             function fetchCampaigns() {
                 $.ajax({
-                    url: '{{ route('super.campaign.fetch') }}',
+                    url: '{{ route('admin.{username}.campaign.fetch', ['username' => Auth::user()->username]) }}',
                     type: 'GET',
                     dataType: 'html',
                     success: function(data) {
@@ -334,63 +339,63 @@
             }
 
             // Define deleteCampaign function to avoid repeating
-            function deleteCampaign(e) {
-                e.preventDefault();
-                const id = $(this).data('id');
+            // function deleteCampaign(e) {
+            //     e.preventDefault();
+            //     const id = $(this).data('id');
 
-                if (confirm('Bạn có chắc chắn muốn xóa chiến dịch này?')) {
-                    $.ajax({
-                        url: '{{ route('admin.campaign.delete', '') }}/' + id,
-                        type: 'DELETE',
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.success) {
-                                // Re-fetch the table content and update pagination
-                                fetchCampaigns();
-                                $.notify({
-                                    icon: 'icon-bell',
-                                    title: 'Chiến dịch',
-                                    message: response.message,
-                                }, {
-                                    type: 'success',
-                                    placement: {
-                                        from: "bottom",
-                                        align: "right"
-                                    },
-                                    time: 1000,
-                                });
-                            } else {
-                                $.notify({
-                                    icon: 'icon-bell',
-                                    title: 'Chiến dịch',
-                                    message: response.message,
-                                }, {
-                                    type: 'danger',
-                                    placement: {
-                                        from: "bottom",
-                                        align: "right"
-                                    },
-                                    time: 1000,
-                                });
-                            }
-                        },
-                        error: function(xhr) {
-                            $.notify({
-                                icon: 'icon-bell',
-                                title: 'Chiến dịch',
-                                message: 'Có lỗi xảy ra trong quá trình xóa',
-                            }, {
-                                type: 'danger',
-                                placement: {
-                                    from: "bottom",
-                                    align: "right"
-                                },
-                                time: 1000,
-                            });
-                        }
-                    });
-                }
-            }
+            //     if (confirm('Bạn có chắc chắn muốn xóa chiến dịch này?')) {
+            //         $.ajax({
+            //             url: '{{ route('admin.{username}.campaign.delete', ['username' => Auth::user()->username]) }}',
+            //             type: 'POST',
+            //             data: id,
+            //             success: function(response) {
+            //                 if (response.success) {
+            //                     // Re-fetch the table content and update pagination
+            //                     fetchCampaigns();
+            //                     $.notify({
+            //                         icon: 'icon-bell',
+            //                         title: 'Chiến dịch',
+            //                         message: response.message,
+            //                     }, {
+            //                         type: 'success',
+            //                         placement: {
+            //                             from: "bottom",
+            //                             align: "right"
+            //                         },
+            //                         time: 1000,
+            //                     });
+            //                 } else {
+            //                     $.notify({
+            //                         icon: 'icon-bell',
+            //                         title: 'Chiến dịch',
+            //                         message: response.message,
+            //                     }, {
+            //                         type: 'danger',
+            //                         placement: {
+            //                             from: "bottom",
+            //                             align: "right"
+            //                         },
+            //                         time: 1000,
+            //                     });
+            //                 }
+            //             },
+            //             error: function(xhr) {
+            //                 $.notify({
+            //                     icon: 'icon-bell',
+            //                     title: 'Chiến dịch',
+            //                     message: 'Có lỗi xảy ra trong quá trình xóa',
+            //                 }, {
+            //                     type: 'danger',
+            //                     placement: {
+            //                         from: "bottom",
+            //                         align: "right"
+            //                     },
+            //                     time: 1000,
+            //                 });
+            //             }
+            //         });
+            //     }
+            // }
         });
     </script>
 
@@ -420,35 +425,31 @@
             switches.forEach(function(toggle) {
                 toggle.addEventListener('change', function() {
                     const campaignId = this.dataset.id;
-                    const newStatus = this.checked ? 1 : 0;
-
-                    // Send AJAX request to update status
-                    fetch(`/admin/campaign/update-status/${campaignId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                status: newStatus
-                            })
-                        })
-                        // .then(response => response.json())
-                        // .then(data => {
-                        //     if (data.success) {
-                        //         alert('Trạng thái đã được cập nhật thành công.');
-                        //     } else {
-                        //         alert('Không thể cập nhật trạng thái.');
-                        //         // Revert the switch if update fails
-                        //         this.checked = !this.checked;
-                        //     }
-                        // })
-                        .catch(error => {
-                            console.error('Error:', error);
+                    const newStatus = this.checked ? 1 : 0; // 1 nếu checked, 0 nếu unchecked
+                    $.ajax({
+                        url: '{{ route('admin.{username}.campaign.updateStatus', ['username' => Auth::user()->username]) }}',
+                        type: 'POST',
+                        data: {
+                            campaignId: campaignId, // Sửa lại cú pháp ở đây
+                            status: newStatus, // Thêm trường status vào data
+                            _token: '{{ csrf_token() }}' // Thêm CSRF token
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Trạng thái đã được cập nhật thành công.');
+                            } else {
+                                alert('Không thể cập nhật trạng thái.');
+                                // Revert the switch if update fails
+                                toggle.checked = !toggle.checked;
+                            }
+                        },
+                        error: function(xhr) {
+                            console.error('Error:', xhr);
                             alert('Đã xảy ra lỗi khi cập nhật trạng thái.');
                             // Revert the switch if there is an error
-                            this.checked = !this.checked;
-                        });
+                            toggle.checked = !toggle.checked;
+                        }
+                    });
                 });
             });
         });

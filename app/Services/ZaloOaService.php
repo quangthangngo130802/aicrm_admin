@@ -7,7 +7,9 @@ use App\Models\ZaloOa;
 use App\Models\ZnsMessage;
 use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 
@@ -25,6 +27,28 @@ class ZaloOaService
         $this->znsMessage = $znsMessage;
         $this->client = $client;
     }
+
+    public function addNewOa(array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $zaloOa = $this->zaloOa->create([
+                'name' => $data['name'],
+                'acccess_token' => $data['access_token'],
+                'oa_id' => $data['oa_id'],
+                'refresh_token' => $data['refresh_token'],
+                'status' => 0,
+                'user_id' => Auth::user()->username,
+            ]);
+
+            DB::commit();
+            return $zaloOa;
+        } catch (Exception $e) {
+            Log::error('Failed to add new OA to database: ' . $e->getMessage());
+            throw new Exception('Failed to add new OA to database');
+        }
+    }
+
 
     public function getAccessToken()
     {

@@ -95,16 +95,16 @@ class UserService
         if (!$user) {
             throw new Exception('Not an User');
         }
-        $userRoleId = $user->role_id;
-        if ($userRoleId != 1 && $userRoleId != 2 && $userRoleId != 3) {
-            throw new Exception('Not authorized');
-        }
+        // $userRoleId = $user->role_id;
+        // if ($userRoleId != 1 && $userRoleId != 2 && $userRoleId != 3) {
+        //     throw new Exception('Not authorized');
+        // }
 
-        if (!Hash::check($credentials['password'], $user->password)) {
-            Log::warning('Unauthorized login attempt', ['user' => $user]);
-            throw new Exception('Unauthorized');
-        }
-
+        // if (!Hash::check($credentials['password'], $user->password)) {
+        //     Log::warning('Unauthorized login attempt', ['user' => $user]);
+        //     throw new Exception('Unauthorized');
+        // }
+        Auth::attempt($credentials);
         Auth::login($user);
         // dd($user);
         return ['user' => $user];

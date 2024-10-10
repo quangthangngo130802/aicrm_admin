@@ -166,7 +166,7 @@
                 <div class="card-body">
                     <div class="">
                         <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
-                            <form action="{{ route('admin.automation.reminder.update') }}" method="POST" id="addcategory" >
+                            <form action="{{ route('admin.{username}.automation.reminder.update', ['username' => Auth::user()->username]) }}" method="POST" id="addcategory" >
                                 @csrf
                                 <div class="form-row">
                                     <div class="form-group col-md-6">

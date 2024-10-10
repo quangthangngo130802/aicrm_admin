@@ -5,12 +5,14 @@ namespace App\Services;
 use App\Mail\UserRegistered;
 use App\Models\AutomationUser;
 use App\Models\Config;
+use App\Models\Customer;
 use App\Models\User;
 use App\Models\ZaloOa;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -32,17 +34,18 @@ class StoreService
     public function getAllStore(): LengthAwarePaginator
     {
         try {
-            return $this->user->where('role_id', 2)->orderByDesc('created_at')->paginate(10);
+            return Customer::where('user_id', Auth::id())->orderByDesc('created_at')->paginate(10);
         } catch (Exception $e) {
             Log::error('Failed to fetch stores: ' . $e->getMessage());
             throw new Exception('Failed to fetch stores');
         }
     }
 
-    public function findStoreByID(int $id)
+    public function findStoreByID($id)
     {
         try {
-            return $this->user->find($id);
+            // dd($id);
+            return Customer::where('user_id', Auth::id())->find($id);
         } catch (Exception $e) {
             Log::error('Failed to find store info: ' . $e->getMessage());
             throw new Exception('Failed to find store info');
@@ -52,11 +55,11 @@ class StoreService
     public function findOwnerByPhone($phone)
     {
         try {
-            $staff = $this->user
-                ->where('phone', $phone)
+            $customer = Customer::where('user_id', Auth::id())
+                ->where('phone', 'like',  "%{$phone}%")
                 ->where('role_id', 1)
                 ->first();
-            return $staff;
+            return $customer;
         } catch (Exception $e) {
             Log::error('Failed to find client profile: ' . $e->getMessage());
             throw new Exception('Failed to find client profile');
@@ -66,8 +69,9 @@ class StoreService
     public function deleteStore($id)
     {
         try {
+            // dd($id);
             Log::info("Deleting store");
-            $store = $this->user->find($id);
+            $store = Customer::where('user_id', Auth::id())->find($id);
             $store->delete();
             DB::commit();
         } catch (Exception $e) {
@@ -82,46 +86,48 @@ class StoreService
         DB::beginTransaction();
         try {
             Log::info('Creating new client');
-            $client = $this->user->create([
+            // dd(Auth::user()->id);
+            $user_id = Auth::user()->id;
+            $client = Customer::create([
                 'name' => $data['name'],
                 'phone' => $data['phone'],
                 'email' => $data['email'],
                 'address' => $data['address'],
-                'role_id' => 2,
                 'source' => $data['source'] ?? 'Thêm thủ công',
+                'user_id' => $user_id,
             ]);
 
-            $user = AutomationUser::first();
-            if ($user->status != 1) {
-                return;
-            } else {
-                $accessToken = $this->getAccessToken();
-                $oa_id = ZaloOa::where('is_active', 1)->first()->id;
+            // $user = AutomationUser::first();
+            // if ($user->status != 1) {
+            //     return;
+            // } else {
+            //     $accessToken = $this->getAccessToken();
+            //     $oa_id = ZaloOa::where('is_active', 1)->first()->id;
 
-                try {
-                    // Gửi yêu cầu tới API Zalo
-                    $clientapi = new Client();
-                    $response = $clientapi->post('https://business.openapi.zalo.me/message/template', [
-                        'headers' => [
-                            'access_token' => $accessToken,
-                            'Content-Type' => 'application/json'
-                        ],
-                        'json' => [
-                            'phone' => preg_replace('/^0/', '84', $data['phone']),
-                            'template_id' => '355330',
-                            'template_data' => [
-                                'date' => Carbon::now()->format('d/m/Y') ?? "",
-                                'name' => $data['name'] ?? "",
-                                'order_code' => $client->id,
-                                'phone_number' => $data['phone'],
-                                'status' => 'Đăng ký thành công'
-                            ]
-                        ]
-                    ]);
-                } catch (Exception $e) {
-                    Log::error('Lỗi khi gửi tin nhắn: ' . $e->getMessage());
-                }
-            }
+            //     try {
+            //         // Gửi yêu cầu tới API Zalo
+            //         $clientapi = new Client();
+            //         $response = $clientapi->post('https://business.openapi.zalo.me/message/template', [
+            //             'headers' => [
+            //                 'access_token' => $accessToken,
+            //                 'Content-Type' => 'application/json'
+            //             ],
+            //             'json' => [
+            //                 'phone' => preg_replace('/^0/', '84', $data['phone']),
+            //                 'template_id' => '355330',
+            //                 'template_data' => [
+            //                     'date' => Carbon::now()->format('d/m/Y') ?? "",
+            //                     'name' => $data['name'] ?? "",
+            //                     'order_code' => $client->id,
+            //                     'phone_number' => $data['phone'],
+            //                     'status' => 'Đăng ký thành công'
+            //                 ]
+            //             ]
+            //         ]);
+            //     } catch (Exception $e) {
+            //         Log::error('Lỗi khi gửi tin nhắn: ' . $e->getMessage());
+            //     }
+            // }
 
 
             DB::commit();

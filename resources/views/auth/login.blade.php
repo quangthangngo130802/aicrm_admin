@@ -73,12 +73,12 @@
                             <div class="col-lg-6">
                                 <div class="p-lg-5 p-4">
                                     <div>
-                                        <h5 class="text-primary">Xin chào!</h5>
+                                        <h5 class="text-primary">Xin chào! {{ $username }}</h5>
                                         <p class="text-muted">Đăng nhập để sử dụng ứng dụng.</p>
                                     </div>
 
                                     <div class="mt-4">
-                                        <form action="{{ route('login') }}" method="post">
+                                        <form action="{{ route('login', ['username' => $username]) }}" method="post">
                                             @csrf
                                             <div class="mb-3">
                                                 <label for="username" class="form-label">Email hoặc Số điện thoại</label>

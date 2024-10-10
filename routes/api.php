@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\TransactionController;
+use App\Http\Controllers\Api\TransferController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +20,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('add-user', [UserController::class, 'addUser'])->name('admin.adduser');
+Route::post('confirm-transaction/{id}', [TransactionController::class, 'confirmTransaction']);
+Route::post('reject-transaction/{id}', [TransactionController::class, 'rejectTransaction']);
+Route::post('transfer', [TransferController::class, 'transfer']);

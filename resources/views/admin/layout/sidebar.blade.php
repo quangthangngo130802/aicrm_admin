@@ -24,7 +24,7 @@
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
                 <li class="nav-item active">
-                    <a href="{{ route('admin.dashboard') }}">
+                    <a href="{{ route('admin.{username}.dashboard', ['username' => Auth::user()->username]) }}">
                         <i class="fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
@@ -38,7 +38,7 @@
 
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.store.index') }}">
+                    <a href="{{ route('admin.{username}.store.index', ['username' => Auth::user()->username]) }}">
                         <i class="fas fa-user"></i>
                         <p>Khách hàng</p>
                     </a>
@@ -52,12 +52,14 @@
                     <div class="collapse" id="sidebargiaodich">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href = "{{ route('admin.transaction.index') }}">
+                                <a
+                                    href = "{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Nạp tiền</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "">
+                                <a
+                                    href = "{{ route('admin.{username}.transfer.index', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Nhận tiền</span>
                                 </a>
                             </li>
@@ -65,7 +67,7 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('admin.campaign.index') }}">
+                    <a href="{{ route('admin.{username}.campaign.index', ['username' => Auth::user()->username]) }}">
                         <i class="fas fa-user"></i>
                         <p>Chiến dịch</p>
                     </a>
@@ -79,7 +81,8 @@
                     <div class="collapse" id="sidebarcauhinh">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href = "{{ route('admin.zalo.zns') }}">
+                                <a
+                                    href = "{{ route('admin.{username}.zalo.zns', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Cấu hình OA/ZNS</span>
                                 </a>
                             </li>
@@ -89,17 +92,18 @@
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{ route('admin.automation.user') }}">
+                                <a
+                                    href = "{{ route('admin.{username}.automation.user', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Khách hàng</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{ route('admin.automation.birthday') }}">
+                                <a href = "{{ route('admin.{username}.automation.birthday', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Sinh nhật</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{ route('admin.automation.reminder') }}">
+                                <a href = "{{ route('admin.{username}.automation.reminder', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Nhắc nhở</span>
                                 </a>
                             </li>
@@ -115,17 +119,17 @@
                     <div class="collapse" id="sidebarzns">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href = "{{route('admin.message.znsMessage')}}">
+                                <a href = "{{ route('admin.{username}.message.znsMessage', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Report ZNS</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{ route('admin.message.znsQuota') }}">
+                                <a href = "{{ route('admin.{username}.message.znsQuota', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Hạn mức ZNS</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{ route('admin.message.znsTemplate') }}">
+                                <a href = "{{ route('admin.{username}.message.znsTemplate', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Template ZNS</span>
                                 </a>
                             </li>

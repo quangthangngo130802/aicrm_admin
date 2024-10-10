@@ -248,7 +248,6 @@
                             <input type="text" class="form-control" id="tax_code" name="tax_code">
                             <small id="tax_code-error" class="text-danger"></small>
                         </div>
-
                         <button type="submit" class="btn btn-primary">Xác nhận</button>
                     </form>
 

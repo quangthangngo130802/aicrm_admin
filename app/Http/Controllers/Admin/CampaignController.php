@@ -14,6 +14,7 @@ use App\Services\CampaignService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToArray;
@@ -135,7 +136,7 @@ class CampaignController extends Controller
             }
 
             session()->flash('success', 'Thêm chiến dịch thành công');
-            return redirect()->route('admin.campaign.index');
+            return redirect()->route('admin.' . Auth::user()->username . '.campaign.index');
         } catch (Exception $e) {
             Log::error('Failed to create new Campaign:' . $e->getMessage());
             return ApiResponse::error('Failed to create new Campaign', 500);
@@ -160,17 +161,18 @@ class CampaignController extends Controller
         try {
             $campaigns = $this->campaignService->updateCampaign($request->all(), $id);
             session()->flash('success', 'Cập nhật thông tin chiến dịch thành công');
-            return redirect()->route('super.campaign.index');
+            return redirect()->route('admin.' . Auth::user()->username . '.campaign.index');
         } catch (Exception $e) {
             Log::error('Failed to update Campagin Information:' . $e->getMessage());
             return ApiResponse::error('Failed to update Campaign Information', 500);
         }
     }
 
-    public function delete($id)
+    public function delete()
     {
         try {
-            $this->campaignService->deleteCampaign($id);
+            // dd(request());
+            $this->campaignService->deleteCampaign(request('id'));
             $campaigns = $this->campaignService->getPaginateCampaign();
             $table = view('admin.campaign.table', compact('campaigns'))->render();
             $pagination = $campaigns->links('vendor.pagination.custom')->render();
@@ -190,12 +192,13 @@ class CampaignController extends Controller
         }
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request)
     {
         try {
-            $campaigns = Campaign::findOrFail($id);
-            $campaigns->status = $request->input('status');
-            $campaigns->save();
+            // Kiểm tra nếu không có chiến dịch nào được tìm thấy sẽ gây lỗi
+            $campaign = Campaign::findOrFail($request->campaignId);
+            $campaign->status = $request->input('status');
+            $campaign->save();
             return response()->json(['success' => true]);
         } catch (Exception $e) {
             return response()->json(['success' => false, 'message' => 'Cập nhật trạng thái thất bại', 'error' => $e->getMessage()]);

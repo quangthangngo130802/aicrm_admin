@@ -11,6 +11,10 @@ use Illuminate\Http\Request;
 
 class DashBoardController extends Controller
 {
+    public function default()
+    {
+        return view('web_default');
+    }
     //
     public function index()
     {

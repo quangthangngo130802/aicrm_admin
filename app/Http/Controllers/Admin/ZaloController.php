@@ -4,21 +4,37 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ZaloOa;
+use App\Services\ZaloOaService;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class ZaloController extends Controller
 {
+    protected $zaloOaService;
+
+    public function __construct(ZaloOaService $zaloOaService)
+    {
+        $this->zaloOaService = $zaloOaService;
+    }
+
     public function index()
     {
         $connectedApps = ZaloOa::all();
 
         return view('admin.zalo.oa', compact('connectedApps'));
     }
+
+    public function store(Request $request)
+    {
+        $zaloOa = $this->zaloOaService->addNewOa($request->all());
+        return route('admin.{username}.zalo.zns', ['username' => Auth::user()->username]);
+    }
+
     public function updateOaStatus($oaId)
     {
         try {

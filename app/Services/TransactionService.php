@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Transaction;
 use App\Models\User;
 use Exception;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -62,7 +63,7 @@ class TransactionService
         try {
             $queryBuilder = $this->transaction->where('user_id', $id);
 
-            if ($status) {
+            if ($status !== null && $status !== '') {
                 $queryBuilder->where('status', $status);
             }
 
@@ -95,7 +96,22 @@ class TransactionService
                 'description' => $data['description'],
             ]);
 
+            $superAdminTransactionUrl = 'http://127.0.0.1:8000/api/add-transaction';
+            $client = new Client();
 
+            $response = $client->post($superAdminTransactionUrl, [
+                'form_params' => [
+                    'amount' => $transaction->amount,
+                    'status' => $transaction->status,
+                    'user_id' => $transaction->user_id,
+                    'notification' => $transaction->notification,
+                    'description' => $transaction->description,
+                ],
+            ]);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new Exception('Failed to add transaction to SuperAdmin');
+            }
             DB::commit();
             return $transaction;
         } catch (Exception $e) {
@@ -172,6 +188,4 @@ class TransactionService
             throw new Exception('Failed to get transaction notification for admin');
         }
     }
-
-
 }

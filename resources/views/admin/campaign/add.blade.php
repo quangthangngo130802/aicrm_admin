@@ -123,8 +123,9 @@
                     <div class="card-body">
                         <div class="">
                             <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
-                                <form action="{{ route('admin.campaign.store') }}" method="POST" id="addcategory"
-                                    enctype="multipart/form-data">
+                                <form
+                                    action="{{ route('admin.{username}.campaign.store', ['username' => Auth::user()->username]) }}"
+                                    method="POST" id="addcategory" enctype="multipart/form-data">
                                     @csrf
                                     <div class="form-row">
                                         <div class="form-group">

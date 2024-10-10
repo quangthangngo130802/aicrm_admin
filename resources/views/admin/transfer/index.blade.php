@@ -45,6 +45,17 @@
             /* Loại bỏ khoảng cách giữa ô nhập liệu và nút tìm kiếm */
         }
 
+        .input-group-btn .btn-secondary {
+            border-radius: 20px 0 0 20px !important;
+            /* Bo góc cho phần bên phải */
+            padding: 0.5rem 1rem !important;
+            font-size: 14px !important;
+            font-weight: bold !important;
+            height: 38px !important;
+            /* Chiều cao cố định để đồng nhất với ô nhập liệu */
+            border: 1px solid #ced4da !important;
+        }
+
         .input-group-btn .btn-primary {
             border-radius: 0 20px 20px 0 !important;
             /* Bo góc cho phần bên phải */
@@ -153,7 +164,7 @@
             background: linear-gradient(135deg, #6f42c1, #007bff) !important;
             color: white !important;
             /* border-top-left-radius: 15px !important;
-                                                                                                                                border-top-right-radius: 5px !important; */
+                                                                                                                                                border-top-right-radius: 5px !important; */
             padding: 1.5rem !important;
         }
 
@@ -195,25 +206,15 @@
                                 <div class="row">
                                     <form id="search-form" method="GET">
                                         <div class="input-group mb-3">
-                                            <!-- Tên hoặc số điện thoại -->
-                                            <input type="text" name="query" class="form-control" id="query"
-                                                placeholder="Tên hoặc số điện thoại" value="{{ request('query') }}">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-secondary" id="clear-btn">Đặt lại</button>
+                                            </span>
                                             <!-- Ngày bắt đầu -->
                                             <input type="date" name="start_date" class="form-control" id="start_date"
                                                 placeholder="Ngày bắt đầu" value="{{ request('start_date') }}">
                                             <!-- Ngày kết thúc -->
                                             <input type="date" name="end_date" class="form-control" id="end_date"
                                                 placeholder="Ngày kết thúc" value="{{ request('end_date') }}">
-                                            <!-- Trạng thái -->
-                                            <select name="status" class="form-control" id="status">
-                                                <option value="">Chọn trạng thái</option>
-                                                <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Đã
-                                                    xác nhận</option>
-                                                <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Đang
-                                                    chờ</option>
-                                                <option value="2" {{ request('status') == '2' ? 'selected' : '' }}>Đã
-                                                    từ chối</option>
-                                            </select>
                                             <!-- Nút tìm kiếm -->
                                             <span class="input-group-btn">
                                                 <button id="search-btn" class="btn btn-primary" type="submit">Tìm
@@ -222,20 +223,15 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div class="row justify-content-center mb-3">
-                                    <div class="col-sm-1 d-flex justify-content-center">
-                                        <button class="btn btn-secondary" id="clear-btn">Đặt lại</button>
-                                    </div>
-                                </div>
                                 <div class="row">
-                                    <div class="col-sm-12" id="transaction-table">
-                                        @include('admin.transaction.table', [
-                                            'transactions' => $transactions,
+                                    <div class="col-sm-12" id="transfer-table">
+                                        @include('admin.transfer.table', [
+                                            'transfers' => $transfers,
                                         ])
                                     </div>
                                     <div class="col-sm-12" id="pagination-links">
-                                        @if ($transactions instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                                            {{ $transactions->links('vendor.pagination.custom') }}
+                                        @if ($transfers instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                                            {{ $transfers->links('vendor.pagination.custom') }}
                                         @endif
                                     </div>
                                 </div>
@@ -268,10 +264,8 @@
 
             // Cập nhật bảng và phân trang dựa trên tham số tìm kiếm.
             function updateTableAndPagination(query, startDate, endDate, status) {
-                let username = "{{ Auth::user()->username }}";
                 $.ajax({
-                    url: "{{ route('admin.{username}.transaction.search', ['username' => '__USERNAME__']) }}".replace(
-                        '__USERNAME__', username),
+                    url: "{{ route('admin.{username}.transfer.search', ['username' => Auth::user()->username]) }}",
                     type: 'GET',
                     data: {
                         query: query,
@@ -280,7 +274,7 @@
                         status: status
                     },
                     success: function(response) {
-                        $('#transaction-table').html(response.html);
+                        $('#transfer-table').html(response.html);
                         $('#pagination-links').html(response.pagination);
                     },
                     error: function(xhr) {
@@ -293,21 +287,18 @@
             $(document).on('click', '#pagination-links a', function(e) {
                 e.preventDefault();
                 let url = $(this).attr('href');
-                let query = $('#query').val();
                 let startDate = $('#start_date').val();
                 let endDate = $('#end_date').val();
-                let status = $('#status').val();
 
-                let newUrl = url + (url.includes('?') ? '&' : '?') + 'query=' + encodeURIComponent(query) +
+                let newUrl = url + (url.includes('?') ? '&' : '?') +
                     '&start_date=' + encodeURIComponent(startDate) +
-                    '&end_date=' + encodeURIComponent(endDate) +
-                    '&status=' + encodeURIComponent(status);
+                    '&end_date=' + encodeURIComponent(endDate);
 
                 $.ajax({
                     url: newUrl,
                     type: 'GET',
                     success: function(response) {
-                        $('#transaction-table').html(response.html);
+                        $('#transfer-table').html(response.html);
                         $('#pagination-links').html(response.pagination);
                     },
                     error: function(xhr) {
@@ -316,21 +307,21 @@
                 });
             });
 
+            $('#clear-btn').on('click', function() {
+                $('#search-form')[0].reset();
+            })
+
             // Đặt giá trị ô tìm kiếm từ URL nếu có.
-            $('#query').val(new URLSearchParams(window.location.search).get('query') || '');
             $('#start_date').val(new URLSearchParams(window.location.search).get('start_date') || '');
             $('#end_date').val(new URLSearchParams(window.location.search).get('end_date') || '');
-            $('#status').val(new URLSearchParams(window.location.search).get('status') || '');
 
             //Reset bộ lọc
             $('#clear-btn').on('click', function(e) {
                 e.preventDefault(); // Ngăn chặn hành vi mặc định của nút
 
                 // Reset các trường tìm kiếm
-                $('#query').val('');
                 $('#start_date').val('');
                 $('#end_date').val('');
-                $('#status').val('');
 
                 // Gọi hàm cập nhật bảng và phân trang với các tham số rỗng
                 updateTableAndPagination('', '', '', '');

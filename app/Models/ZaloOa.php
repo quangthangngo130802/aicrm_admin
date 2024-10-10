@@ -17,7 +17,8 @@ class ZaloOa extends Model
         'access_token',
         'refresh_token',
         'package_valid_through_date',
-        'is_active'
+        'is_active',
+        'user_id'
     ];
 
     // Define a relationship with ZnsMessage

@@ -28,13 +28,22 @@
                     <a href="javascript:void(0)" id="open-add-modal"
                         style="background-color: white; border-color: white">
                         <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
-                            class="fa-solid fa-plus"></i>Thêm khách hàng
-
+                            class="fa-solid fa-plus"></i> Thêm khách hàng
                     </a>
                 </li>
+
+                <li class="nav-item topbar-user dropdown hidden-caret">
+                    <a href="javascript:void(0)" id="open-add-oa-modal"
+                        style="background-color: white; border-color: white">
+                        <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
+                            class="fa-solid fa-plus"></i> Thêm OA
+                    </a>
+                </li>
+
                 <li class="nav-item topbar-user dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" target="_blank"
-                        href="{{ route('admin.transaction.payment') }}" aria-expanded="false">
+                        href="{{ route('admin.{username}.transaction.payment', ['username' => Auth::user()->username]) }}"
+                        aria-expanded="false">
                         <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
                             class="fa-solid fa-wallet"></i> Nạp tiền: {{ number_format(\Auth::user()->wallet) }} đ
 
@@ -136,12 +145,15 @@
                     <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-bell"></i>
-                        <span class="notification">{{ $adminNotifications->count() ?? '0' }}</span>
+                        <span
+                            class="notification">{{ $adminNotifications->count() + $adminTransferNotifications->count() ?? '0' }}</span>
                     </a>
                     <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
                         <li>
                             <div class="dropdown-title">
-                                You have {{ $adminNotifications->count() ?? '' }} new notifications
+                                You have
+                                {{ $adminNotifications->count() + $adminTransferNotifications->count() ?? '' }} new
+                                notifications
                             </div>
                         </li>
                         <li>
@@ -149,6 +161,28 @@
                                 <div class="notif-scroll scrollbar-outer scroll-content"
                                     style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 0px;">
                                     <div class="notif-center">
+                                        @foreach ($adminTransferNotifications as $item)
+                                            @php
+                                                $createdAt = $item->created_at;
+                                                $timeElapsed = Carbon\Carbon::parse($createdAt)
+                                                    ->locale('vi')
+                                                    ->diffForHumans();
+                                            @endphp
+                                            <a href="{{ route('admin.transfer.updateNotification', ['id' => $item->id]) }}"
+                                                class="notification-item mark-as-read">
+                                                <!-- Thêm data-href -->
+                                                <div class="notif-icon notif-primary">
+                                                    <i class="fas fa-bell"></i>
+                                                </div>
+                                                <div class="notif-content">
+                                                    <span class="block">
+                                                        Bạn vừa được chuyển {{ number_format($item->amount) }} vào ví
+                                                        phụ
+                                                    </span>
+                                                    <span class="time">{{ $timeElapsed }}</span>
+                                                </div>
+                                            </a>
+                                        @endforeach
                                         @foreach ($adminNotifications as $item)
                                             @php
                                                 $createdAt = $item->created_at;
@@ -308,13 +342,14 @@
                                         <div class="u-text">
                                             <h4>{{ session('authUser')->name }}</h4>
                                             <p class="text-muted">{{ session('authUser')->email }}</p>
-                                            <a href="{{ route('admin.detail', ['id' => session('authUser')->id]) }}"
+                                            <a href="{{ route('admin.{username}.detail', ['username' => Auth::user()->username, 'id' => session('authUser')->id]) }}"
                                                 class="btn btn-xs btn-secondary btn-sm">Trang cá nhân</a>
                                             <a href="#" class="btn btn-xs  btn-sm"
                                                 style="background: red; color: #ffff"
                                                 onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">Đăng
                                                 xuất</a>
-                                            <form id="logoutForm" action="{{ route('admin.logout') }}"
+                                            <form id="logoutForm"
+                                                action="{{ route('admin.{username}.logout', ['username' => Auth::user()->username]) }}"
                                                 method="POST" style="display: none;">
                                                 @csrf
                                             </form>
@@ -345,45 +380,87 @@
     </nav>
     <!-- End Navbar -->
 </div>
-<div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalLabel"
+
+<div class="modal fade" id="addClientModal" tabindex="-1" role="dialog" aria-labelledby="addClientModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addClientModalLabel">Thêm khách hàng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
+                <!-- Form Thêm khách hàng -->
                 <form id="add-client-form">
-                    @csrf
-                    <!-- Form fields -->
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Họ tên <span class="text-danger">*</span></label>
+                    <div class="form-group">
+                        <label for="name">Tên khách hàng</label>
                         <input type="text" class="form-control" id="name" name="name" required>
-                        <div id="name-error" class="invalid-feedback"></div>
+                        <div class="invalid-feedback" id="name-error"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" name="email">
-                        <div id="email-error" class="invalid-feedback"></div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="phone" class="form-label">Số điện thoại <span
-                                class="text-danger">*</span></label>
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại</label>
                         <input type="text" class="form-control" id="phone" name="phone" required>
-                        <div id="phone-error" class="invalid-feedback"></div>
+                        <div class="invalid-feedback" id="phone-error"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Địa chỉ <span class="text-danger">*</span></label>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                        <div class="invalid-feedback" id="email-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Địa chỉ</label>
                         <input type="text" class="form-control" id="address" name="address" required>
-                        <div id="address-error" class="invalid-feedback"></div>
+                        <div class="invalid-feedback" id="address-error"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="address" class="form-label">Nguồn khách hàng</label>
+                    <div class="form-group">
+                        <label for="address">Nguồn</label>
                         <input type="text" class="form-control" id="source" name="source">
-                        <div id="address-error" class="invalid-feedback"></div>
+                        <div class="invalid-feedback" id="address-error"></div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Xác nhận</button>
+                    <button type="submit" class="btn btn-primary">Thêm khách hàng</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thêm oa mới -->
+<div class="modal fade" id="addOAModal" tabindex="-1" role="dialog" aria-labelledby="addOAModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addClientModalLabel">Thêm OA</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form Thêm khách hàng -->
+                <form id="add-client-form">
+                    <div class="form-group">
+                        <label for="name">Tên OA</label>
+                        <input type="text" class="form-control" id="oa_name" name="name" required>
+                        <div class="invalid-feedback" id="oa_name-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="oa_id">OA ID</label>
+                        <input type="text" class="form-control" id="oa_id" name="oa_id" required>
+                        <div class="invalid-feedback" id="oa_id-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="access_token">Access Token</label>
+                        <input type="access_token" class="form-control" id="access_token" name="access_token" required>
+                        <div class="invalid-feedback" id="access_token-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="refresh_token">Refresh Token</label>
+                        <input type="text" class="form-control" id="refresh_token" name="refresh_token" required>
+                        <div class="invalid-feedback" id="refresh_token-error"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Thêm OA mới</button>
                 </form>
             </div>
         </div>

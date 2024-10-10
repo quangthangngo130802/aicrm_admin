@@ -78,6 +78,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="{{ asset('assets/js/demo.js') }}"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     {{-- <script>
         $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
           type: "line",
@@ -130,23 +132,37 @@
     </script>
 
     <script>
-        // Hiển thị modal thêm khách hàng
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            // Sự kiện khi nhấn vào nút mở modal
             $('#open-add-modal').on('click', function() {
                 $('#add-client-form')[0].reset();
-                $('.invalid-feedback').hide(); // Hide all validation feedback
-                $('#addClientModal').modal('show');
+                $('.invalid-feedback').hide(); // Ẩn tất cả các thông báo lỗi
+                $('#addClientModal').modal('show'); // Hiển thị modal
             });
 
+            $('#open-add-oa-modal').on('click', function() {
+                $('#add-oa-form')[0].reset();
+                $('.invalid-feedback').hide();
+                $('#addOAModal').modal('show');
+            })
+
+            // Sự kiện submit form
             $('#add-client-form').on('submit', function(e) {
+                let username = "{{ Auth::user()->username }}";
                 e.preventDefault();
                 $.ajax({
-                    url: "https://aicrm.vn/admin/store/store",
+                    url: "{{ route('admin.{username}.store.store', ['username' => '__USERNAME__']) }}"
+                        .replace(
+                            '__USERNAME__', username),
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
-                        console.log(response); // In ra response để kiểm tra
-
+                        console.log(response); // Kiểm tra phản hồi từ server
                         if (response.success) {
                             Swal.fire({
                                 icon: 'success',
@@ -159,7 +175,6 @@
                             });
                             $('#addClientModal').modal('hide'); // Đóng modal khi thành công
                         } else {
-                            // Thêm console log để kiểm tra thông tin lỗi
                             console.log('Response failed:', response);
                             Swal.fire({
                                 icon: 'error',
@@ -197,6 +212,58 @@
                         }
                     }
                 });
+            });
+
+            // Sự kiện submit form thêm oa
+            $('#add-oa-form').on('submit', function(e) {
+                let username = "{{ Auth::user()->username }}";
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ route('admin.{username}.zalo.store', ['username' => '__USERNAME__']) }}"
+                        .replace('__USERNAME__', $username),
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công!',
+                                text: 'Thêm OA mới thành công',
+                                showConfirmButton: false,
+                                timer: 1500,
+                                position: 'top-end',
+                                toast: true
+                            });
+                            $('#addOAModal').modal('hide');
+                        } else {
+                            console.log('Response Failed: ', response);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại',
+                                text: response.message ||
+                                    'Có lỗi xảy ra, vui lòng thử lại',
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+                            if (errors.name) {
+                                $('#oa_name').addClass('is_invalid');
+                                $('#oa_name-error').text(errors.name[0]).show();
+                            }
+
+                            if (errors.oa_id) {
+                                $('#oa_id').addClass('is-invalid');
+                                $('#oa_id-error').text(errors.oa_id[0]).show();
+                            }
+
+                            if(errors.access_token){
+                                $('#access_token')
+                            }
+                        }
+                    }
+                })
             });
         });
     </script>

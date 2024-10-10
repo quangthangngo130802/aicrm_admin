@@ -172,7 +172,9 @@
                             <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
                                 <div class="row">
                                     <div class="col-sm-12 col-md-6">
-                                        <form action="{{ route('admin.store.findByPhone') }}" method="GET">
+                                        <form
+                                            action="{{ route('admin.{username}.store.findByPhone', ['username' => Auth::user()->username]) }}"
+                                            method="GET">
                                             <div class="dataTables_filter">
                                                 <label>Tìm kiếm</label>
                                                 <input type="text" name="phone" class="form-control form-control-sm"
@@ -210,7 +212,7 @@
                                                                 <td>{{ $value->phone ?? '' }}</td>
                                                                 <td>{{ $value->created_at ? $value->created_at->format('d/m/Y') : '' }}
                                                                 </td>
-                                                                <td>{{ $value->source ?? 'Thêm thủ công'}}</td>
+                                                                <td>{{ $value->source ?? 'Thêm thủ công' }}</td>
                                                                 <td>
                                                                     {{-- Accordion for campaigns --}}
                                                                     @if ($value->campaignDetails && $value->campaignDetails->isNotEmpty())
@@ -231,11 +233,12 @@
                                                                 </td>
                                                                 <td style="text-align:center">
                                                                     <a class="btn btn-warning"
-                                                                        href="{{ route('admin.store.detail', ['id' => $value->id]) }}"><i
-                                                                            class="fa-solid fa-eye"></i></a>
+                                                                        href="{{ route('admin.{username}.store.detail', ['username' => Auth::user()->username, 'id' => $value->id]) }}">
+                                                                        <i class="fa-solid fa-eye"></i>
+                                                                    </a>
                                                                     <a onclick="return confirm('Bạn có chắc chắn muốn xóa?')"
                                                                         class="btn btn-danger"
-                                                                        href="{{ route('admin.store.delete', ['id' => $value->id]) }}"><i
+                                                                        href="{{ route('admin.{username}.store.delete', ['username' => Auth::user()->username, 'id' => $value->id]) }}"><i
                                                                             class="fa-solid fa-trash"></i></a>
                                                                 </td>
                                                             </tr>
@@ -245,7 +248,7 @@
                                                     <tr>
                                                         <td class="text-center" colspan="7">
                                                             <div class="">
-                                                                Chưa có cửa hàng
+                                                                Chưa có khách hàng
                                                             </div>
                                                         </td>
                                                     </tr>

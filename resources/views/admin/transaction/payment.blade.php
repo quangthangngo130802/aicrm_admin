@@ -121,7 +121,7 @@
                         <div class="card-body border rounded">
                             <div class="d-flex gap-3 align-items-center">
                                 <h6 class="text-gray">
-                                    {{ $authUser->company_name }} -
+                                    {{ $authUser->company_name ?? 'Chưa có' }} -
                                     MST : {{ $authUser->tax_code ?? 'Chưa có' }}
                                 </h6>
                                 <a href="#" id="editInvoiceInfo" class="text-primary"
@@ -194,48 +194,56 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('admin.update', ['id' => $authUser->id]) }}" method="POST">
+                    <form
+                        action="{{ route('admin.{username}.update', ['username' => Auth::user()->username, 'id' => $authUser->id]) }}"
+                        method="POST">
                         @csrf
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="companyName" class="form-label">Tên công ty</label>
-                                    <input type="text" class="form-control" id="companyName" name="company_name"
-                                        placeholder="Nhập tên công ty" required>
+                                    <input type="text" value="{{ $authUser->company_name ?? '' }}"
+                                        class="form-control" id="companyName" name="company_name"
+                                        placeholder="Nhập tên công ty" >
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="taxCode" class="form-label">Mã số thuế</label>
-                                    <input type="text" class="form-control" id="taxCode" name="tax_code"
-                                        placeholder="Nhập mã số thuế" required>
+                                    <input type="text" value="{{ $authUser->tax_code ?? '' }}"
+                                        class="form-control" id="taxCode" name="tax_code"
+                                        placeholder="Nhập mã số thuế" >
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="name" class="form-label">Họ tên</label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        placeholder="Nhập họ tên người nhận hoá đơn" required>
+                                    <input type="text" value="{{ $authUser->name ?? '' }}" class="form-control"
+                                        id="name" name="name" placeholder="Nhập họ tên người nhận hoá đơn"
+                                        required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
                                     <label for="phone" class="form-label">Số điện thoại</label>
-                                    <input type="text" class="form-control" id="phone" name="phone"
+                                    <input type="text" value="{{ $authUser->phone ?? '' }}" class="form-control"
+                                        id="phone" name="phone"
                                         placeholder="Nhập số điện thoại nhận hoá đơn của doanh nghiệp" required>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group mb-3">
                                     <label for="email" class="form-label">Email nhận hoá đơn điện tử</label>
-                                    <input type="email" class="form-control" id="email" name="email"
+                                    <input type="email" value="{{ $authUser->email ?? '' }}" class="form-control"
+                                        id="email" name="email"
                                         placeholder="Nhập email nhận hoá đơn của doanh nghiệp" required>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group mb-3">
                                     <label for="address" class="form-label">Địa chỉ công ty</label>
-                                    <input type="text" class="form-control" id="address" name="address"
+                                    <input type="text" value="{{ $authUser->address ?? '' }}"
+                                        class="form-control" id="address" name="address"
                                         placeholder="Nhập địa chỉ công ty" required>
                                 </div>
                             </div>
@@ -314,7 +322,7 @@
 
                 // Gọi AJAX để lấy mã QR
                 $.ajax({
-                    url: '{{ route('admin.transaction.generate') }}', // Đường dẫn đến route
+                    url: '{{ route('admin.{username}.transaction.generate', ['username' => Auth::user()->username]) }}', // Đường dẫn đến route
                     type: 'GET',
                     data: {
                         amount: amount,
@@ -349,7 +357,7 @@
 
                 // Gửi dữ liệu đến route admin.transaction.store
                 $.ajax({
-                    url: '{{ route('admin.transaction.store') }}', // Đường dẫn đến route
+                    url: '{{ route('admin.{username}.transaction.store', ['username' => Auth::user()->username]) }}', // Đường dẫn đến route
                     type: 'POST',
                     data: {
                         money: money,
@@ -371,11 +379,12 @@
                             // Sau khi tải file xong, chuyển hướng người dùng
                             downloadLink.addEventListener('click', function() {
                                 window.location.href =
-                                    '{{ route('admin.transaction.index') }}';
+                                    '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}';
                             });
                         } else {
                             // Nếu không có yêu cầu xuất hóa đơn, chuyển hướng luôn
-                            window.location.href = '{{ route('admin.transaction.index') }}';
+                            window.location.href =
+                                '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}';
                         }
 
                         // Hiển thị thông báo SweetAlert

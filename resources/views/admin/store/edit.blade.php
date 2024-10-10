@@ -107,7 +107,8 @@
                             </div>
                         </div>
                         <div class="text-center mt-4">
-                            <a href="{{ route('super.store.index') }}" class="btn btn-primary w-md">
+                            <a href="{{ route('admin.{username}.store.index', ['username' => Auth::user()->username]) }}"
+                                class="btn btn-primary w-md">
                                 <i class="fas fa-arrow-left"></i> Quay lại
                             </a>
                         </div>
