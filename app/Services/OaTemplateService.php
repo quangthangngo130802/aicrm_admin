@@ -56,12 +56,13 @@ class OaTemplateService
                 'query' => [
                     'offset' => 0,
                     'limit' => 100,
-                    // 'status' => 2,
+                    'status' => 1,
                 ],
                 'timeout' => 30,
             ]);
 
             $responseBody = $response->getBody()->getContents();
+            // dd($responseBody);
             Log::info('API Response: ' . $responseBody); // Log API response
 
             $responseData = json_decode($responseBody, true);
@@ -100,8 +101,13 @@ class OaTemplateService
                         $templateDetailBody = $templateDetailResponse->getBody()->getContents();
                         Log::info('Template Detail API Response: ' . $templateDetailBody); // Log template detail API response
 
-                        $templateDetailData = json_decode($templateDetailBody, true)['data'];
-
+                        $templateDetailData = json_decode($templateDetailBody, true);
+                        if (isset($templateDetailData['data'])) {
+                            $templateDetailData = $templateDetailData['data'];
+                        } else {
+                            Log::error('Template detail API response missing "data" key.');
+                            continue; // Bỏ qua template này và tiếp tục với template tiếp theo
+                        }
                         // Cập nhật giá trong cơ sở dữ liệu
                         $this->oaTemplate->updateOrCreate(
                             ['template_id' => $template['templateId'], 'oa_id' => $zaloOa->id],

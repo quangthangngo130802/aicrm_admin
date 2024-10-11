@@ -142,7 +142,8 @@
         });
 
         refreshTokenBtn.addEventListener('click', function() {
-            const url = `{{ route('admin.{username}.zalo.refreshAccessToken', ['username' => Auth::user()->username]) }}`;
+            const url =
+                `{{ route('admin.{username}.zalo.refreshAccessToken', ['username' => Auth::user()->username]) }}`;
 
             // Lấy token CSRF
             const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
@@ -204,14 +205,21 @@
                 });
         }
 
-        function updateActiveOaInfo(name, accessToken, refreshToken) {
-            document.getElementById('activeOaName').textContent = name || 'Chưa có OA nào được kích hoạt';
-            const accessTokenDisplay = document.getElementById('accessTokenDisplay');
-            const refreshTokenDisplay = document.getElementById('refreshTokenDisplay');
-            accessTokenDisplay.dataset.token = accessToken;
-            accessTokenDisplay.textContent = accessToken.slice(0, 20) + '...' + accessToken.slice(-10);
-            refreshTokenDisplay.dataset.token = refreshToken;
-            refreshTokenDisplay.textContent = refreshToken.slice(0, 20) + '...' + refreshToken.slice(-10);
+        function updateActiveOaInfo(activeOaName, accessToken, refreshToken) {
+            // Kiểm tra xem phần tử mà bạn muốn cập nhật có tồn tại không
+            const oaNameElement = document.querySelector('#oaName');
+            const accessTokenElement = document.querySelector('#accessToken');
+            const refreshTokenElement = document.querySelector('#refreshToken');
+
+            if (!oaNameElement || !accessTokenElement || !refreshTokenElement) {
+                console.error('Một trong các phần tử DOM không tồn tại.');
+                return;
+            }
+
+            // Cập nhật thông tin OA
+            oaNameElement.textContent = activeOaName;
+            accessTokenElement.textContent = accessToken;
+            refreshTokenElement.textContent = refreshToken;
         }
     </script>
 @endsection

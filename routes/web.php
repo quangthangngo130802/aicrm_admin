@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AutomationController;
+use App\Http\Controllers\Admin\AutomationMarketingController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CampaignController as AdminCampaignController;
 use App\Http\Controllers\Admin\CategorieController;
@@ -51,6 +52,7 @@ use App\Http\Controllers\SuperAdmin\ZaloController;
 use App\Http\Controllers\SuperAdminController as ControllersSuperAdminController;
 use App\Http\Middleware\CheckLogin;
 use App\Http\Middleware\CheckLoginSuperAdmin;
+use App\Models\AutomationUser;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -65,7 +67,7 @@ Route::post('/register_account', [SignUpController::class, 'store'])->name('regi
 Route::get('/{username}', function ($username) {
     return view('auth.login', compact('username'));
 })->name('formlogin');
-Route::get('*/dashboard', [DashboardController::class, 'default'])->name('default');
+Route::get('', [DashboardController::class, 'default'])->name('default');
 Route::post('/{username}/login', [AuthController::class, 'login'])->name('login');
 // Route::get('/', function () {
 //     return view('auth.login');
@@ -98,6 +100,19 @@ Route::get('/employee', function () {
 })->name('employee');
 
 Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('{username}/automation')->name('{username}.automation.')->group(function () {
+        Route::get('', [AutomationMarketingController::class, 'index'])->name('index');
+        Route::post('/update-status', [AutomationMarketingController::class, 'updateUserStatus'])->name('updateStatus');
+        Route::post('/update-template', [AutomationMarketingController::class, 'updateUserTemplate'])->name('updateTemplate');
+        // Route::get('/user', [AutomationController::class, 'user'])->name('user');
+        // Route::post('/user', [AutomationController::class, 'userupdate'])->name('user.update');
+
+        // Route::get('/birthday', [AutomationController::class, 'birthday'])->name('birthday');
+        // Route::post('/birthday', [AutomationController::class, 'birthdayupdate'])->name('birthday.update');
+
+        // Route::get('/reminder', [AutomationController::class, 'reminder'])->name('reminder');
+        // Route::post('/birtreminderhday', [AutomationController::class, 'reminderupdate'])->name('reminder.update');
+    });
     Route::prefix('{username}/campaign')->name('{username}.campaign.')->group(function () {
         Route::get('add', [AdminCampaignController::class, 'add'])->name('add');
         Route::get('', [AdminCampaignController::class, 'index'])->name('index');
@@ -150,16 +165,7 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
     Route::post('{username}/changePassword', [AdminController::class, 'changePassword'])->name('{username}.changePassword');
     Route::post('{username}/logout', [AdminController::class, 'logout'])->name('{username}.logout');
 
-    Route::prefix('{username}/automation')->name('{username}.automation.')->group(function () {
-        Route::get('/user', [AutomationController::class, 'user'])->name('user');
-        Route::post('/user', [AutomationController::class, 'userupdate'])->name('user.update');
 
-        Route::get('/birthday', [AutomationController::class, 'birthday'])->name('birthday');
-        Route::post('/birthday', [AutomationController::class, 'birthdayupdate'])->name('birthday.update');
-
-        Route::get('/reminder', [AutomationController::class, 'reminder'])->name('reminder');
-        Route::post('/birtreminderhday', [AutomationController::class, 'reminderupdate'])->name('reminder.update');
-    });
 
     Route::get('{username}/dashboard', [DashboardController::class, 'index'])->name('{username}.dashboard');
     Route::post('{username}/logout', [AuthController::class, 'logout'])->name('{username}.logout');

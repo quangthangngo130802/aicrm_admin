@@ -432,14 +432,14 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addClientModalLabel">Thêm OA</h5>
+                <h5 class="modal-title" id="addOAModalLabel">Thêm OA</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <!-- Form Thêm khách hàng -->
-                <form id="add-client-form">
+                <form id="add-oa-form">
                     <div class="form-group">
                         <label for="name">Tên OA</label>
                         <input type="text" class="form-control" id="oa_name" name="name" required>

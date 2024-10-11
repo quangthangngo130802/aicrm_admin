@@ -71,7 +71,7 @@ class ZnsMessageController extends Controller
     protected function getAccessToken()
     {
         $oa = ZaloOa::where('is_active', 1)->first();
-
+        // dd($oa);
         if (!$oa) {
             Log::error('Không tìm thấy OA nào có trạng thái is_active = 1');
             throw new Exception('Không tìm thấy OA nào có trạng thái is_active = 1');
@@ -225,9 +225,9 @@ class ZnsMessageController extends Controller
     public function status($id)
     {
         // Lấy tất cả các OA đang hoạt động
-        if($id == 1){
+        if ($id == 1) {
             $title = 'Danh sách tin nhắn gửi thành công';
-        }else{
+        } else {
             $title = 'Danh sách tin nhắn đã gửi thất bại';
         }
         $activeOas = ZaloOa::where('is_active', 1)->pluck('id');

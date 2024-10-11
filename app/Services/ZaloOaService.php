@@ -37,8 +37,8 @@ class ZaloOaService
                 'acccess_token' => $data['access_token'],
                 'oa_id' => $data['oa_id'],
                 'refresh_token' => $data['refresh_token'],
-                'status' => 0,
-                'user_id' => Auth::user()->username,
+                'is_active' => 0,
+                'user_id' => Auth::user()->id,
             ]);
 
             DB::commit();

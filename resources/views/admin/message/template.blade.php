@@ -113,7 +113,7 @@
                 var templateId = $(this).val();
                 if (templateId) {
                     $.ajax({
-                        url: '{{ route('super.message.znsTemplateDetail') }}',
+                        url: '{{ route('admin.{username}.message.znsTemplateDetail', ['username' => Auth::user()->username]) }}',
                         method: 'GET',
                         data: {
                             template_id: templateId
@@ -131,7 +131,7 @@
             // Handle refresh button click
             $('#refreshButton').click(function() {
                 $.ajax({
-                    url: '{{ route('super.message.znsTemplateRefresh') }}',
+                    url: '{{ route('admin.{username}.message.znsTemplateRefresh', ['username' => Auth::user()->username]) }}',
                     method: 'GET',
                     success: function(response) {
                         // Update dropdown with new templates

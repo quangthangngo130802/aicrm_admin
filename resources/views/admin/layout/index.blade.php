@@ -56,6 +56,8 @@
 
     </div>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('assets/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
     <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
@@ -138,18 +140,18 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
+
+            $('#open-add-oa-modal').on('click', function() {
+                $('#add-oa-form')[0].reset(); // Thay đổi thành id chính xác
+                $('.invalid-feedback').hide();
+                $('#addOAModal').modal('show');
+            });
             // Sự kiện khi nhấn vào nút mở modal
             $('#open-add-modal').on('click', function() {
                 $('#add-client-form')[0].reset();
                 $('.invalid-feedback').hide(); // Ẩn tất cả các thông báo lỗi
                 $('#addClientModal').modal('show'); // Hiển thị modal
             });
-
-            $('#open-add-oa-modal').on('click', function() {
-                $('#add-oa-form')[0].reset();
-                $('.invalid-feedback').hide();
-                $('#addOAModal').modal('show');
-            })
 
             // Sự kiện submit form
             $('#add-client-form').on('submit', function(e) {
@@ -219,8 +221,7 @@
                 let username = "{{ Auth::user()->username }}";
                 e.preventDefault();
                 $.ajax({
-                    url: "{{ route('admin.{username}.zalo.store', ['username' => '__USERNAME__']) }}"
-                        .replace('__USERNAME__', $username),
+                    url: "{{ route('admin.{username}.zalo.store', ['username' => Auth::user()->username]) }}",
                     type: 'POST',
                     data: $(this).serialize(),
                     success: function(response) {
@@ -249,7 +250,7 @@
                         if (xhr.status === 422) {
                             let errors = xhr.responseJSON.errors;
                             if (errors.name) {
-                                $('#oa_name').addClass('is_invalid');
+                                $('#oa_name').addClass('is-invalid');
                                 $('#oa_name-error').text(errors.name[0]).show();
                             }
 
@@ -258,13 +259,26 @@
                                 $('#oa_id-error').text(errors.oa_id[0]).show();
                             }
 
-                            if(errors.access_token){
-                                $('#access_token')
+                            if (errors.access_token) {
+                                $('#access_token').addClass('is-invalid');
+                                $('#access_token-error').text(errors.access_token[0]).show();
                             }
+
+                            if (errors.refresh_token) {
+                                $('#refresh_token').addClass('is-invalid');
+                                $('#refresh_token-error').text(errors.refresh_token[0]).show();
+                            }
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại!',
+                                text: 'Thêm OA thất bại',
+                            });
                         }
                     }
-                })
+                });
             });
+
         });
     </script>
 

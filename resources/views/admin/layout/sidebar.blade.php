@@ -87,11 +87,12 @@
                                 </a>
                             </li>
                             <li>
-                                <a href = "">
+                                <a
+                                    href = "{{ route('admin.{username}.automation.index', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Automation Marketing</span>
                                 </a>
                             </li>
-                            <li>
+                            {{-- <li>
                                 <a
                                     href = "{{ route('admin.{username}.automation.user', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Khách hàng</span>
@@ -106,7 +107,7 @@
                                 <a href = "{{ route('admin.{username}.automation.reminder', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Nhắc nhở</span>
                                 </a>
-                            </li>
+                            </li> --}}
                         </ul>
                     </div>
                 </li>
@@ -119,17 +120,20 @@
                     <div class="collapse" id="sidebarzns">
                         <ul class="nav nav-collapse">
                             <li>
-                                <a href = "{{ route('admin.{username}.message.znsMessage', ['username' => Auth::user()->username]) }}">
+                                <a
+                                    href = "{{ route('admin.{username}.message.znsMessage', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Report ZNS</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{ route('admin.{username}.message.znsQuota', ['username' => Auth::user()->username]) }}">
+                                <a
+                                    href = "{{ route('admin.{username}.message.znsQuota', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Hạn mức ZNS</span>
                                 </a>
                             </li>
                             <li>
-                                <a href = "{{ route('admin.{username}.message.znsTemplate', ['username' => Auth::user()->username]) }}">
+                                <a
+                                    href = "{{ route('admin.{username}.message.znsTemplate', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Template ZNS</span>
                                 </a>
                             </li>

@@ -8,6 +8,7 @@ use App\Models\Config;
 use App\Models\Customer;
 use App\Models\User;
 use App\Models\ZaloOa;
+use App\Models\ZnsMessage;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -24,11 +25,13 @@ class StoreService
     protected $user;
     protected $automationUser;
     protected $signUpService;
-    public function __construct(User $user, AutomationUser $automationUser, SignUpService $signUpService)
+    protected $zaloOaService;
+    public function __construct(User $user, AutomationUser $automationUser, SignUpService $signUpService, ZaloOaService $zaloOaService)
     {
         $this->user = $user;
         $this->automationUser = $automationUser;
         $this->signUpService = $signUpService;
+        $this->zaloOaService = $zaloOaService;
     }
 
     public function getAllStore(): LengthAwarePaginator
@@ -87,8 +90,10 @@ class StoreService
         try {
             Log::info('Creating new client');
             // dd(Auth::user()->id);
+            $user = Auth::user();
+            // dd($user);
             $user_id = Auth::user()->id;
-            $client = Customer::create([
+            $customer = Customer::create([
                 'name' => $data['name'],
                 'phone' => $data['phone'],
                 'email' => $data['email'],
@@ -128,10 +133,100 @@ class StoreService
             //         Log::error('Lỗi khi gửi tin nhắn: ' . $e->getMessage());
             //     }
             // }
+            $accessToken = $this->zaloOaService->getAccessToken();
+            $oa_id = ZaloOa::where('is_active', 1)->first()->id;
+            $price = AutoMationUser::first()->template->price;
+            $template_id = AutomationUser::first()->template->template_id;
+            $user_template_id = AutomationUser::first()->template_id;
 
+            if ($user->wallet >= 200) {
+                try {
+                    //Gửi yêu cầu tới API ZALO
+                    $client = new Client();
+                    $response = $client->post('https://business.openapi.zalo.me/message/template', [
+                        'headers' => [
+                            'access_token' => $accessToken,
+                            'Content-Type' => 'application/json'
+                        ],
+                        'json' => [
+                            'phone' => preg_replace('/^0/', '84', $data['phone']),
+                            'template_id' => $template_id,
+                            'template_data' => [
+                                'date' => Carbon::now()->format('d/m/Y') ?? "",
+                                'name' => $data['name'] ?? "",
+                                'order_code' => $customer->id,
+                                'phone_number' => $data['phone'],
+                                'status' => 'Đăng ký thành công',
+                                'payment_status' => 'Thành công',
+                                'customer_name' => $data['name'],
+                                'phone' => $data['phone'],
+                                'price' => $price,
+                                'payment' => $customer->source,
+                                'custom_field' => $customer->address,
+                            ]
+                        ]
+                    ]);
 
+                    $responseBody = $response->getBody()->getContents();
+                    Log::info('Api Response: ' . $responseBody);
+
+                    $responseData = json_decode($responseBody, true);
+                    $status = $responseData['error'] == 0 ? 1 : 0;
+
+                    if ($user->sub_wallet < 200) {
+                        $user->wallet -= $price;
+                        ZnsMessage::create([
+                            'name' => $data['name'],
+                            'phone' => $data['phone'],
+                            'sent_at' => Carbon::now(),
+                            'status' => $status,
+                            'note' => $responseData['message'],
+                            'template_id' => $user_template_id,
+                            'oa_id' => $oa_id,
+                        ]);
+                    } else {
+                        $user->sub_wallet -= $price;
+                        ZnsMessage::create([
+                            'name' => $data['name'],
+                            'phone' => $data['phone'],
+                            'sent_at' => Carbon::now(),
+                            'status' => $status,
+                            'note' => $responseData['message'],
+                            'template_id' => $user_template_id,
+                            'oa_id' => $oa_id,
+                        ]);
+                    }
+                    if ($status == 1) {
+                        Log::info('Gửi ZNS thành công');
+                    } else {
+                        Log::error('Gửi ZNS thất bại: ' . $response->getBody());
+                    }
+                } catch (Exception $e) {
+                    Log::error('Lỗi khi gửi tin nhắn: ' . $e->getMessage());
+                    // Lưu thông tin tin nhắn vào cơ sở dữ liệu khi gặp lỗi
+                    ZnsMessage::create([
+                        'name' => $data['name'],
+                        'phone' => $data['phone'],
+                        'sent_at' => Carbon::now(),
+                        'status' => 0,
+                        'note' => $e->getMessage(),
+                        'oa_id' => $oa_id,
+                    ]);
+                }
+            } else {
+                ZnsMessage::create([
+                    'name' => $data['name'],
+                    'phone' => $data['phone'],
+                    'sent_at' => Carbon::now(),
+                    'status' => 0,
+                    'note' => 'Tài khoản của bạn không đủ tiền để thực hiện gửi tin nhắn',
+                    'oa_id' => $oa_id,
+                    'template_id' => $user_template_id,
+                ]);
+            }
+            $user->save();
             DB::commit();
-            return $client;
+            return $customer;
         } catch (Exception $e) {
             DB::rollBack();
             Log::error("Failed to add new client: " . $e->getMessage());
@@ -139,63 +234,63 @@ class StoreService
         }
     }
 
-    protected function getAccessToken()
-    {
-        $oa = ZaloOa::where('is_active', 1)->first();
+    // protected function getAccessToken()
+    // {
+    //     $oa = ZaloOa::where('is_active', 1)->first();
 
-        if (!$oa) {
-            Log::error('Không tìm thấy OA nào có trạng thái is_active = 1');
-            throw new Exception('Không tìm thấy OA nào có trạng thái is_active = 1');
-        }
+    //     if (!$oa) {
+    //         Log::error('Không tìm thấy OA nào có trạng thái is_active = 1');
+    //         throw new Exception('Không tìm thấy OA nào có trạng thái is_active = 1');
+    //     }
 
-        $accessToken = $oa->access_token;
-        $refreshToken = $oa->refresh_token;
+    //     $accessToken = $oa->access_token;
+    //     $refreshToken = $oa->refresh_token;
 
-        if (!$accessToken || Cache::has('access_token_expired')) {
-            $secretKey = env('ZALO_APP_SECRET');
-            $appId = env('ZALO_APP_ID');
-            $accessToken = $this->refreshAccessToken($refreshToken, $secretKey, $appId);
+    //     if (!$accessToken || Cache::has('access_token_expired')) {
+    //         $secretKey = env('ZALO_APP_SECRET');
+    //         $appId = env('ZALO_APP_ID');
+    //         $accessToken = $this->refreshAccessToken($refreshToken, $secretKey, $appId);
 
-            $oa->update(['access_token' => $accessToken]);
-        }
+    //         $oa->update(['access_token' => $accessToken]);
+    //     }
 
-        Log::info('Retrieved access token: ' . $accessToken);
-        return $accessToken;
-    }
+    //     Log::info('Retrieved access token: ' . $accessToken);
+    //     return $accessToken;
+    // }
 
-    protected function refreshAccessToken($refreshToken, $secretKey, $appId)
-    {
-        $client = new Client();
-        try {
-            $response = $client->post('https://oauth.zaloapp.com/v4/oa/access_token', [
-                'headers' => [
-                    'secret_key' => $secretKey,
-                ],
-                'form_params' => [
-                    'grant_type' => 'refresh_token',
-                    'refresh_token' => $refreshToken,
-                    'app_id' => $appId,
-                ]
-            ]);
+    // protected function refreshAccessToken($refreshToken, $secretKey, $appId)
+    // {
+    //     $client = new Client();
+    //     try {
+    //         $response = $client->post('https://oauth.zaloapp.com/v4/oa/access_token', [
+    //             'headers' => [
+    //                 'secret_key' => $secretKey,
+    //             ],
+    //             'form_params' => [
+    //                 'grant_type' => 'refresh_token',
+    //                 'refresh_token' => $refreshToken,
+    //                 'app_id' => $appId,
+    //             ]
+    //         ]);
 
-            $body = json_decode($response->getBody(), true);
-            Log::info("Refresh token response: " . json_encode($body));
+    //         $body = json_decode($response->getBody(), true);
+    //         Log::info("Refresh token response: " . json_encode($body));
 
-            if (isset($body['access_token'])) {
-                // Lưu access token vào cache và đặt thời gian hết hạn là 24h
-                Cache::put('access_token', $body['access_token'], 86400);
-                Cache::forget('access_token_expired');
+    //         if (isset($body['access_token'])) {
+    //             // Lưu access token vào cache và đặt thời gian hết hạn là 24h
+    //             Cache::put('access_token', $body['access_token'], 86400);
+    //             Cache::forget('access_token_expired');
 
-                if (isset($body['refresh_token'])) {
-                    Cache::put('refresh_token', $body['refresh_token'], 7776000);
-                }
-                return [$body['access_token'], $body['refresh_token']];
-            } else {
-                throw new Exception('Failed to refresh access token');
-            }
-        } catch (Exception $e) {
-            Log::error('Failed to refresh access token: ' . $e->getMessage());
-            throw new Exception('Failed to refresh access token');
-        }
-    }
+    //             if (isset($body['refresh_token'])) {
+    //                 Cache::put('refresh_token', $body['refresh_token'], 7776000);
+    //             }
+    //             return [$body['access_token'], $body['refresh_token']];
+    //         } else {
+    //             throw new Exception('Failed to refresh access token');
+    //         }
+    //     } catch (Exception $e) {
+    //         Log::error('Failed to refresh access token: ' . $e->getMessage());
+    //         throw new Exception('Failed to refresh access token');
+    //     }
+    // }
 }
