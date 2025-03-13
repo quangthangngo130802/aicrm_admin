@@ -92,8 +92,9 @@ class TransactionController extends Controller
             ]);
         }
 
-        Session::flash('action', 'Thanh toán thành công');
-        return redirect()->route('admin.transaction.index');
+        //Session::flash('action', 'Thanh toán thành công');
+        //return redirect()->route('admin.{username}.transaction.index', ['username' => Auth::user()->username]);
+        return response()->json(['success' => 'Thanh toán thành công']);
     }
 
 
@@ -101,15 +102,22 @@ class TransactionController extends Controller
     {
         $superAdmin = SuperAdmin::first();
         $amount = $request->input('amount');
+        //Account cá nhân
         $bank_id = $superAdmin->bank->shortName;
         $bank_account = $superAdmin->bank_account;
+        //Account công ty
+        $bank_company_id = $superAdmin->bankCompany->shortName;
+        $bank_company_account = $superAdmin->bank_company_account;
         $description = $request->input('description');
         $account_name = $superAdmin->name;
-
         // Tạo URL cho QR code
         $template = 'compact2';
-        $qrCodeUrl = "https://img.vietqr.io/image/" . $bank_id . "-" . $bank_account . "-" . $template . ".png?amount=" . $amount . "&addInfo=" . urlencode($description) . "&accountName=" . urlencode($account_name);
-
+        $qrCodeUrl = '';
+        if ($request->requestAnInvoice == 5) {
+            $qrCodeUrl = "https://img.vietqr.io/image/" . $bank_id . "-" . $bank_account . "-" . $template . ".png?amount=" . $amount . "&addInfo=" . urlencode($description) . "&accountName=" . urlencode($account_name);
+        } else if ($request->requestAnInvoice == 10) {
+            $qrCodeUrl = "https://img.vietqr.io/image/" . $bank_company_id . "-" . $bank_company_account . "-" . $template . ".png?amount=" . $amount . "&addInfo=" . urlencode($description) . "&accountName=" . urlencode($account_name);
+        }
         // Trả về URL cho QR code
         return $qrCodeUrl;
     }
@@ -128,12 +136,12 @@ class TransactionController extends Controller
     public function updateNotification($id)
     {
         try {
-            $transaction = Transaction::find($id);
+            $transaction = Transaction::find(request()->id);
             $transaction->notification = 3;
             $transaction->save();
-            return to_route('admin.transaction.index');
+            return to_route('admin.{username}.transaction.index', ['username' => Auth::user()->username]);
         } catch (Exception $e) {
-            Log::erro('failed to update mark-as-read this transaction: ' . $e->getMessage());
+            Log::error('failed to update mark-as-read this transaction: ' . $e->getMessage());
             return ApiResponse::error('Failed to mark-as-read this transaction', 500);
         }
     }

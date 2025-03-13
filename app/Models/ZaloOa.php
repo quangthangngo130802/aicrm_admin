@@ -16,14 +16,19 @@ class ZaloOa extends Model
         'oa_id',
         'access_token',
         'refresh_token',
-        'package_valid_through_date',
         'is_active',
-        'user_id'
+        'user_id',
+        'access_token_expiration',
     ];
 
     // Define a relationship with ZnsMessage
     public function messages()
     {
         return $this->hasMany(ZnsMessage::class, 'oa_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

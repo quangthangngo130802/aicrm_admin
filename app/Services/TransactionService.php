@@ -96,7 +96,7 @@ class TransactionService
                 'description' => $data['description'],
             ]);
 
-            $superAdminTransactionUrl = 'http://127.0.0.1:8000/api/add-transaction';
+            $superAdminTransactionUrl = config('app.api_url') . '/api/add-transaction';
             $client = new Client();
 
             $response = $client->post($superAdminTransactionUrl, [
@@ -115,6 +115,7 @@ class TransactionService
             DB::commit();
             return $transaction;
         } catch (Exception $e) {
+            dd($e->getMessage());
             DB::rollBack();
             Log::error('Failed to create new Transaction: ' . $e->getMessage());
             throw new Exception('Failed to create new transaction');

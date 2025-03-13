@@ -6,6 +6,7 @@ use App\Models\OaTemplate;
 use App\Models\ZaloOa;
 use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -14,18 +15,20 @@ class OaTemplateService
     protected $oaTemplate;
     protected $zaloOa;
     protected $client;
+    protected $zaloOaService;
 
-    public function __construct(OaTemplate $oaTemplate, ZaloOa $zaloOa)
+    public function __construct(OaTemplate $oaTemplate, ZaloOa $zaloOa, ZaloOaService $zaloOaService)
     {
         $this->oaTemplate = $oaTemplate;
         $this->zaloOa = $zaloOa;
         $this->client = new Client(); // Create a single instance of the client
+        $this->zaloOaService = $zaloOaService;
     }
 
     public function getAllTemplateByOaID()
     {
         try {
-            $oa_id = ZaloOa::where('is_active', 1)->first()->id;
+            $oa_id = ZaloOa::where('is_active', 1)->where('user_id', Auth::user()->id)->first()->id;
             return $this->oaTemplate->where('oa_id', $oa_id)->get();
         } catch (Exception $e) {
             Log::error('Failed to get templates: ' . $e->getMessage());
@@ -38,14 +41,14 @@ class OaTemplateService
         DB::beginTransaction(); // Start transaction
 
         try {
-            $zaloOa = $this->zaloOa->where('is_active', 1)->first();
+            $zaloOa = $this->zaloOa->where('user_id', Auth::user()->id)->where('is_active', 1)->first();
 
             if (!$zaloOa) {
                 Log::warning('No active Zalo OA found');
                 return 'No active Zalo OA found';
             }
 
-            $accessToken = $zaloOa->access_token;
+            $accessToken = $this->zaloOaService->getAccessToken();
             Log::info('Access Token: ' . $accessToken); // Log the access token
 
             $response = $this->client->get('https://business.openapi.zalo.me/template/all', [
@@ -132,9 +135,9 @@ class OaTemplateService
     }
     public function getTemplateById($template_id, $oa_id)
     {
-        $accessToken = $this->zaloOa->where('id', $oa_id)->first()->access_token;
+        $accessToken = $this->zaloOaService->getAccessToken();
         try {
-            $response = $this->client->get('https://business.openapi.zalo.me/template/info', [
+            $response = $this->client->get('https://business.openapi.zalo.me/template/info/v2', [
                 'headers' => [
                     'access_token' => $accessToken,
                     'Content-Type' => 'application/json'

@@ -9,7 +9,7 @@ class OaTemplate extends Model
 {
     use HasFactory;
 
-    protected $table = 'sgo_oa_template';
+    protected $table = 'sgo_oa_templates';
 
     protected $fillable = [
         'oa_id',

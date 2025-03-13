@@ -259,25 +259,36 @@
                                                     <td>1</td>
                                                     <td>{{ $user->name }}</td>
                                                     <td>
-                                                        <select name="template_id" class="form-control">
+                                                        <select name="template_id"
+                                                            class="form-control template-user-dropdown"
+                                                            data-id="{{ $user->id }}">
+
+                                                            <!-- Tùy chọn rỗng đầu tiên nếu không có template được chọn -->
+                                                            <option value="" {{ $user->template ? '' : 'selected' }}>
+                                                                -- Chọn Template --</option>
+
                                                             <!-- Hiển thị template hiện tại -->
-                                                            <option value="{{ $user->template->id }}">
-                                                                {{ $user->template->template_name }}</option>
+                                                            @if ($user->template)
+                                                                <option value="{{ $user->template->id }}" selected>
+                                                                    {{ $user->template->template_name }}
+                                                                </option>
+                                                            @endif
 
                                                             <!-- Hiển thị danh sách templates còn lại -->
                                                             @foreach ($templates as $template)
-                                                                <!-- Loại bỏ template hiện tại khỏi danh sách để tránh trùng lặp -->
-                                                                @if ($template->id != $user->template->id)
+                                                                @if (!$user->template || $template->id != $user->template->id)
                                                                     <option value="{{ $template->id }}">
-                                                                        {{ $template->template_name }}</option>
+                                                                        {{ $template->template_name }}
+                                                                    </option>
                                                                 @endif
                                                             @endforeach
                                                         </select>
                                                     </td>
+
                                                     <td>
                                                         <label class="switch">
                                                             <input type="checkbox" class="toggle-status"
-                                                                data-id="{{ $user->id }}"
+                                                                data-id="{{ $user->user_id }}"
                                                                 {{ $user->status == 1 ? 'checked' : '' }}>
                                                             <span class="slider round"></span>
                                                         </label>
@@ -285,58 +296,141 @@
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
-                                                {{-- @if ($stores && $stores->count() > 0)
-                                                    @php
-                                                        $stt = ($stores->currentPage() - 1) * $stores->perPage();
-                                                    @endphp
-                                                    @foreach ($stores as $value)
-                                                        @if (is_object($value))
-                                                            <tr>
-                                                                <td>{{ ++$stt }}</td>
-                                                                <td>{{ $value->name ?? '' }}</td>
-                                                                <td>{{ $value->phone ?? '' }}</td>
-                                                                <td>{{ $value->created_at ? $value->created_at->format('d/m/Y') : '' }}
-                                                                </td>
-                                                                <td>{{ $value->source ?? 'Thêm thủ công' }}</td>
-                                                                <td>
-                                                                    @if ($value->campaignDetails && $value->campaignDetails->isNotEmpty())
-                                                                        <button class="accordion-button">
-                                                                            Xem chiến dịch
-                                                                        </button>
-                                                                        <div class="accordion-content">
-                                                                            <ul>
-                                                                                @foreach ($value->campaignDetails as $campaignDetail)
-                                                                                    <li>{{ $campaignDetail->campaign->name ?? 'Không có tên chiến dịch' }}
-                                                                                    </li>
-                                                                                @endforeach
-                                                                            </ul>
-                                                                        </div>
-                                                                    @else
-                                                                        Không có chiến dịch
-                                                                    @endif
-                                                                </td>
-                                                                <td style="text-align:center">
-                                                                    <a class="btn btn-warning"
-                                                                        href="{{ route('admin.{username}.store.detail', ['username' => Auth::user()->username, 'id' => $value->id]) }}">
-                                                                        <i class="fa-solid fa-eye"></i>
-                                                                    </a>
-                                                                    <a onclick="return confirm('Bạn có chắc chắn muốn xóa?')"
-                                                                        class="btn btn-danger"
-                                                                        href="{{ route('admin.{username}.store.delete', ['username' => Auth::user()->username, 'id' => $value->id]) }}"><i
-                                                                            class="fa-solid fa-trash"></i></a>
-                                                                </td>
-                                                            </tr>
-                                                        @endif
-                                                    @endforeach
-                                                @else
-                                                    <tr>
-                                                        <td class="text-center" colspan="7">
-                                                            <div class="">
-                                                                Chưa có khách hàng
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endif --}}
+                                                <tr>
+                                                    <td>2</td>
+                                                    <td>{{ $rate->name }}</td>
+                                                    <td>
+                                                        <select name="rate_template_id"
+                                                            class="form-control template-rate-dropdown"
+                                                            data-id="{{ $rate->id }}">
+
+                                                            <!-- Tùy chọn rỗng đầu tiên nếu không có template được chọn -->
+                                                            <option value="" {{ $rate->template ? '' : 'selected' }}>
+                                                                -- Chọn Template --</option>
+
+                                                            <!-- Hiển thị template hiện tại -->
+                                                            @if ($rate->template)
+                                                                <option value="{{ $rate->template->id }}" selected>
+                                                                    {{ $rate->template->template_name }}
+                                                                </option>
+                                                            @endif
+
+                                                            <!-- Hiển thị danh sách templates còn lại -->
+                                                            @foreach ($templates as $template)
+                                                                @if (!$rate->template || $template->id != $rate->template->id)
+                                                                    <option value="{{ $template->id }}">
+                                                                        {{ $template->template_name }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <label class="switch">
+                                                            <input type="checkbox" class="toggle-rate-status"
+                                                                data-id="{{ $rate->user_id }}"
+                                                                {{ $rate->status == 1 ? 'checked' : '' }}>
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>3</td>
+                                                    <td>{{ $birthday->name }}</td>
+                                                    <td>
+                                                        <select name="birthday_template_id"
+                                                            class="form-control template-birthday-dropdown"
+                                                            data-id="{{ $birthday->id }}">
+
+                                                            <!-- Tùy chọn rỗng đầu tiên nếu không có template được chọn -->
+                                                            <option value=""
+                                                                {{ $birthday->template ? '' : 'selected' }}>
+                                                                -- Chọn Template --</option>
+
+                                                            <!-- Hiển thị template hiện tại -->
+                                                            @if ($birthday->template)
+                                                                <option value="{{ $birthday->template->id }}" selected>
+                                                                    {{ $birthday->template->template_name }}
+                                                                </option>
+                                                            @endif
+
+                                                            <!-- Hiển thị danh sách templates còn lại -->
+                                                            @foreach ($templates as $template)
+                                                                @if (!$birthday->template || $template->id != $birthday->template->id)
+                                                                    <option value="{{ $template->id }}">
+                                                                        {{ $template->template_name }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <label class="switch">
+                                                            <input type="checkbox" class="toggle-birthday-status"
+                                                                data-id="{{ $birthday->user_id }}"
+                                                                {{ $birthday->status == 1 ? 'checked' : '' }}>
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="time" class="form-control start-time-input"
+                                                            value="{{ $birthday->start_time }}"
+                                                            data-id="{{ $birthday->id }}">
+                                                    </td>
+
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>4</td>
+                                                    <td>{{ $reminder->name }}</td>
+                                                    <td>
+                                                        <select name="reminder_template_id"
+                                                            class="form-control template-reminder-dropdown"
+                                                            data-id="{{ $reminder->id }}">
+
+                                                            <!-- Tùy chọn rỗng đầu tiên nếu không có template được chọn -->
+                                                            <option value=""
+                                                                {{ $reminder->template ? '' : 'selected' }}>
+                                                                -- Chọn Template --</option>
+
+                                                            <!-- Hiển thị template hiện tại -->
+                                                            @if ($reminder->template)
+                                                                <option value="{{ $reminder->template->id }}" selected>
+                                                                    {{ $reminder->template->template_name }}
+                                                                </option>
+                                                            @endif
+
+                                                            <!-- Hiển thị danh sách templates còn lại -->
+                                                            @foreach ($templates as $template)
+                                                                @if (!$reminder->template || $template->id != $reminder->template->id)
+                                                                    <option value="{{ $template->id }}">
+                                                                        {{ $template->template_name }}
+                                                                    </option>
+                                                                @endif
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <label class="switch">
+                                                            <input type="checkbox" class="toggle-reminder-status"
+                                                                data-id="{{ $reminder->user_id }}"
+                                                                {{ $reminder->status == 1 ? 'checked' : '' }}>
+                                                            <span class="slider round"></span>
+                                                        </label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="time" class="form-control sent-time-input"
+                                                            value="{{ $reminder->sent_time }}"
+                                                            data-id="{{ $reminder->id }}">
+                                                    </td>
+
+                                                    <td>
+                                                        <input type="number" class="form-control numbertime-input"
+                                                            value="{{ $reminder->numbertime }}">
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
 
@@ -354,6 +448,7 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/js/bootstrap-notify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
             // Khi người dùng thay đổi trạng thái của checkbox
@@ -373,52 +468,169 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            $.notify({
-                                icon: 'icon-bell',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Thành công',
-                                message: 'Cập nhật trạng thái thành công!',
-                            }, {
-                                type: 'success',
-                                placement: {
-                                    from: "top",
-                                    align: "right"
-                                },
-                                time: 1000,
+                                text: 'Cập nhật trạng thái thành công!',
+                                timer: 1500,
+                                showConfirmButton: false,
                             });
                         } else {
-                            $.notify({
-                                icon: 'icon-bell',
+                            Swal.fire({
+                                icon: 'error',
                                 title: 'Lỗi',
-                                message: 'Cập nhật trạng thái thất bại!',
-                            }, {
-                                type: 'danger',
-                                placement: {
-                                    from: "top",
-                                    align: "right"
-                                },
-                                time: 1000,
+                                text: 'Cập nhật trạng thái thất bại!',
+                                timer: 1500,
+                                showConfirmButton: false,
                             });
                         }
                     },
                     error: function() {
-                        $.notify({
-                            icon: 'icon-bell',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Lỗi',
-                            message: 'Có lỗi xảy ra, vui lòng thử lại!',
-                        }, {
-                            type: 'danger',
-                            placement: {
-                                from: "top",
-                                align: "right"
-                            },
-                            time: 1000,
+                            text: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            });
+            $('.toggle-rate-status').on('change', function() {
+                var userId = $(this).data('id'); // Lấy ID người dùng từ thuộc tính data-id
+                var rateStatus = $(this).is(':checked') ? 1 :
+                    0; // Lấy trạng thái mới (1 nếu checked, 0 nếu không)
+
+                // Gửi AJAX request để cập nhật trạng thái
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateRateStatus', ['username' => Auth::user()->username]) }}', // Đường dẫn tới route update
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Bảo mật với CSRF token
+                        rate_status: rateStatus,
+                        user_id: userId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật trạng thái thành công!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Cập nhật trạng thái thất bại!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            });
+            $('.toggle-birthday-status').on('change', function() {
+                var userId = $(this).data('id'); // Lấy ID người dùng từ thuộc tính data-id
+                var birthdayStatus = $(this).is(':checked') ? 1 :
+                    0; // Lấy trạng thái mới (1 nếu checked, 0 nếu không)
+
+                // Gửi AJAX request để cập nhật trạng thái
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateBirthdayStatus', ['username' => Auth::user()->username]) }}', // Đường dẫn tới route update
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Bảo mật với CSRF token
+                        birthday_status: birthdayStatus,
+                        user_id: userId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật trạng thái thành công!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Cập nhật trạng thái thất bại!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            });
+            $('.toggle-reminder-status').on('change', function() {
+                var userId = $(this).data('id'); // Lấy ID người dùng từ thuộc tính data-id
+                var reminderStatus = $(this).is(':checked') ? 1 :
+                    0; // Lấy trạng thái mới (1 nếu checked, 0 nếu không)
+
+                // Gửi AJAX request để cập nhật trạng thái
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateReminderStatus', ['username' => Auth::user()->username]) }}', // Đường dẫn tới route update
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Bảo mật với CSRF token
+                        reminder_status: reminderStatus,
+                        user_id: userId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật trạng thái thành công!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Cập nhật trạng thái thất bại!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            timer: 1500,
+                            showConfirmButton: false,
                         });
                     }
                 });
             });
 
             // Khi người dùng thay đổi template từ dropdown
-            $('.template-dropdown').on('change', function() {
+            $('.template-user-dropdown').on('change', function() {
                 var userId = $(this).data('id'); // Lấy ID người dùng từ thuộc tính data-id
                 var templateId = $(this).val(); // Lấy ID template mới được chọn
 
@@ -433,48 +645,315 @@
                     },
                     success: function(response) {
                         if (response.success) {
-                            $.notify({
-                                icon: 'icon-bell',
+                            Swal.fire({
+                                icon: 'success',
                                 title: 'Thành công',
-                                message: 'Cập nhật template thành công!',
-                            }, {
-                                type: 'success',
-                                placement: {
-                                    from: "top",
-                                    align: "right"
-                                },
-                                time: 1000,
+                                text: 'Cập nhật template thành công!',
+                                timer: 1500,
+                                showConfirmButton: false,
                             });
                         } else {
-                            $.notify({
-                                icon: 'icon-bell',
+                            Swal.fire({
+                                icon: 'error',
                                 title: 'Lỗi',
-                                message: 'Cập nhật template thất bại!',
-                            }, {
-                                type: 'danger',
-                                placement: {
-                                    from: "top",
-                                    align: "right"
-                                },
-                                time: 1000,
+                                text: 'Cập nhật template thất bại!',
+                                timer: 1500,
+                                showConfirmButton: false,
                             });
                         }
                     },
                     error: function() {
-                        $.notify({
-                            icon: 'icon-bell',
+                        Swal.fire({
+                            icon: 'error',
                             title: 'Lỗi',
-                            message: 'Có lỗi xảy ra, vui lòng thử lại!',
-                        }, {
-                            type: 'danger',
-                            placement: {
-                                from: "top",
-                                align: "right"
-                            },
-                            time: 1000,
+                            text: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            timer: 1500,
+                            showConfirmButton: false,
                         });
                     }
                 });
+            });
+
+            $('.template-rate-dropdown').on('change', function() {
+                var userId = $(this).data('id'); // Lấy ID người dùng từ thuộc tính data-id
+                var rateTemplateId = $(this).val(); // Lấy ID template mới được chọn
+
+                // Gửi AJAX request để cập nhật template
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateRateTemplate', ['username' => Auth::user()->username]) }}', // Đường dẫn tới route update template
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Bảo mật với CSRF token
+                        rate_template_id: rateTemplateId,
+                        user_id: userId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật template thành công!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Cập nhật template thất bại!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            });
+
+            $('.template-birthday-dropdown').on('change', function() {
+                var userId = $(this).data('id'); // Lấy ID người dùng từ thuộc tính data-id
+                var birthdayTemplateId = $(this).val(); // Lấy ID template mới được chọn
+
+                // Gửi AJAX request để cập nhật template
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateBirthdayTemplate', ['username' => Auth::user()->username]) }}', // Đường dẫn tới route update template
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Bảo mật với CSRF token
+                        birthday_template_id: birthdayTemplateId,
+                        user_id: userId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật template thành công!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Cập nhật template thất bại!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            });
+            $('.template-reminder-dropdown').on('change', function() {
+                var userId = $(this).data('id'); // Lấy ID người dùng từ thuộc tính data-id
+                var reminderTemplateId = $(this).val(); // Lấy ID template mới được chọn
+
+                // Gửi AJAX request để cập nhật template
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateReminderTemplate', ['username' => Auth::user()->username]) }}', // Đường dẫn tới route update template
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Bảo mật với CSRF token
+                        reminder_template_id: reminderTemplateId,
+                        user_id: userId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật template thành công!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Lỗi',
+                                text: 'Cập nhật template thất bại!',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại!',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            });
+
+            var isRequesting = false; // Cờ kiểm tra xem có đang gửi yêu cầu AJAX hay không
+
+            $('.start-time-input').on('blur', function() {
+                // Khi mất focus (click chuột ra ngoài), lưu thời gian và kiểm tra cờ
+                if (!isRequesting) {
+                    isRequesting = true; // Đặt cờ là đang gửi yêu cầu
+                    saveStartTime($(this).val());
+                }
+            });
+
+            function saveStartTime(newStartTime) {
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateBirthdayStartTime', ['username' => Auth::user()->username]) }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        start_time: newStartTime
+                    },
+                    success: function(response) {
+                        isRequesting = false; // Đặt cờ là không còn yêu cầu
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật giờ gửi thành công',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại',
+                                text: 'Cập nhật giờ gửi thất bại',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        isRequesting = false; // Đặt cờ là không còn yêu cầu
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            }
+            var reminderIsRequesting = false; // Cờ kiểm tra xem có đang gửi yêu cầu AJAX hay không
+
+            $('.sent-time-input').on('blur', function() {
+                // Khi mất focus (click chuột ra ngoài), lưu thời gian và kiểm tra cờ
+                if (!reminderIsRequesting) {
+                    reminderIsRequesting = true; // Đặt cờ là đang gửi yêu cầu
+                    saveSentTime($(this).val());
+                }
+            });
+
+            function saveSentTime(newSentTime) {
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateReminderStartTime', ['username' => Auth::user()->username]) }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        sent_time: newSentTime
+                    },
+                    success: function(response) {
+                        reminderIsRequesting = false; // Đặt cờ là không còn yêu cầu
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật giờ gửi thành công',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại',
+                                text: 'Cập nhật giờ gửi thất bại',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        isRequesting = false; // Đặt cờ là không còn yêu cầu
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            }
+
+            //Hàm cập nhật chu kỳ gửi
+            function updateReminderSendingCycle(inputElement) {
+                let numbertime = inputElement.val();
+                let reminderId = inputElement.data('id');
+
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateReminderSendingCycle', ['username' => Auth::user()->id]) }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        numbertime: numbertime,
+                        reminder_id: reminderId,
+                    },
+
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật chu kỳ gửi thành công',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại',
+                                text: 'Cập nhật chu kỳ gửi thất bại',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        isRequesting = false; // Đặt cờ là không còn yêu cầu
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            }
+
+            $('.numbertime-input').on('blur', function(e) {
+                updateReminderSendingCycle($(this));
             });
         });
     </script>

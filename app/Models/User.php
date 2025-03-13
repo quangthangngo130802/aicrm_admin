@@ -37,7 +37,9 @@ class User extends Authenticatable
         'source',
         'expired_at',
         'username',
-        'sub_wallet'
+        'sub_wallet',
+        'prefix',
+        'parent_id',
     ];
 
     protected $hidden = [
@@ -109,5 +111,25 @@ class User extends Authenticatable
     public function transfer()
     {
         return $this->hasMany(Transfer::class, 'user_id');
+    }
+
+    public function message()
+    {
+        return $this->hasMany(ZnsMessage::class, 'user_id');
+    }
+
+    public function zaloOa()
+    {
+        return $this->hasMany(ZaloOa::class, 'user_id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(User::class, 'parent_id');
     }
 }

@@ -1,6 +1,21 @@
 @extends('admin.layout.index')
 
 @section('content')
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <style>
+        .swiper-container {
+            width: 100%;
+           
+            overflow-x: hidden;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
+
     <div class="page-inner">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
@@ -33,7 +48,7 @@
                 </a>
             </div>
             <div class="col-sm-6 col-md-3">
-                <a href="{{ route('admin.{username}.message.status', ['username' => Auth::user()->username, 'id' => 0]) }}"
+                <a href="{{ route('admin.{username}.message.status', ['username' => Auth::user()->username, 'status' => 0]) }}"
                     class="card card-stats card-round">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -53,7 +68,7 @@
                 </a>
             </div>
             <div class="col-sm-6 col-md-3">
-                <a href="{{ route('admin.{username}.message.status', ['username' => Auth::user()->username, 'id' => 1]) }}"
+                <a href="{{ route('admin.{username}.message.status', ['username' => Auth::user()->username, 'status' => 1]) }}"
                     class="card card-stats card-round">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -74,7 +89,7 @@
                 </a>
             </div>
             <div class="col-sm-6 col-md-3">
-                <a href="{{ route('admin.{username}.message.znsTemplate', ['username' => Auth::user()->username]) }}"
+                <a href="{{ route('admin.{username}.zalo.zns', ['username' => Auth::user()->username]) }}"
                     class="card card-stats card-round">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -179,5 +194,33 @@
           </div>
         </div> --}}
         </div>
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                @foreach ($banners ?? [] as $banner)
+                    <div class="swiper-slide">
+                        <img src="{{ $banner }}">
+                    </div>
+                @endforeach
+            </div>
+            <!-- Add Pagination -->
+            {{--<div class="swiper-pagination"></div>--}}
+        </div>
     </div>
+
+
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        const swiper = new Swiper('.swiper-container', {
+            loop: true, // Vòng lặp slider
+            autoplay: {
+                delay: 3000, // Tự động chuyển slide sau 3 giây
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            }
+        });
+    </script>
 @endsection

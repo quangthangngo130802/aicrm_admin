@@ -88,27 +88,30 @@ class UserService
             throw new Exception('Failed to find this client by name');
         }
     }
-    public function authenticateUser($credentials)
+    public function authenticateUser($credentials, $remember)
     {
-        // dd($credentials);
-        $user = User::where('email', $credentials['email'])->orwhere('phone', $credentials['email'])->first();
-        if (!$user) {
-            throw new Exception('Not an User');
-        }
-        // $userRoleId = $user->role_id;
-        // if ($userRoleId != 1 && $userRoleId != 2 && $userRoleId != 3) {
-        //     throw new Exception('Not authorized');
-        // }
+        // Tìm user qua email hoặc phone
+        $user = User::where('email', $credentials['email'])
+            ->orWhere('phone', $credentials['email'])
+            ->first();
 
-        // if (!Hash::check($credentials['password'], $user->password)) {
-        //     Log::warning('Unauthorized login attempt', ['user' => $user]);
-        //     throw new Exception('Unauthorized');
-        // }
-        Auth::attempt($credentials);
-        Auth::login($user);
-        // dd($user);
+        if (!$user) {
+            toastr()->error('Người dùng không tồn tại');
+            return null;
+        }
+
+        // Kiểm tra mật khẩu
+        if (!Hash::check($credentials['password'], $user->password)) {
+            toastr()->error('Tài khoản hoặc mật khẩu không đúng');
+            return null;
+        }
+
+        // Thực hiện đăng nhập thủ công
+        Auth::login($user, $remember);
+
         return ['user' => $user];
     }
+
 
     public function logout(Request $request)
     {

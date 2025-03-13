@@ -142,7 +142,7 @@
         }
 
         .card {
-            border-radius: 15px !important;
+            /* border-radius: 15px !important; */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
             overflow: hidden !important;
             background-color: #fff !important;

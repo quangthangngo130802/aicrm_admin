@@ -14,11 +14,17 @@ class AutomationUser extends Model
         'name',
         'template_id',
         'status',
+        'user_id',
     ];
 
     // Nếu bạn muốn thiết lập quan hệ với Template
     public function template()
     {
         return $this->belongsTo(OaTemplate::class, 'template_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

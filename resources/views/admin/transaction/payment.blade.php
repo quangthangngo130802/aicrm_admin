@@ -6,13 +6,13 @@
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- jQuery Notify -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-notify/1.0.0/jquery.notify.min.js"></script>
-
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     <!-- Bootstrap CSS v5.2.1 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
@@ -20,6 +20,13 @@
 </head>
 
 <style>
+    button:disabled {
+        opacity: 0.5;
+        /* Mờ đi */
+        cursor: not-allowed;
+        /* Đổi con trỏ để hiển thị nút bị vô hiệu hóa */
+    }
+
     * {
         margin: 0;
         padding: 0;
@@ -84,7 +91,7 @@
                 <div class="row mt-3">
                     <div class="form-group col-12">
                         <input type="text" id="amount" class="form-control" name="amount"
-                            placeholder="Nhập tiền" />
+                            placeholder="Tối thiểu 5 triệu đồng" />
                     </div>
 
                     <div class="form-group col-12 mt-3">
@@ -96,14 +103,14 @@
                     <p class="fw-bold mb-2" style="color: gray">Yêu cầu hóa đơn</p>
                     <div class="d-flex gap-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="noInvoice"
-                                checked />
+                            <input class="form-check-input" type="radio" value="5" name="flexRadioDefault"
+                                id="noInvoice" checked />
                             <label class="form-check-label" for="flexRadioDefault1">
                                 Không xuất hóa đơn
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="flexRadioDefault"
+                            <input class="form-check-input" type="radio" value="10" name="flexRadioDefault"
                                 id="requestInvoice" />
                             <label class="form-check-label" for="flexRadioDefault1">
                                 Xuất hóa đơn
@@ -125,7 +132,7 @@
                                     MST : {{ $authUser->tax_code ?? 'Chưa có' }}
                                 </h6>
                                 <a href="#" id="editInvoiceInfo" class="text-primary"
-                                    style="margin-left: auto; font-weight: bold;">Chỉnh sửa thông tin</a>
+                                    style="margin-left: auto; font-weight: bold;"><i class="fas fa-edit"></i></a>
                             </div>
                             <div class="form-group">
                                 <label for="" class="form-label">Địa chỉ</label>
@@ -149,13 +156,8 @@
                 </div>
 
                 <div class="float-end">
-                    <button class="text-white mt-3 border-0 continue-btn"
-                        style="
-                padding: 8px 15px;
-                font-weight: 600;
-                background-color: #122be6;
-                font-size: 12px;
-              ">
+                    <button class="text-white mt-3 border-0 continue-btn" disabled
+                        style="padding: 8px 15px; font-weight: 600; background-color: #122be6; font-size: 12px;">
                         Tiếp tục
                     </button>
                 </div>
@@ -204,7 +206,7 @@
                                     <label for="companyName" class="form-label">Tên công ty</label>
                                     <input type="text" value="{{ $authUser->company_name ?? '' }}"
                                         class="form-control" id="companyName" name="company_name"
-                                        placeholder="Nhập tên công ty" >
+                                        placeholder="Nhập tên công ty">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -212,7 +214,7 @@
                                     <label for="taxCode" class="form-label">Mã số thuế</label>
                                     <input type="text" value="{{ $authUser->tax_code ?? '' }}"
                                         class="form-control" id="taxCode" name="tax_code"
-                                        placeholder="Nhập mã số thuế" >
+                                        placeholder="Nhập mã số thuế">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -280,6 +282,14 @@
                 } else {
                     $(this).val(''); // Nếu không có giá trị, đặt lại ô input
                 }
+
+                //Kiếm tra nếu giá trị >= 5 triệu thì bật nút tiếp tục
+                const amountValue = parseInt(value);
+                if (amountValue >= 5000000) {
+                    $('.continue-btn').prop('disabled', false);
+                } else {
+                    $('.continue-btn').prop('disabled', true);
+                }
             });
 
             // function formatMoney(input) {
@@ -319,7 +329,7 @@
                 if ($("#requestInvoice").is(":checked")) {
                     amount += (amount * 0.1);
                 }
-
+                var requestAnInvoice = $('input[name="flexRadioDefault"]:checked').val();
                 // Gọi AJAX để lấy mã QR
                 $.ajax({
                     url: '{{ route('admin.{username}.transaction.generate', ['username' => Auth::user()->username]) }}', // Đường dẫn đến route
@@ -327,6 +337,7 @@
                     data: {
                         amount: amount,
                         description: description,
+                        requestAnInvoice: requestAnInvoice,
                         _token: '{{ csrf_token() }}' // Thêm token CSRF
                     },
                     success: function(response) {
@@ -342,6 +353,7 @@
                         alert("Có lỗi xảy ra! Vui lòng thử lại."); // Thông báo lỗi
                     }
                 });
+
             });
 
             // Xử lý sự kiện click cho nút xác nhận trong modal QR
@@ -377,14 +389,31 @@
                             document.body.removeChild(downloadLink); // Xóa link sau khi tải
 
                             // Sau khi tải file xong, chuyển hướng người dùng
-                            downloadLink.addEventListener('click', function() {
-                                window.location.href =
-                                    '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}';
+                            // downloadLink.addEventListener('click', function() {
+                            window.location.href =
+                                '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}';
+                            history.pushState(null, null,
+                                '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}'
+                            );
+                            window.addEventListener("popstate", function() {
+                                history.pushState(null, null,
+                                    '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}'
+                                );
                             });
+                            // });
                         } else {
                             // Nếu không có yêu cầu xuất hóa đơn, chuyển hướng luôn
                             window.location.href =
                                 '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}';
+                            history.pushState(null, null,
+                                '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}'
+                            );
+                            window.addEventListener("popstate", function() {
+                                history.pushState(null, null,
+                                    '{{ route('admin.{username}.transaction.index', ['username' => Auth::user()->username]) }}'
+                                );
+                            });
+
                         }
 
                         // Hiển thị thông báo SweetAlert

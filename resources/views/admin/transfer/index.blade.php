@@ -11,7 +11,7 @@
         #query {
             border-radius: 20px 0 0 20px !important;
             /* Bo góc cho phần bên trái */
-            border: 1px solid #ced4da !important;
+            /* border: 1px solid #ced4da !important; */
         }
 
         .input-group {
@@ -153,7 +153,7 @@
         }
 
         .card {
-            border-radius: 15px !important;
+            /* border-radius: 15px !important; */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
             overflow: hidden !important;
             background-color: #fff !important;

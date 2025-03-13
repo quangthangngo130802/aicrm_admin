@@ -18,11 +18,24 @@ class Customer extends Model
         'city_id',
         'district_id',
         'ward_id',
-        'user_id'
+        'user_id',
+        'product_id',
+        'code',
+        'dob'
     ];
 
     public function city()
     {
         return $this->belongsTo(City::class, 'city_id');
+    }
+
+    public function campaignDetails()
+    {
+        return $this->hasMany(CampaignDetail::class, 'customer_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

@@ -62,10 +62,10 @@ class TransferController extends Controller
     public function updateNotification($id)
     {
         try {
-            $transfer = Transfer::find($id);
+            $transfer = Transfer::find(request()->id);
             $transfer->notification = 0;
             $transfer->save();
-            return to_route('admin.transfer.index');
+            return to_route('admin.{username}.transfer.index', ['username' => Auth::user()->id]);
         } catch (Exception $e) {
             Log::error('Failed to change this transfer notification: ' . $e->getMessage());
             return ApiResponse::error('Failed to change this transfer notification', 500);

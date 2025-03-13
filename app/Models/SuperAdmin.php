@@ -18,6 +18,7 @@ class SuperAdmin extends Authenticatable
         'password',
         'bank_id',
         'bank_account',
+        'banner'
     ];
 
     public function bank()
@@ -41,5 +42,6 @@ class SuperAdmin extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'banner' => 'array'
     ];
 }

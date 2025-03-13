@@ -15,7 +15,8 @@ class AutomationBirthday extends Model
         'name',
         'status',
         'start_time',
-        'template_id'
+        'template_id',
+        'user_id'
     ];
     public function template()
     {

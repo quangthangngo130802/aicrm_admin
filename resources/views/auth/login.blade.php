@@ -101,7 +101,8 @@
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value=""
                                                     id="auth-remember-check">
-                                                <label class="form-check-label" for="auth-remember-check">Lưu thông
+                                                <label class="form-check-label" for="auth-remember-check"
+                                                    name="remember">Lưu thông
                                                     tin</label>
                                             </div>
 
@@ -138,8 +139,7 @@
                                     </div>
 
                                     <div class="mt-5 text-center">
-                                        <p class="mb-0">Tạo tài khoản dùng thử miễn phí ? <a
-                                                href="{{ route('register.index') }}"
+                                        <p class="mb-0">Tạo tài khoản dùng thử miễn phí ? <a href="https://sgomedia.vn/"
                                                 class="fw-semibold text-primary text-decoration-underline"> Đăng ký</a> </p>
                                     </div>
                                 </div>

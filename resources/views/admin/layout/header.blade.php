@@ -1,7 +1,46 @@
+<style>
+    /* @media screen and (max-width: 991.5px) {
+        #dropdownContent  .navbar-nav{
+            flex-direction: column!important;
+
+        }
+
+        #dropdownContent  .navbar-nav{
+            display: flex !important;
+            flex : 40% !important;
+            overflow-x: auto;
+        }
+        #dropdownContent  .navbar-nav li{
+            padding: 5px 0px
+        }
+    } */
+
+    .navbar-nav {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: space-around;
+
+    }
+
+    .nav-item {
+        width: 80% !important;
+    }
+
+    @media (min-width: 768px) {
+        .navbar-nav {
+            flex-wrap: nowrap !important;
+        }
+
+        .nav-item {
+            width: auto !important;
+        }
+
+    }
+</style>
 <div class="main-header">
     <div class="main-header-logo">
         <!-- Logo Header -->
-        <div class="logo-header" data-background-color="dark">
+        <div class="logo-header" data-background-color="white">
             <a href="../index.html" class="logo">
                 <img src="../assets/img/kaiadmin/logo_light.svg" alt="navbar brand" class="navbar-brand" height="20">
             </a>
@@ -13,7 +52,7 @@
                     <i class="gg-menu-left"></i>
                 </button>
             </div>
-            <button class="topbar-toggler more">
+            <button class="topbar-toggler more" id="toggleButton">
                 <i class="gg-more-vertical-alt"></i>
             </button>
         </div>
@@ -21,27 +60,49 @@
     </div>
     <!-- Navbar Header -->
     <nav class="navbar navbar-header navbar-header-transparent navbar-expand-lg border-bottom">
-        <div class="container-fluid">
+        <div class="container-fluid d-block d-md-flex" id="dropdownContent">
             <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
 
-                <li class="nav-item topbar-user dropdown hidden-caret">
-                    <a href="javascript:void(0)" id="open-add-modal"
-                        style="background-color: white; border-color: white">
-                        <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
-                            class="fa-solid fa-plus"></i> Thêm khách hàng
+                {{-- <li class="nav-item topbar-user dropdown hidden-caret ">
+                    <a href="javascript:void(0)" id="open-add-modal">
+                        <i class="fa-solid fa-plus"
+                            style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"></i> Thêm khách hàng
                     </a>
-                </li>
+                </li> --}}
 
-                <li class="nav-item topbar-user dropdown hidden-caret">
-                    <a href="javascript:void(0)" id="open-add-oa-modal"
+                @if ((Auth::user()->role_id == 2 && Auth::user()->status == 1) || Auth::user()->role_id == 1)
+                    <li class="nav-item topbar-user dropdown hidden-caret">
+                        <a class="dropdown-toggle profile-pic" id="open-add-modal"
+                            style="background-color: white; border-color: white; justify-content: center !important;"
+                            href="javascript:void(0)" aria-expanded="false">
+                            <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
+                                class="fa-solid fa-plus"></i> Thêm khách hàng
+
+                        </a>
+                    </li>
+                @endif
+
+                {{-- <li class="nav-item topbar-user dropdown hidden-caret">
+<a href="javascript:void(0)" id="open-add-oa-modal"
                         style="background-color: white; border-color: white">
                         <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
                             class="fa-solid fa-plus"></i> Thêm OA
                     </a>
-                </li>
+                </li> --}}
+                @if (Auth::user()->role_id == 1)
+                    <li class="nav-item topbar-user dropdown hidden-caret">
+                        <a class="dropdown-toggle profile-pic" id="open-add-oa-modal"
+                            style="background-color: white; border-color: white;justify-content: center !important;"
+                            href="javascript:void(0)" aria-expanded="false">
+                            <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
+                                class="fa-solid fa-plus"></i> Thêm OA
+
+                        </a>
+                    </li>
+                @endif
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
-                    <a class="dropdown-toggle profile-pic" target="_blank"
+                    <a class="dropdown-toggle profile-pic" target="_blank" style="justify-content: center !important;"
                         href="{{ route('admin.{username}.transaction.payment', ['username' => Auth::user()->username]) }}"
                         aria-expanded="false">
                         <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
@@ -50,100 +111,18 @@
                     </a>
                 </li>
                 <li class="nav-item topbar-user dropdown hidden-caret">
-                    <a class="dropdown-toggle profile-pic" target="_blank" href="" aria-expanded="false">
+                    <a class="dropdown-toggle profile-pic" target="_blank" href="" aria-expanded="false"
+                        style="justify-content: center !important;">
                         <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
                             class="fa-solid fa-wallet"></i> Ví phụ: {{ number_format(\Auth::user()->sub_wallet) }} đ
 
                     </a>
                 </li>
-                <li class="nav-item topbar-icon dropdown hidden-caret">
-                    <a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-envelope"></i>
-                    </a>
-                    <ul class="dropdown-menu messages-notif-box animated fadeIn" aria-labelledby="messageDropdown">
-                        <li>
-                            <div class="dropdown-title d-flex justify-content-between align-items-center">
-                                Messages
-                                <a href="#" class="small">Mark all as read</a>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="scroll-wrapper message-notif-scroll scrollbar-outer"
-                                style="position: relative;">
-                                <div class="message-notif-scroll scrollbar-outer scroll-content"
-                                    style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 0px;">
-                                    <div class="notif-center">
-                                        <a href="#">
-                                            <div class="notif-img">
-                                                <img src="../assets/img/jm_denis.jpg" alt="Img Profile">
-                                            </div>
-                                            <div class="notif-content">
-                                                <span class="subject">Jimmy Denis</span>
-                                                <span class="block"> How are you ? </span>
-                                                <span class="time">5 minutes ago</span>
-                                            </div>
-                                        </a>
-                                        <a href="#">
-                                            <div class="notif-img">
-                                                <img src="../assets/img/chadengle.jpg" alt="Img Profile">
-                                            </div>
-                                            <div class="notif-content">
-                                                <span class="subject">Chad</span>
-                                                <span class="block"> Ok, Thanks ! </span>
-                                                <span class="time">12 minutes ago</span>
-                                            </div>
-                                        </a>
-                                        <a href="#">
-                                            <div class="notif-img">
-                                                <img src="../assets/img/mlane.jpg" alt="Img Profile">
-                                            </div>
-                                            <div class="notif-content">
-                                                <span class="subject">Jhon Doe</span>
-                                                <span class="block">
-                                                    Ready for the meeting today...
-                                                </span>
-                                                <span class="time">12 minutes ago</span>
-                                            </div>
-                                        </a>
-                                        <a href="#">
-                                            <div class="notif-img">
-                                                <img src="{{ asset('assets/img/talha.jpg') }}" alt="Img Profile">
-                                            </div>
-                                            <div class="notif-content">
-                                                <span class="subject">Talha</span>
-                                                <span class="block"> Hi, Apa Kabar ? </span>
-                                                <span class="time">17 minutes ago</span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="scroll-element scroll-x">
-                                    <div class="scroll-element_outer">
-                                        <div class="scroll-element_size"></div>
-                                        <div class="scroll-element_track"></div>
-                                        <div class="scroll-bar"></div>
-                                    </div>
-                                </div>
-                                <div class="scroll-element scroll-y">
-                                    <div class="scroll-element_outer">
-                                        <div class="scroll-element_size"></div>
-                                        <div class="scroll-element_track"></div>
-                                        <div class="scroll-bar"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <a class="see-all" href="javascript:void(0);">See all messages<i
-                                    class="fa fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item topbar-icon dropdown hidden-caret">
+                <li class="nav-item topbar-icon dropdown hidden-caret"
+                    style="justify-content: center !important; display: flex;">
                     <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        style="justify-content: center !important;" data-bs-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
                         <i class="fa fa-bell"></i>
                         <span
                             class="notification">{{ $adminNotifications->count() + $adminTransferNotifications->count() ?? '0' }}</span>
@@ -168,7 +147,7 @@
                                                     ->locale('vi')
                                                     ->diffForHumans();
                                             @endphp
-                                            <a href="{{ route('admin.transfer.updateNotification', ['id' => $item->id]) }}"
+                                            <a href="{{ route('admin.{username}.transfer.updateNotification', ['username' => Auth::user()->username, 'id' => $item->id]) }}"
                                                 class="notification-item mark-as-read">
                                                 <!-- Thêm data-href -->
                                                 <div class="notif-icon notif-primary">
@@ -190,7 +169,7 @@
                                                     ->locale('vi')
                                                     ->diffForHumans();
                                             @endphp
-                                            <a href="{{ route('admin.transaction.updateNotification', ['id' => $item->id]) }}"
+                                            <a href="{{ route('admin.{username}.transaction.updateNotification', ['username' => Auth::user()->username, 'id' => $item->id]) }}"
                                                 class="notification-item mark-as-read">
                                                 <!-- Thêm data-href -->
                                                 <div class="notif-icon notif-primary">
@@ -234,92 +213,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item topbar-icon dropdown hidden-caret">
-                    <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-expanded="false">
-                        <i class="fas fa-layer-group"></i>
-                    </a>
-                    <div class="dropdown-menu quick-actions animated fadeIn">
-                        <div class="quick-actions-header">
-                            <span class="title mb-1">Quick Actions</span>
-                            <span class="subtitle op-7">Shortcuts</span>
-                        </div>
-                        <div class="scroll-wrapper quick-actions-scroll scrollbar-outer" style="position: relative;">
-                            <div class="quick-actions-scroll scrollbar-outer scroll-content"
-                                style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 0px;">
-                                <div class="quick-actions-items">
-                                    <div class="row m-0">
-                                        <a class="col-6 col-md-4 p-0" href="#">
-                                            <div class="quick-actions-item">
-                                                <div class="avatar-item bg-danger rounded-circle">
-                                                    <i class="far fa-calendar-alt"></i>
-                                                </div>
-                                                <span class="text">Calendar</span>
-                                            </div>
-                                        </a>
-                                        <a class="col-6 col-md-4 p-0" href="#">
-                                            <div class="quick-actions-item">
-                                                <div class="avatar-item bg-warning rounded-circle">
-                                                    <i class="fas fa-map"></i>
-                                                </div>
-                                                <span class="text">Maps</span>
-                                            </div>
-                                        </a>
-                                        <a class="col-6 col-md-4 p-0" href="#">
-                                            <div class="quick-actions-item">
-                                                <div class="avatar-item bg-info rounded-circle">
-                                                    <i class="fas fa-file-excel"></i>
-                                                </div>
-                                                <span class="text">Reports</span>
-                                            </div>
-                                        </a>
-                                        <a class="col-6 col-md-4 p-0" href="#">
-                                            <div class="quick-actions-item">
-                                                <div class="avatar-item bg-success rounded-circle">
-                                                    <i class="fas fa-envelope"></i>
-                                                </div>
-                                                <span class="text">Emails</span>
-                                            </div>
-                                        </a>
-                                        <a class="col-6 col-md-4 p-0" href="#">
-                                            <div class="quick-actions-item">
-                                                <div class="avatar-item bg-primary rounded-circle">
-                                                    <i class="fas fa-file-invoice-dollar"></i>
-                                                </div>
-                                                <span class="text">Invoice</span>
-                                            </div>
-                                        </a>
-                                        <a class="col-6 col-md-4 p-0" href="#">
-                                            <div class="quick-actions-item">
-                                                <div class="avatar-item bg-secondary rounded-circle">
-                                                    <i class="fas fa-credit-card"></i>
-                                                </div>
-                                                <span class="text">Payments</span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="scroll-element scroll-x">
-                                <div class="scroll-element_outer">
-                                    <div class="scroll-element_size"></div>
-                                    <div class="scroll-element_track"></div>
-                                    <div class="scroll-bar"></div>
-                                </div>
-                            </div>
-                            <div class="scroll-element scroll-y">
-                                <div class="scroll-element_outer">
-                                    <div class="scroll-element_size"></div>
-                                    <div class="scroll-element_track"></div>
-                                    <div class="scroll-bar"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
-                        aria-expanded="false">
+                        aria-expanded="false" style="justify-content: center !important;">
                         <div class="avatar-sm">
                             <img src="{{ isset(session('authUser')->user_info->img_url) && !empty(session('authUser')->user_info->img_url) ? asset(session('authUser')->user_info->img_url) : asset('images/avatar2.jpg') }}"
                                 alt="image profile" class="avatar-img rounded-circle">
@@ -330,49 +227,28 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
-                        <div class="scroll-wrapper dropdown-user-scroll scrollbar-outer" style="position: relative;">
-                            <div class="dropdown-user-scroll scrollbar-outer scroll-content"
-                                style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 0px;">
-                                <li>
-                                    <div class="user-box">
-                                        <div class="avatar-lg">
-                                            <img src="{{ isset(session('authUser')->user_info->img_url) && !empty(session('authUser')->user_info->img_url) ? asset(session('authUser')->user_info->img_url) : asset('images/avatar2.jpg') }}"
-                                                alt="image profile" class="avatar-img rounded-circle">
-                                        </div>
-                                        <div class="u-text">
-                                            <h4>{{ session('authUser')->name }}</h4>
-                                            <p class="text-muted">{{ session('authUser')->email }}</p>
-                                            <a href="{{ route('admin.{username}.detail', ['username' => Auth::user()->username, 'id' => session('authUser')->id]) }}"
-                                                class="btn btn-xs btn-secondary btn-sm">Trang cá nhân</a>
-                                            <a href="#" class="btn btn-xs  btn-sm"
-                                                style="background: red; color: #ffff"
-                                                onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">Đăng
-                                                xuất</a>
-                                            <form id="logoutForm"
-                                                action="{{ route('admin.{username}.logout', ['username' => Auth::user()->username]) }}"
-                                                method="POST" style="display: none;">
-                                                @csrf
-                                            </form>
-                                        </div>
-                                    </div>
-                                </li>
-
-                            </div>
-                            <div class="scroll-element scroll-x">
-                                <div class="scroll-element_outer">
-                                    <div class="scroll-element_size"></div>
-                                    <div class="scroll-element_track"></div>
-                                    <div class="scroll-bar"></div>
+                        <li>
+                            <div class="user-box">
+                                <div class="avatar-lg">
+                                    <img src="{{ isset(session('authUser')->user_info->img_url) && !empty(session('authUser')->user_info->img_url) ? asset(session('authUser')->user_info->img_url) : asset('images/avatar2.jpg') }}"
+                                        alt="image profile" class="avatar-img rounded-circle">
+                                </div>
+                                <div class="u-text">
+                                    <h4>{{ session('authUser')->name }}</h4>
+                                    <p class="text-muted">{{ session('authUser')->email }}</p>
+                                    <a href="{{ route('admin.{username}.detail', ['username' => Auth::user()->username, 'id' => session('authUser')->id]) }}"
+                                        class="btn btn-xs btn-secondary btn-sm">Trang cá nhân</a>
+                                    <a href="#" class="btn btn-xs  btn-sm"
+                                        style="background: red; color: #ffff"
+                                        onclick="event.preventDefault(); document.getElementById('logoutForm').submit();">Đăng
+                                        xuất</a>
+                                    <form id="logoutForm" action="{{ route('admin.logout') }}" method="POST"
+                                        style="display: none;">
+                                        @csrf
+                                    </form>
                                 </div>
                             </div>
-                            <div class="scroll-element scroll-y">
-                                <div class="scroll-element_outer">
-                                    <div class="scroll-element_size"></div>
-                                    <div class="scroll-element_track"></div>
-                                    <div class="scroll-bar"></div>
-                                </div>
-                            </div>
-                        </div>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -387,7 +263,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addClientModalLabel">Thêm khách hàng</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="client_close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -406,18 +282,33 @@
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
+                        <input type="email" class="form-control" id="email" name="email">
                         <div class="invalid-feedback" id="email-error"></div>
                     </div>
                     <div class="form-group">
+                        <label for="dob">Ngày sinh</label>
+                        <input type="date" class="form-control" id="dob" name="dob">
+                        <div class="invalid-feedback" id="dob-error"></div>
+                    </div>
+                    <div class="form-group">
                         <label for="address">Địa chỉ</label>
-                        <input type="text" class="form-control" id="address" name="address" required>
+                        <input type="text" class="form-control" id="address" name="address">
                         <div class="invalid-feedback" id="address-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="address">Nguồn</label>
                         <input type="text" class="form-control" id="source" name="source">
                         <div class="invalid-feedback" id="address-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="product_id">Chọn sản phẩm</label>
+                        <select class="form-control" id="product_id" name="product_id">
+                            <option value="">Chọn sản phẩm</option>
+                            @foreach ($products as $product)
+                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback" id="product_id-error"></div>
                     </div>
                     <button type="submit" class="btn btn-primary">Thêm khách hàng</button>
                 </form>
@@ -433,7 +324,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addOAModalLabel">Thêm OA</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="oa_close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -452,7 +343,8 @@
                     </div>
                     <div class="form-group">
                         <label for="access_token">Access Token</label>
-                        <input type="access_token" class="form-control" id="access_token" name="access_token" required>
+                        <input type="access_token" class="form-control" id="access_token" name="access_token"
+                            required>
                         <div class="invalid-feedback" id="access_token-error"></div>
                     </div>
                     <div class="form-group">

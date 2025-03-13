@@ -1,7 +1,8 @@
 @extends('admin.layout.index')
 
 @section('content')
-    <div class="container">
+
+    <div class="container mt-5" style="padding: 0px 40px">
         <!-- Hiển thị thông báo thành công và thất bại -->
         @if (session('success'))
             <div class="alert alert-success">
@@ -14,7 +15,7 @@
             </div>
         @endif
 
-        <h2>OA Đang Kích Hoạt:</h2>
+        <h2 class="">OA Đang Kích Hoạt:</h2>
         <div class="card mb-3">
             <div class="card-body">
                 <p id="activeOaName">

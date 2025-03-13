@@ -16,7 +16,8 @@ class AutomationReminder extends Model
         'status',
         'sent_time',
         'template_id',
-        'numbertime'
+        'numbertime',
+        'user_id'
     ];
 
     // Định nghĩa quan hệ với bảng templates
