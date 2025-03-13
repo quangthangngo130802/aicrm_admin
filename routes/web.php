@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AssociateController;
 use App\Http\Controllers\Admin\AutomationController;
 use App\Http\Controllers\Admin\AutomationMarketingController;
 use App\Http\Controllers\Admin\BrandController;
@@ -98,12 +99,29 @@ Route::get('/product', function () {
 Route::get('/employee', function () {
     return view('Themes.pages.employee.index');
 })->name('employee');
-
 Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('{username}/associate')->name('{username}.associate.')->group(function () {
+        Route::get('', [AssociateController::class, 'index'])->name('index');
+        Route::get('search', [AssociateController::class, 'search'])->name('search');
+        Route::post('store', [AssociateController::class, 'store'])->name('store');
+        Route::get('detail/{id}', [AssociateController::class, 'detail'])->name('detail');
+        Route::put('update/{id}', [AssociateController::class, 'update'])->name('update');
+        Route::post('delete', [AssociateController::class, 'delete'])->name('delete');
+        Route::post('associate-status', [AssociateController::class, 'updateAssociateStatus'])->name('updateAssociateStatus');
+    });
     Route::prefix('{username}/automation')->name('{username}.automation.')->group(function () {
         Route::get('', [AutomationMarketingController::class, 'index'])->name('index');
         Route::post('/update-status', [AutomationMarketingController::class, 'updateUserStatus'])->name('updateStatus');
         Route::post('/update-template', [AutomationMarketingController::class, 'updateUserTemplate'])->name('updateTemplate');
+        Route::post('/update-rate-status', [AutomationMarketingController::class, 'updateRateStatus'])->name('updateRateStatus');
+        Route::post('/update-rate-template', [AutomationMarketingController::class, 'updateRateTemplate'])->name('updateRateTemplate');
+        Route::post('/update-birthday-status', [AutomationMarketingController::class, 'updateBirthdayStatus'])->name('updateBirthdayStatus');
+        Route::post('/update-birthday-template', [AutomationMarketingController::class, 'updateBirthdayTemplate'])->name('updateBirthdayTemplate');
+        Route::post('/update-birthday-start-time', [AutomationMarketingController::class, 'updateBirthdayStartTime'])->name('updateBirthdayStartTime');
+        Route::post('/update-reminder-sendingcycle', [AutomationMarketingController::class, 'updateReminderSendingCycle'])->name('updateReminderSendingCycle');
+        Route::post('/update-reminder-start-time', [AutomationMarketingController::class, 'updateReminderStartTime'])->name('updateReminderStartTime');
+        Route::post('/update-reminder-template', [AutomationMarketingController::class, 'updateReminderTemplate'])->name('updateReminderTemplate');
+        Route::post('/update-reminder-status', [AutomationMarketingController::class, 'updateReminderStatus'])->name('updateReminderStatus');
         // Route::get('/user', [AutomationController::class, 'user'])->name('user');
         // Route::post('/user', [AutomationController::class, 'userupdate'])->name('user.update');
 
@@ -112,6 +130,42 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
 
         // Route::get('/reminder', [AutomationController::class, 'reminder'])->name('reminder');
         // Route::post('/birtreminderhday', [AutomationController::class, 'reminderupdate'])->name('reminder.update');
+    });
+    Route::prefix('{username}/message')->name('{username}.message.')->group(function () {
+        Route::get('/export', [AdminZnsMessageController::class, 'export'])->name('export');
+        Route::get('/statusDashboard', [AdminZnsMessageController::class, 'statusDashboard'])->name('statusDashboard');
+        Route::get('/status', [AdminZnsMessageController::class, 'status'])->name('status');
+        Route::get('', [AdminZnsMessageController::class, 'znsMessage'])->name('znsMessage');
+        Route::get('/quota', [AdminZnsMessageController::class, 'znsQuota'])->name('znsQuota');
+        Route::get('template', [AdminZnsMessageController::class, 'templateIndex'])->name('znsTemplate');
+        Route::get('refresh', [AdminZnsMessageController::class, 'refreshTemplates'])->name('znsTemplateRefresh');
+        Route::get('detail', [AdminZnsMessageController::class, 'getTemplateDetail'])->name('znsTemplateDetail');
+        Route::get('test', [AdminZnsMessageController::class, 'test'])->name('test');
+        Route::get('params', [AdminZnsMessageController::class, 'params'])->name('params');
+    });
+    Route::prefix('{username}/product')->name('{username}.product.')->group(function () {
+        Route::get('', [ProductController::class, 'index'])->name('index');
+        Route::post('store', [ProductController::class, 'store'])->name('store');
+        Route::post('update', [ProductController::class, 'update'])->name('update');
+        Route::post('delete', [ProductController::class, 'delete'])->name('delete');
+        Route::get('fetch', [ProductController::class, 'fetch'])->name('fetch');
+    });
+    Route::prefix('{username}/store')->name('{username}.store.')->group(function () {
+        Route::post('/import', [AdminStoreController::class, 'import'])->name('import');
+        Route::get('/index', [AdminStoreController::class, 'index'])->name('index');
+        Route::get('/detail/{id}', [AdminStoreController::class, 'detail'])->name('detail');
+        Route::get('/findByPhone', [AdminStoreController::class, 'findByPhone'])->name('findByPhone');
+        Route::post('/delete', [AdminStoreController::class, 'delete'])->name('delete');
+        Route::post('/store', [AdminStoreController::class, 'store'])->name('store');
+    });
+    Route::prefix('{username}/transaction')->name('{username}.transaction.')->group(function () {
+        Route::get('/update-notification/{id}', [TransactionController::class, 'updateNotification'])->name('updateNotification');
+        Route::get('', [TransactionController::class, 'index'])->name('index');
+        Route::get('search', [TransactionController::class, 'search'])->name('search');
+        Route::get('payment', [TransactionController::class, 'payment'])->name('payment');
+        Route::post('store', [TransactionController::class, 'store'])->name('store');
+        Route::get('export/{id}', [TransactionController::class, 'exportPDF'])->name('export');
+        Route::get('generateQR', [TransactionController::class, 'generateQrCode'])->name('generate');
     });
     Route::prefix('{username}/campaign')->name('{username}.campaign.')->group(function () {
         Route::get('add', [AdminCampaignController::class, 'add'])->name('add');
@@ -123,35 +177,10 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
         Route::post('delete', [AdminCampaignController::class, 'delete'])->name('delete');
         Route::post('update-status/', [AdminCampaignController::class, 'updateStatus'])->name('updateStatus');
     });
-    Route::prefix('{username}/store')->name('{username}.store.')->group(function () {
-        Route::get('/index', [AdminStoreController::class, 'index'])->name('index');
-        Route::get('/detail/{id}', [AdminStoreController::class, 'detail'])->name('detail');
-        Route::get('/findByPhone', [AdminStoreController::class, 'findByPhone'])->name('findByPhone');
-        Route::get('/delete/{id}', [AdminStoreController::class, 'delete'])->name('delete');
-        Route::post('/store', [AdminStoreController::class, 'store'])->name('store');
-    });
-    Route::prefix('{username}/message')->name('{username}.message.')->group(function () {
-        Route::get('', [AdminZnsMessageController::class, 'znsMessage'])->name('znsMessage');
-        Route::get('/quota', [AdminZnsMessageController::class, 'znsQuota'])->name('znsQuota');
-        Route::get('template', [AdminZnsMessageController::class, 'templateIndex'])->name('znsTemplate');
-        Route::get('refresh', [AdminZnsMessageController::class, 'refreshTemplates'])->name('znsTemplateRefresh');
-        Route::get('detail', [AdminZnsMessageController::class, 'getTemplateDetail'])->name('znsTemplateDetail');
-        Route::get('test', [AdminZnsMessageController::class, 'test'])->name('test');
-        Route::get('/status/{id}', [AdminZnsMessageController::class, 'status'])->name('status');
-    });
     Route::prefix('{username}/transfer')->name('{username}.transfer.')->group(function () {
         Route::get('', [AdminTransferController::class, 'index'])->name('index');
         Route::get('search', [AdminTransferController::class, 'search'])->name('search');
         Route::get('update-notification/{id}', [AdminTransferController::class, 'updateNotification'])->name('updateNotification');
-    });
-    Route::prefix('{username}/transaction')->name('{username}.transaction.')->group(function () {
-        Route::get('/update-notification/{id}', [TransactionController::class, 'updateNotification'])->name('updateNotification');
-        Route::get('', [TransactionController::class, 'index'])->name('index');
-        Route::get('search', [TransactionController::class, 'search'])->name('search');
-        Route::get('payment', [TransactionController::class, 'payment'])->name('payment');
-        Route::post('store', [TransactionController::class, 'store'])->name('store');
-        Route::get('export/{id}', [TransactionController::class, 'exportPDF'])->name('export');
-        Route::get('generateQR', [TransactionController::class, 'generateQrCode'])->name('generate');
     });
     Route::prefix('{username}/zalo')->name('{username}.zalo.')->group(function () {
         Route::get('zns', [AdminZaloController::class, 'index'])->name('zns');
@@ -159,16 +188,14 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
         Route::post('/update-oa-status/{oaId}', [AdminZaloController::class, 'updateOaStatus'])->name('updateOaStatus');
         Route::post('/refresh-access-token', [AdminZaloController::class, 'refreshAccessToken'])->name('refreshAccessToken');
         Route::post('store', [AdminZaloController::class, 'store'])->name('store');
+        Route::post('/check-oa', [AdminZaloController::class, 'checkOa'])->name('checkOa');
     });
     Route::get('{username}/detail/{id}', [AdminController::class, 'getAdminInfor'])->name('{username}.detail');
     Route::post('{username}/update/{id}', [AdminController::class, 'updateAdminInfor'])->name('{username}.update');
     Route::post('{username}/changePassword', [AdminController::class, 'changePassword'])->name('{username}.changePassword');
-    Route::post('{username}/logout', [AdminController::class, 'logout'])->name('{username}.logout');
-
-
 
     Route::get('{username}/dashboard', [DashboardController::class, 'index'])->name('{username}.dashboard');
-    Route::post('{username}/logout', [AuthController::class, 'logout'])->name('{username}.logout');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 })->middleware('checkRole:1');
 
 // Route::get('super-dang-nhap', [SuperAdminController::class, 'loginForm'])->name('super.dang.nhap');
