@@ -90,7 +90,7 @@ class OaTemplateService
                         }
 
                         // Lấy thông tin chi tiết cho từng template và cập nhật giá
-                        $templateDetailResponse = $this->client->get('https://business.openapi.zalo.me/template/info', [
+                        $templateDetailResponse = $this->client->get('https://business.openapi.zalo.me/template/info/v2', [
                             'headers' => [
                                 'access_token' => $accessToken,
                                 'Content-Type' => 'application/json'

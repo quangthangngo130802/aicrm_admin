@@ -88,8 +88,8 @@
         position: relative;
         visibility: visible;
         background-color: transparent;
-        width: 90px;
-        height: 90px;
+        /* width: 90px; */
+        /* height: 90px; */
         cursor: pointer;
         z-index: 11;
         -webkit-backface-visibility: hidden;
@@ -199,9 +199,9 @@
                             <div class="phone-vr">
                                 <div class="phone-vr-img-circle">
                                     <a href="https://zalo.me/0981185620" target="_blank"
-                                        style="display: block; width: 100%; height: 100%;">
-                                        <img alt="Zalo"
-                                            src="https://sgomedia.vn/wp-content/plugins/button-contact-vr/img/zalo.png">
+                                        style="display: inline-block;width: 100%;height: 100%;text-align: center;">
+                                        <img alt="Zalo" style="width: 35px; height: auto;"
+                                            src="{{ asset('zalo.png') }}">
                                     </a>
                                 </div>
                             </div>
