@@ -1,7 +1,7 @@
 <style>
     iframe {
-        width: 500px;
-        height: 370px;
+        width: 100%;
+        height: 400px;
     }
 
     .table-responsive {
@@ -25,7 +25,7 @@
     }
 
     .modal-dialog {
-        max-width: 90%;
+        max-width: 60%;
         margin: 1.75rem auto;
     }
 
@@ -44,75 +44,72 @@
 @if (isset($responseData) && !empty($responseData))
 
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-7">
             <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
+                <table class="table table-bordered table-hover align-middle">
+                    <thead class="table-dark text-center">
                         <tr>
-                            <th>Thông tin</th>
-                            <th>Giá trị</th>
+                            <th class="p-3">Thông tin</th>
+                            <th class="p-3">Giá trị</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Template ID</td>
+                            <td class="fw-bold">Template ID</td>
                             <td>{{ $responseData['templateId'] ?? 'Không có dữ liệu' }}</td>
                         </tr>
                         <tr>
-                            <td>Tên Template</td>
+                            <td class="fw-bold">Tên Template</td>
                             <td>{{ $responseData['templateName'] ?? 'Không có dữ liệu' }}</td>
                         </tr>
                         <tr>
-                            <td>
-                                <a class="toggle-link" data-toggle="modal" data-target="#paramsModal" role="button">
-                                    Danh sách tham số
+                            <td class="fw-bold">
+                                <a class="toggle-link text-primary fw-bold" data-toggle="modal" data-target="#paramsModal" role="button">
+                                    <i class="fas fa-list-ul"></i> Danh sách tham số
                                 </a>
                             </td>
-                            <td>
-                                {{ count($responseData['listParams'] ?? []) }}
-                            </td>
+                            <td><span class="badge bg-info">{{ count($responseData['listParams'] ?? []) }}</span></td>
                         </tr>
                         <tr>
-                            <td>
-                                Giá
-                            </td>
-                            <td>
+                            <td class="fw-bold">Giá</td>
+                            <td class="text-success fw-bold">
                                 {{ number_format($responseData['price'], 0) ?? 'Không có dữ liệu' }} đ/ZNS
                             </td>
                         </tr>
                         <tr>
-                            <td>Trạng thái</td>
+                            <td class="fw-bold">Trạng thái</td>
                             <td>
                                 @switch($responseData['status'])
                                     @case('PENDING_REVIEW')
-                                        Chờ duyệt
+                                        <span class="badge bg-warning text-dark"><i class="fas fa-clock"></i> Chờ duyệt</span>
                                     @break
 
-                                    @case('DISBALE')
-                                        Vô hiệu hóa
+                                    @case('DISABLE')
+                                        <span class="badge bg-secondary"><i class="fas fa-ban"></i> Vô hiệu hóa</span>
                                     @break
 
                                     @case('ENABLE')
-                                        Đã kích hoạt
+                                        <span class="badge bg-success"><i class="fas fa-check-circle"></i> Đã kích hoạt</span>
                                     @break
 
                                     @case('REJECT')
-                                        Bị từ chối
+                                        <span class="badge bg-danger"><i class="fas fa-times-circle"></i> Bị từ chối</span>
                                     @break
 
                                     @default
-                                        Không có dữ liệu
+                                        <span class="badge bg-dark">Không có dữ liệu</span>
                                 @endswitch
                             </td>
                         </tr>
                         <tr>
-                            <td>Đường dẫn xem mẫu</td>
+                            <td class="fw-bold">Đường dẫn xem mẫu</td>
                             <td>
                                 @if (isset($responseData['previewUrl']))
-                                    <a href="{{ $responseData['previewUrl'] }}" target="_blank"
-                                        rel="noopener noreferrer">{{ $responseData['previewUrl'] }}</a>
+                                    <a href="{{ $responseData['previewUrl'] }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none text-primary fw-bold">
+                                        <i class="fas fa-external-link-alt"></i> Xem mẫu
+                                    </a>
                                 @else
-                                    Không có dữ liệu
+                                    <span class="text-muted">Không có dữ liệu</span>
                                 @endif
                             </td>
                         </tr>
@@ -120,9 +117,10 @@
                 </table>
             </div>
 
+
         </div>
 
-        <div class="col-md-4 mt-4">
+        <div class="col-md-5 mt-4">
             <div id="content">
                 <iframe src="{{ $responseData['previewUrl'] }}" title="Embedded Website"></iframe>
             </div>
@@ -137,7 +135,7 @@
 <!-- Modal -->
 <div class="modal fade" id="paramsModal" tabindex="-1" role="dialog" aria-labelledby="paramsModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="paramsModalLabel">Danh sách tham số</h5>
@@ -199,7 +197,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>

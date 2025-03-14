@@ -43,8 +43,8 @@
         }
 
         .table-responsive {
-            max-height: 70vh;
-            overflow-y: auto;
+            /* max-height: 70vh; */
+            /* overflow-y: auto; */
         }
 
         .modal-dialog {
@@ -129,16 +129,36 @@
             });
 
             // Handle refresh button click
-            $('#refreshButton').click(function() {
+              $('#refreshButton').click(function() {
                 $.ajax({
                     url: '{{ route('admin.{username}.message.znsTemplateRefresh', ['username' => Auth::user()->username]) }}',
                     method: 'GET',
                     success: function(response) {
-                        // Update dropdown with new templates
+                        // Cập nhật dropdown với templates mới
                         $('#templateDropdown').html(response.templates);
-                        alert('Templates have been refreshed!');
 
-                        // Show the first template info automatically
+                        // Hiển thị thông báo thành công
+                        Swal.fire({
+                            title: 'Thành công!',
+                            text: 'Templates đã được làm mới.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Hiển thị thông báo thứ hai ngay sau khi bấm OK
+                            Swal.fire({
+                                title: 'Đang tải lại...',
+                                icon: 'info',
+                                timer: 1000,
+                                showConfirmButton: false
+                            });
+
+                            // Reload trang sau 2 giây
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        });
+
+                        // Cập nhật thông tin template
                         if (response.initialTemplateData) {
                             $('#templateInfo').html(response.initialTemplateData);
                         } else {
