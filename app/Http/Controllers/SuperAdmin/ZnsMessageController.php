@@ -152,7 +152,7 @@ class ZnsMessageController extends Controller
 
         try {
             $client = new Client();
-            $response = $client->get('https://business.openapi.zalo.me/template/info', [
+            $response = $client->get('https://business.openapi.zalo.me/template/info/v2', [
                 'headers' => [
                     'access_token' => $accessToken,
                     'Content-Type' => 'application/json'
