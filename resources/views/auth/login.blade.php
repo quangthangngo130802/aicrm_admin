@@ -1,266 +1,307 @@
-@extends('Themes.main.main')
+<!DOCTYPE html>
+<html>
 
-@section('content')
-    <style>
-        @media (max-width: 768px) {
-            .auth-one-bg {
-                display: none;
-            }
+
+<!-- Mirrored from id.tenten.vn/loginNavi by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 04 Dec 2024 01:24:10 GMT -->
+<!-- Added by HTTrack -->
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+
+<head>
+    <title>Login</title>
+    <!-- css -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/6.0.0-beta1/css/tempus-dominus.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('auth/css/style.css') }}">
+    <link rel="icon" href="https://sgomedia.vn/wp-content/uploads/2023/06/cropped-favicon-sgomedia-32x32.png"
+        type="image/x-icon">
+    <!-- js -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.marquee/1.5.0/jquery.marquee.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.pause/0.2/jquery.pause.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/6.0.0-beta1/js/tempus-dominus.min.js">
+    </script>
+</head>
+<style type="text/css">
+    #toast-container>div {
+        width: auto !important;
+    }
+
+    .error_txt {
+        color: red;
+    }
+
+    .active {
+        display: none;
+    }
+
+    .btn {
+        margin-top: 20px;
+    }
+
+    .pointer {
+        cursor: pointer;
+    }
+
+    .g-recaptcha div {
+        margin: auto;
+    }
+
+    .logo_login img {
+        margin-bottom: 20px;
+    }
+
+    .loginButton:disabled {
+        cursor: no-drop;
+    }
+
+
+    @media (min-width: 768px) {
+
+        .login_page .ct_left,
+        .login_page .ct_right {
+            min-height: 530px !important;
         }
-    </style>
-    @if (session('success'))
-        <div id="alert-success" class="alert alert-success position-fixed top-0 end-0 m-3" role="alert">
-            {{ session('success') }}
-        </div>
-    @endif
 
-    <div class="bg-overlay"></div>
-    <!-- auth-page content -->
-    <div class="auth-page-content overflow-hidden pt-lg-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="card overflow-hidden">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="p-lg-5 p-4 auth-one-bg h-100">
-                                    <div class="bg-overlay"></div>
-                                    <div class="position-relative h-100 d-flex flex-column">
-                                        <div class="mb-4">
-                                            <a href="index.html" class="d-block">
-                                                <img src="assets/images/logo-light.png" alt="" height="18">
-                                            </a>
-                                        </div>
-                                        <div class="mt-auto">
-                                            {{-- <div class="mb-3">
-                                                <i class="ri-double-quotes-l display-4 text-success"></i>
-                                            </div>
 
-                                            <div id="qoutescarouselIndicators" class="carousel slide"
-                                                data-bs-ride="carousel">
-                                                <div class="carousel-indicators">
-                                                    <button type="button" data-bs-target="#qoutescarouselIndicators"
-                                                        data-bs-slide-to="0" class="active" aria-current="true"
-                                                        aria-label="Slide 1"></button>
-                                                    <button type="button" data-bs-target="#qoutescarouselIndicators"
-                                                        data-bs-slide-to="1" aria-label="Slide 2"></button>
-                                                    <button type="button" data-bs-target="#qoutescarouselIndicators"
-                                                        data-bs-slide-to="2" aria-label="Slide 3"></button>
-                                                </div>
-                                                <div class="carousel-inner text-center text-white-50 pb-5">
-                                                    <div class="carousel-item active">
-                                                        <p class="fs-15 fst-italic">" Tuyệt vời! Mã sạch, thiết kế sạch, dễ
-                                                            tùy chỉnh. Cảm ơn rất nhiều!"</p>
-                                                    </div>
-                                                    <div class="carousel-item">
-                                                        <p class="fs-15 fst-italic">
-                                                            "Chủ đề này thực sự tuyệt vời với dịch vụ hỗ trợ khách hàng
-                                                            tuyệt vời."</p>
-                                                    </div>
-                                                    <div class="carousel-item">
-                                                        <p class="fs-15 fst-italic"> "Tuyệt vời! Mã sạch, thiết kế sạch, dễ
-                                                            tùy chỉnh. Cảm ơn rất nhiều!"</p>
-                                                    </div>
-                                                </div>
-                                            </div> --}}
-                                            <!-- end carousel -->
-                                        </div>
-                                    </div>
+
+        .add_phone {
+            display: block;
+            text-align: right;
+        }
+
+        .add_phone:first,
+        {
+        padding: 0px 26px !important;
+    }
+    }
+
+    @media (min-width: 375px) and (max-width: 550px) {
+        .rc-image-tile-33 {
+            width: 200%;
+            height: 200%;
+        }
+
+        .rc-image-tile-44 {
+            width: 300%;
+            height: 300%;
+        }
+
+        .add_phone {
+            display: block;
+            text-align: right;
+            /* padding: 0px 29px; */
+        }
+
+        .add_phone:nth-of-type(1),
+        {
+        padding: 0px 29px;
+    }
+    }
+
+    .support-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .support-item {
+        display: flex;
+        /* justify-content: space-between; */
+        align-items: center;
+        /* margin-bottom: 20px; */
+    }
+
+    .diff_strong {
+        font-weight: bold;
+        color: #fff;
+        flex-shrink: 0;
+        margin-right: 20px;
+    }
+
+    .phone-wrapper {
+        display: flex;
+        flex-direction: column;
+        text-align: right;
+        /* Căn phải */
+    }
+
+    .phone-wrapper span {
+        /* display: flex; */
+        justify-content: flex-end;
+        /* Căn nội dung số điện thoại và chú thích bên phải */
+        align-items: center;
+        gap: 10px;
+        /* Khoảng cách giữa số và chú thích */
+    }
+
+    .normal_strong {
+        font-weight: normal;
+        color: #fff;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        color: #ddd;
+    }
+</style>
+
+<body class="form_page">
+    <div id="qb_content_navi_2021">
+        <div class="login_display_02 login_page">
+            <div class="ct_left">
+                <h2 class="title_login">Liên hệ với chúng tôi</h2>
+                <div class="ct_left_ct">
+                    <ul class="support-list">
+                        <li>
+                            <div class="support-item">
+                                <strong class="diff_strong">Hỗ trợ kỹ thuật:</strong>
+                                <div class="phone-wrapper">
+                                    <span>
+                                        <strong class="normal_strong">(024) 62 927 089</strong>
+                                        <p>(24/7)</p>
+                                    </span>
+                                    <span>
+                                        <strong class="normal_strong">0981 185 620</strong>
+                                        <p>(24/7)</p>
+                                    </span>
                                 </div>
                             </div>
-                            <!-- end col -->
-
-                            <div class="col-lg-6">
-                                <div class="p-lg-5 p-4">
-                                    <div>
-                                        <h5 class="text-primary">Xin chào! {{ $username }}</h5>
-                                        <p class="text-muted">Đăng nhập để sử dụng ứng dụng.</p>
-                                    </div>
-
-                                    <div class="mt-4">
-                                        <form action="{{ route('login', ['username' => $username]) }}" method="post">
-                                            @csrf
-                                            <div class="mb-3">
-                                                <label for="username" class="form-label">Email hoặc Số điện thoại</label>
-                                                <input type="text" class="form-control" id="email" name="email"
-                                                    placeholder="Tên đăng nhập">
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label class="form-label" for="password-input">Mật Khẩu</label>
-                                                <div class="position-relative auth-pass-inputgroup mb-3">
-                                                    <input type="password" id="password" name="password"
-                                                        class="form-control pe-5 password-input" placeholder="Mật khẩu">
-                                                    <button
-                                                        class="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted password-addon"
-                                                        type="button" id="password-addon"><i
-                                                            class="ri-eye-fill align-middle"></i></button>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" value=""
-                                                    id="auth-remember-check">
-                                                <label class="form-check-label" for="auth-remember-check"
-                                                    name="remember">Lưu thông
-                                                    tin</label>
-                                            </div>
-
-                                            <div class="mt-4">
-                                                <button class="btn btn-success w-100" type="submit">Đăng nhập</button>
-                                            </div>
-                                            <div
-                                                style="margin: 0px; display: flex; justify-content: flex-end; padding: 10px 5px;">
-                                                <a href="{{ route('forget-password') }}" class="text-muted">Quên mật
-                                                    khẩu?</a>
-                                            </div>
-                                            {{-- <div class="mt-2 text-center">
-                                            <div class="signin-other-title">
-                                                <h5 class="fs-13 mb-4 title" style="padding: 10px;">Sign In with</h5>
-                                            </div>
-
-                                            <div>
-                                                <button type="button"
-                                                    class="btn btn-primary btn-icon waves-effect waves-light"><i
-                                                        class="ri-facebook-fill fs-16"></i></button>
-                                                <button type="button"
-                                                    class="btn btn-danger btn-icon waves-effect waves-light"><i
-                                                        class="ri-google-fill fs-16"></i></button>
-                                                <button type="button"
-                                                    class="btn btn-dark btn-icon waves-effect waves-light"><i
-                                                        class="ri-github-fill fs-16"></i></button>
-                                                <button type="button"
-                                                    class="btn btn-info btn-icon waves-effect waves-light"><i
-                                                        class="ri-twitter-fill fs-16"></i></button>
-                                            </div>
-                                        </div> --}}
-
-                                        </form>
-                                    </div>
-
-                                    <div class="mt-5 text-center">
-                                        <p class="mb-0">Tạo tài khoản dùng thử miễn phí ? <a href="https://sgomedia.vn/"
-                                                class="fw-semibold text-primary text-decoration-underline"> Đăng ký</a> </p>
-                                    </div>
+                        </li>
+                        <li>
+                            <div class="support-item">
+                                <strong class="diff_strong">Hỗ trợ hoá đơn:</strong>
+                                <div class="phone-wrapper">
+                                    <span>
+                                        <strong class="normal_strong">(024) 62 927 089</strong>
+                                        <p>(8h30 - 18h00)</p>
+                                    </span>
+                                    <span>
+                                        <strong class="normal_strong">0912 399 322</strong>
+                                        <p>(8h30 - 18h00)</p>
+                                    </span>
                                 </div>
                             </div>
-                            <!-- end col -->
+                        </li>
+                        <li>
+                            <div class="support-item">
+                                <strong class="diff_strong">Hỗ trợ gia hạn:</strong>
+                                <div class="phone-wrapper">
+                                    <span>
+                                        <strong class="normal_strong">(024) 62 927 089</strong>
+                                        <p>(8h30 - 18h00)</p>
+                                    </span>
+                                    <span>
+                                        <strong class="normal_strong">0981 185 620</strong>
+                                        <p>(8h30 - 18h00)</p>
+                                    </span>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="support-item">
+                                <strong class="diff_strong">Email:</strong>
+                                <span>
+                                    <strong class="normal_strong">info@sgomedia.vn</strong>
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+            <div class="ct_right">
+                <div class="ct_right_ct">
+
+                    <figure class="logo_login">
+                        <a href="#"><img style="width: 210px !important"
+                                src="{{ asset('assets/img/logo-sgo-media-file-chot-1.png') }}" alt="logo-sgo-media"></a>
+                    </figure>
+
+                    <div class="login_form">
+                        <form method="post" accept-charset="utf-8" id="form-login"
+                            action="{{ route('login', ['username' => $username]) }}">
+                            @csrf
+
+                            <div class="form_group" style="display: block;">
+                                <div class="list_group">
+                                    <input type="text" name="email" autocomplete="off" placeholder="Địa chỉ Email"
+                                        id="email" value="">
+                                    <figure class="feild_icon"><img
+                                            src="{{ asset('auth/images/login_user_icon.png') }}"></figure>
+                                    @error('email')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="list_group">
+                                    <input type="password" name="password" autocomplete="off" placeholder="Password"
+                                        id="password" value="{{ old('password') }}">
+                                    <figure class="feild_icon"><img
+                                            src="{{ asset('auth/images/login_padlock_icon.png') }}"></figure>
+                                    @error('password')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="form-check my-3">
+                                        <input class="form-check-input" name="remember" type="checkbox" id="remember">
+                                        <label class="form-check-label" for="remember">
+                                            Lưu mật khẩu
+                                        </label>
+                                    </div>
+                                </div>
+                                {!! NoCaptcha::renderJs() !!}
+                                {!! NoCaptcha::display() !!}
+                                @error('g-recaptcha-response')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+
+                                <div class="btn">
+                                    <button type="submit" name="button"
+                                        class="loginButton loginButtonGg remove-msg before-login disabled_button"
+                                        id="submitBtn">Đăng nhập</button>
+                                </div>
+                            </div>
+
+                        </form>
+                        <div class="create_forget_acc" style="display: flex;justify-content: end; display: none">
+                            <a href="#" target="_blank" class="btn_login" style="margin-bottom: 15px;"
+                                id="create-account">Tạo tài khoản</a>
+                            <a href="#" class="btn_login remove-msg forgot-pass" style="margin-bottom: 15px;"
+                                id="forgot-password">Quên mật khẩu?</a>
                         </div>
-                        <!-- end row -->
-                    </div>
-                    <!-- end card -->
-                </div>
-                <!-- end col -->
 
-            </div>
-            <!-- end row -->
-        </div>
-        <!-- end container -->
-    </div>
-    <!-- end auth page content -->
-
-    <!-- footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="text-center">
-                        {{-- <p class="mb-0">&copy;
-                        <script>
-                            document.write(new Date().getFullYear())
-                        </script> Velzon. Crafted with <i class="mdi mdi-heart text-danger"></i> by
-                        Themesbrand
-                    </p> --}}
                     </div>
                 </div>
             </div>
+
+
         </div>
-    </footer>
-    <!-- end Footer -->
-    <script>
-        $(document).ready(function() {
-            $('#password-addon').on('click', function() {
-                var passwordField = $('#password');
-                var passwordFieldType = passwordField.attr('type');
-                var eyeIcon = $('#eye-icon');
+    </div><!-- end content -->
 
-                if (passwordFieldType === 'password') {
-                    passwordField.attr('type', 'text');
-                    eyeIcon.removeClass('ri-eye-fill').addClass('ri-eye-off-fill');
-                } else {
-                    passwordField.attr('type', 'password');
-                    eyeIcon.removeClass('ri-eye-off-fill').addClass('ri-eye-fill');
-                }
-            });
-        });
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-notify/0.2.0/js/bootstrap-notify.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-        $(document).ready(function() {
-            // Lấy dữ liệu tài khoản đã lưu từ localStorage
-            var savedAccounts = JSON.parse(localStorage.getItem('accounts')) || {};
+</body>
 
-            // Hàm để điền thông tin email và mật khẩu đã lưu
-            function populateFields(email) {
-                console.log('Populating fields for email:', email);
-                if (savedAccounts[email]) {
-                    $('#email').val(email);
-                    $('#password').val(savedAccounts[email]);
-                    console.log('Password populated:', savedAccounts[email]);
-                }
-            }
 
-            // Kiểm tra nếu chỉ có một tài khoản đã lưu và tự động điền
-            if (Object.keys(savedAccounts).length === 1) {
-                var email = Object.keys(savedAccounts)[0];
-                console.log('Single saved account found:', email);
-                populateFields(email);
-                $('#auth-remember-check').prop('checked', true);
-            }
+<!-- Mirrored from id.tenten.vn/loginNavi by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 04 Dec 2024 01:24:11 GMT -->
 
-            // Sự kiện thay đổi trên trường email để điền mật khẩu đã lưu
-            $('#email').on('input', function() {
-                var email = $(this).val();
-                console.log('Email changed to:', email);
-                populateFields(email);
-            });
-
-            // Xử lý sự kiện submit của form đăng nhập
-            $('#login-form').submit(function(event) {
-                var email = $('#email').val();
-                var password = $('#password').val();
-                var remember = $('#auth-remember-check').is(':checked');
-
-                console.log('Form submitted with:', {
-                    email,
-                    password,
-                    remember
-                });
-
-                if (remember) {
-                    savedAccounts[email] = password;
-                    localStorage.setItem('accounts', JSON.stringify(savedAccounts));
-                    console.log('Account saved:', {
-                        email,
-                        password
-                    });
-                } else {
-                    delete savedAccounts[email];
-                    localStorage.setItem('accounts', JSON.stringify(savedAccounts));
-                    console.log('Account removed:', email);
-                }
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var alertSuccess = document.getElementById('alert-success');
-            if (alertSuccess) {
-                setTimeout(function() {
-                    alertSuccess.style.display = 'none';
-                }, 3000);
-            }
-        });
-    </script>
-
-    <!-- Add necessary icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/2.5.0/remixicon.css" rel="stylesheet">
-@endsection
+</html>

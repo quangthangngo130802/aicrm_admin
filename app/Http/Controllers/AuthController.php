@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\CustomerLogin;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use App\Models\OTP;
 use App\Services\UserService;
@@ -19,7 +20,7 @@ class AuthController extends Controller
     {
         $this->userService = $userService;
     }
-    public function login(Request $request, $username)
+    public function login(LoginRequest $request, $username)
     {
         try {
             Log::info('Bắt đầu quá trình đăng nhập', ['username' => $username]);
