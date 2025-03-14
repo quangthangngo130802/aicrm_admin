@@ -119,7 +119,13 @@
                             template_id: templateId
                         },
                         success: function(response) {
-                            $('#templateInfo').html(response);
+                            if (response.success) {
+                                $('#templateInfo').html(response.html); // Gán HTML từ response
+                            } else {
+                                $('#templateInfo').html(
+                                    '<div class="alert alert-warning">Không có dữ liệu!</div>'
+                                    );
+                            }
                         },
                         error: function(xhr) {
                             console.error('Error fetching template info:', xhr.responseText);
@@ -129,7 +135,7 @@
             });
 
             // Handle refresh button click
-              $('#refreshButton').click(function() {
+            $('#refreshButton').click(function() {
                 $.ajax({
                     url: '{{ route('admin.{username}.message.znsTemplateRefresh', ['username' => Auth::user()->username]) }}',
                     method: 'GET',

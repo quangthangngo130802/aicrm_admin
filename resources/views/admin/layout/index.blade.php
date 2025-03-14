@@ -344,7 +344,10 @@
                                 timer: 1500,
                                 position: 'top-end',
                                 toast: true
+                            }).then(() => {
+                                location.reload(); // Reload lại trang sau khi thông báo đóng
                             });
+
                             $('#addClientModal').modal('hide'); // Đóng modal khi thành công
                         } else {
                             console.log('Response failed:', response);

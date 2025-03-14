@@ -105,7 +105,7 @@ class ZnsMessageController extends Controller
 
         try {
             $client = new Client();
-            $response = $client->get('https://business.openapi.zalo.me/template/info', [
+            $response = $client->get('https://business.openapi.zalo.me/template/info/v2', [
                 'headers' => [
                     'access_token' => $accessToken,
                     'Content-Type' => 'application/json'
@@ -118,7 +118,10 @@ class ZnsMessageController extends Controller
             $responseData = json_decode($responseBody, true)['data'];
 
             // Format response for display
-            return view('admin.message.template_detail', compact('responseData'));
+            return response()->json([
+                'success' => true,
+                'html' => view('admin.message.template_detail', compact('responseData'))->render()
+            ]);
         } catch (Exception $e) {
             Log::error('Failed to get template details: ' . $e->getMessage());
             return response()->json(['error' => 'Failed to get template details'], 500);
