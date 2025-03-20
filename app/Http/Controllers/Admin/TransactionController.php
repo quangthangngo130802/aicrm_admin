@@ -107,7 +107,7 @@ class TransactionController extends Controller
         $bank_account = $superAdmin->bank_account;
         //Account công ty
         $bank_company_id = $superAdmin->bank->shortName;
-        $bank_company_account = $superAdmin->bank_company_account;
+        $bank_company_account = $superAdmin->bank_account;
         $description = $request->input('description');
         $account_name = $superAdmin->name;
         // Tạo URL cho QR code
