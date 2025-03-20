@@ -107,16 +107,17 @@ class TransactionController extends Controller
         $bank_account = $superAdmin->bank_account;
         //Account công ty
         $bank_company_id = $superAdmin->bank->shortName;
-        $bank_company_account = $superAdmin->bank_account;
+        $bank_company_account = $superAdmin->company_bank_account;
         $description = $request->input('description');
         $account_name = $superAdmin->name;
+        $company = $superAdmin->company_name;
         // Tạo URL cho QR code
         $template = 'compact2';
         $qrCodeUrl = '';
         if ($request->requestAnInvoice == 5) {
             $qrCodeUrl = "https://img.vietqr.io/image/" . $bank_id . "-" . $bank_account . "-" . $template . ".png?amount=" . $amount . "&addInfo=" . urlencode($description) . "&accountName=" . urlencode($account_name);
         } else if ($request->requestAnInvoice == 10) {
-            $qrCodeUrl = "https://img.vietqr.io/image/" . $bank_company_id . "-" . $bank_company_account . "-" . $template . ".png?amount=" . $amount . "&addInfo=" . urlencode($description) . "&accountName=" . urlencode($account_name);
+            $qrCodeUrl = "https://img.vietqr.io/image/" . $bank_company_id . "-" . $bank_company_account . "-" . $template . ".png?amount=" . $amount . "&addInfo=" . urlencode($description) . "&accountName=" . urlencode($company);
         }
         // Trả về URL cho QR code
         return $qrCodeUrl;

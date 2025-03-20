@@ -18,7 +18,8 @@ class SuperAdminController extends Controller
             $superAdmin = SuperAdmin::first();
 
             // Cập nhật thông tin
-            $superAdmin->update([$request->all()]);
+            $data = $request->except(['banner']);
+            $superAdmin->update($data);
 
             Log::info('Super admin in Admin updated successfully');
             return response()->json(['success' => 'Super admin updated successfully']);

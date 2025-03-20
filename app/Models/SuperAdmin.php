@@ -11,15 +11,7 @@ class SuperAdmin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $table = 'super_admins';
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'password',
-        'bank_id',
-        'bank_account',
-        'banner'
-    ];
+    protected $guarded = [];
 
     public function bank()
     {
