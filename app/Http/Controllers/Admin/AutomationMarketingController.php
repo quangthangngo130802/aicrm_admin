@@ -17,6 +17,7 @@ class AutomationMarketingController extends Controller
 {
     public function index()
     {
+        $title = "Automation Marketing";
         $templates = OaTemplate::whereHas('zaloOa', function ($query) {
             $query->where('user_id', Auth::user()->id);
         })->get();
@@ -24,7 +25,7 @@ class AutomationMarketingController extends Controller
         $user = AutomationUser::where('user_id', Auth::user()->id)->first();
         $rate = AutomationRate::where('user_id', Auth::user()->id)->first();
         $reminder = AutomationReminder::where('user_id', Auth::user()->id)->first();
-        return view('admin.automation_marketing.index', compact('birthday', 'user', 'reminder', 'templates', 'rate'));
+        return view('admin.automation_marketing.index', compact('birthday', 'user', 'reminder', 'templates', 'rate', 'title'));
     }
 
     public function updateReminderStatus(Request $request)

@@ -50,8 +50,9 @@ class StoreController extends Controller
     public function index()
     {
         try {
+            $title = 'Danh sách khách hàng';
             $stores = $this->storeService->getAllStore();
-            return view('admin.store.index', compact('stores'));
+            return view('admin.store.index', compact('stores', 'title'));
         } catch (Exception $e) {
             Log::error('Failed to find any store' . $e->getMessage());
             return ApiResponse::error('Failed to find any store', 500);

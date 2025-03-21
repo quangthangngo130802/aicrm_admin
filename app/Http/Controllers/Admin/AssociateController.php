@@ -22,12 +22,13 @@ class AssociateController extends Controller
     public function index()
     {
         try {
+            $title = "Danh sách cộng sự";
             $associates = $this->associateService->getPaginatedAssociate();
             if (request()->ajax()) {
                 $view = view('admin.associate.table', compact('associates'))->render();
                 return response()->json(['success' => true, 'table' => $view]);
             }
-            return view('admin.associate.index', compact('associates'));
+            return view('admin.associate.index', compact('associates', 'title'));
         } catch (Exception $e) {
             Log::error("Failed to get Associates: " . $e->getMessage());
             return ApiResponse::error('Failed to get Associates' . $e->getMessage(), 500);

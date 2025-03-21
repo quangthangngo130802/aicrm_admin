@@ -26,6 +26,7 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         try {
+            $title = "Giao dịch nạp tiền";
             $status = $request->input('status');
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
@@ -39,7 +40,7 @@ class TransactionController extends Controller
                     'pagination' => $transactions->links('pagination::custom')->render(),
                 ]);
             }
-            return view('admin.transaction.index', compact('transactions'));
+            return view('admin.transaction.index', compact('transactions', 'title'));
         } catch (Exception $e) {
             Log::error("Failed to get paginated Transaction list: " . $e->getMessage());
             return ApiResponse::error("Failed to get paginated Transaction list", 500);
