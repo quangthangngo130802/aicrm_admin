@@ -11,19 +11,16 @@ class SuperAdmin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $table = 'super_admins';
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'password',
-        'bank_id',
-        'bank_account',
-        'banner'
-    ];
+    protected $guarded = [];
 
     public function bank()
     {
         return $this->belongsTo(Bank::class, 'bank_id');
+    }
+
+    public function bankcompany()
+    {
+        return $this->belongsTo(Bank::class, 'company_bank_id');
     }
 
     /**

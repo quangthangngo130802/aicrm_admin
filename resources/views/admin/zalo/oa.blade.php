@@ -2,84 +2,96 @@
 
 @section('content')
 
-    <div class="container mt-5" style="padding: 0px 40px">
-        <!-- Hiển thị thông báo thành công và thất bại -->
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
-            </div>
-        @endif
+<div class="container mt-5 px-5" >
+    <!-- Thông báo -->
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center shadow-sm p-3 rounded-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2 text-success"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center shadow-sm p-3 rounded-3" role="alert">
+            <i class="bi bi-x-circle-fill me-2 text-danger"></i> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
-        <h2 class="">OA Đang Kích Hoạt:</h2>
-        <div class="card mb-3">
-            <div class="card-body">
-                <p id="activeOaName">
-                    @php
-                        $activeOa = $connectedApps->firstWhere('is_active', 1);
-                        if ($activeOa) {
-                            echo $activeOa->name;
-                        } else {
-                            echo 'Chưa có OA nào được kích hoạt';
-                        }
-                    @endphp
-                </p>
+    <!-- OA Đang Kích Hoạt -->
+    <h2 class="mb-3 text-primary fw-bold">OA Đang Kích Hoạt</h2>
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+        <div class="card-body">
+            <h4 class="text-primary fw-bold mb-3" id="activeOaName">
+                @php
+                    $activeOa = $connectedApps->firstWhere('is_active', 1);
+                    echo $activeOa ? $activeOa->name : 'Chưa có OA nào được kích hoạt';
+                @endphp
+            </h4>
 
-                @if ($activeOa)
-                    <div class="mt-3">
-                        <h4>Thông tin OA hiện tại</h4>
-                        <p><strong>Access Token:</strong>
-                            <span id="accessTokenDisplay" data-token="{{ $activeOa->access_token }}">
-                                {{ substr($activeOa->access_token, 0, 20) }}...{{ substr($activeOa->access_token, -10) }}
-                            </span>
-                            <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('accessTokenDisplay')">Sao
-                                chép</button>
-                        </p>
-                        <p><strong>Refresh Token:</strong>
-                            <span id="refreshTokenDisplay" data-token="{{ $activeOa->refresh_token }}">
-                                {{ substr($activeOa->refresh_token, 0, 20) }}...{{ substr($activeOa->refresh_token, -10) }}
-                            </span>
-                            <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('refreshTokenDisplay')">Sao
-                                chép</button>
-                        </p>
-                        <button class="btn btn-secondary" id="refreshTokenBtn">Làm mới Access Token</button>
+            @if ($activeOa)
+                <hr class="my-4">
+                <h5 class="text-secondary">Thông tin OA hiện tại</h5>
+                <div class="mb-3">
+                    <strong>Access Token:</strong>
+                    <div class="d-flex align-items-center">
+                        <span class="text-muted flex-grow-1" id="accessTokenDisplay" data-token="{{ $activeOa->access_token }}">
+                            {{ substr($activeOa->access_token, 0, 25) }}...{{ substr($activeOa->access_token, -25) }}
+                        </span>
+                        <button class="btn btn-outline-primary btn-sm ms-2 rounded-pill" onclick="copyToClipboard('accessTokenDisplay')">
+                           Sao chép
+                        </button>
                     </div>
-                @endif
-            </div>
-        </div>
-
-        <h2>Kết nối Zalo OA</h2>
-        <div class="card mb-3">
-            <div class="card-body">
-                <div class="form-group">
-                    <label for="zaloOaInfo">Zalo OA</label>
-                    <select class="form-control" id="zaloOaInfo">
-                        <option value="" disabled selected>Chọn OA</option>
-                        @forelse ($connectedApps as $app)
-                            <option value="{{ $app->oa_id }}" data-access-token="{{ $app->access_token }}"
-                                data-refresh-token="{{ $app->refresh_token }}" data-is-active="{{ $app->is_active }}">
-                                {{ $app->name }}
-                            </option>
-                        @empty
-                            <option value="">Không có ứng dụng nào</option>
-                        @endforelse
-                    </select>
                 </div>
-                <!-- Thêm nút kết nối -->
-                <button class="btn btn-primary" id="connectOaBtn" disabled>Kết nối Zalo OA</button>
-            </div>
+                <div class="mb-3">
+                    <strong>Refresh Token:</strong>
+                    <div class="d-flex align-items-center">
+                        <span class="text-muted flex-grow-1" id="refreshTokenDisplay" data-token="{{ $activeOa->refresh_token }}">
+                            {{ substr($activeOa->refresh_token, 0, 25) }}...{{ substr($activeOa->refresh_token, -25) }}
+                        </span>
+                        <button class="btn btn-outline-primary btn-sm ms-2 rounded-pill" onclick="copyToClipboard('refreshTokenDisplay')">
+                            Sao chép
+                        </button>
+                    </div>
+                </div>
+                <button class="btn btn-secondary w-100 rounded-pill mt-3 py-2" id="refreshTokenBtn">
+                    <i class="fa-solid fa-arrows-rotate"></i> Làm mới Access Token
+                </button>
+            @endif
         </div>
-
-        @if ($connectedApps->isEmpty())
-            <div class="alert alert-danger" role="alert">
-                Không có dữ liệu Zalo OA. Vui lòng kiểm tra token hoặc địa chỉ API.
-            </div>
-        @endif
     </div>
+
+    <!-- Kết nối Zalo OA -->
+    <h2 class="mt-5 mb-3 text-primary fw-bold">Kết nối Zalo OA</h2>
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="zaloOaInfo" class="form-label fw-semibold">Chọn Zalo OA</label>
+                <select class="form-select rounded-pill shadow-sm" id="zaloOaInfo">
+                    <option value="">Chọn OA</option>
+                    @forelse ($connectedApps as $app)
+                        <option value="{{ $app->oa_id }}" data-access-token="{{ $app->access_token }}"
+                            data-refresh-token="{{ $app->refresh_token }}" data-is-active="{{ $app->is_active }}" @selected($app->is_active == 1)>
+                            {{ $app->name }}
+                        </option>
+                    @empty
+                        <option value="">Không có ứng dụng nào</option>
+                    @endforelse
+                </select>
+            </div>
+            <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold" id="connectOaBtn" @disabled($app->is_active != 1)>
+                <i class="bi bi-link"></i> Kết nối Zalo OA
+            </button>
+        </div>
+    </div>
+
+    <!-- Thông báo không có dữ liệu -->
+    @if ($connectedApps->isEmpty())
+        <div class="alert alert-warning text-center mt-4 rounded-pill shadow-sm p-3" role="alert">
+            <i class="bi bi-exclamation-circle"></i> Không có dữ liệu Zalo OA. Vui lòng kiểm tra token hoặc địa chỉ API.
+        </div>
+    @endif
+</div>
+
 
     <!-- Thêm thẻ meta CSRF Token nếu chưa có -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
