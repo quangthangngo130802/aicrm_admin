@@ -106,7 +106,7 @@ class TransactionController extends Controller
         $bank_id = $superAdmin->bank->shortName;
         $bank_account = $superAdmin->bank_account;
         //Account công ty
-        $bank_company_id = $superAdmin->bank->shortName;
+        $bank_company_id = $superAdmin->bankcompany->shortName;
         $bank_company_account = $superAdmin->company_bank_account;
         $description = $request->input('description');
         $account_name = $superAdmin->name;

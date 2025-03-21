@@ -18,6 +18,11 @@ class SuperAdmin extends Authenticatable
         return $this->belongsTo(Bank::class, 'bank_id');
     }
 
+    public function bankcompany()
+    {
+        return $this->belongsTo(Bank::class, 'company_bank_id');
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
