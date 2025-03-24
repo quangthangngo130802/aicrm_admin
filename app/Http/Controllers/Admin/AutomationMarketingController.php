@@ -79,7 +79,7 @@ class AutomationMarketingController extends Controller
     public function updateReminderTemplate(Request $request)
     {
         try {
-            Log::info('Request data: ', $request->all());
+
 
             $automationReminder = AutomationReminder::where('user_id', Auth::user()->id)->first();
             $automationReminder->template_id = $request->input('reminder_template_id');
@@ -87,7 +87,7 @@ class AutomationMarketingController extends Controller
 
             return response()->json(['success' => true]);
         } catch (Exception $e) {
-            Log::error('Failed to update rating status: ', $e->getMessage());
+            Log::error('Failed to update rating status: '. $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Cập nhật trạng thái Reminder thất bại', 'error' => $e->getMessage()]);
         }
     }
@@ -95,7 +95,7 @@ class AutomationMarketingController extends Controller
     public function updateBirthdayTemplate(Request $request)
     {
         try {
-            Log::info('Request data: ', $request->all());
+
 
             $automationBirthday = AutomationBirthday::where('user_id', Auth::user()->id)->first();
             $automationBirthday->template_id = $request->input('birthday_template_id');
@@ -103,23 +103,22 @@ class AutomationMarketingController extends Controller
 
             return response()->json(['success' => true]);
         } catch (Exception $e) {
-            Log::error('Failed to update rating status: ', $e->getMessage());
+            Log::error('Failed to update rating status: '. $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Cập nhật trạng thái Rating thất bại', 'error' => $e->getMessage()]);
         }
     }
 
     public function updateRateTemplate(Request $request)
     {
-        try {
-            Log::info('Request data: ', $request->all());
 
+        try {
             $automationRate = AutomationRate::where('user_id', Auth::user()->id)->first();
             $automationRate->template_id = $request->input('rate_template_id');
             $automationRate->save();
 
             return response()->json(['success' => true]);
         } catch (Exception $e) {
-            Log::error('Failed to update rating status: ', $e->getMessage());
+            Log::error('Failed to update rating status: '. $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Cập nhật trạng thái Rating thất bại', 'error' => $e->getMessage()]);
         }
     }
@@ -127,7 +126,6 @@ class AutomationMarketingController extends Controller
     public function updateUserTemplate(Request $request)
     {
         try {
-            Log::info('Request data:', $request->all()); // Ghi log dữ liệu yêu cầu
 
             $automationUser = AutomationUser::where('user_id', Auth::user()->id)->first();
             $automationUser->template_id = $request->input('template_id');
@@ -137,6 +135,21 @@ class AutomationMarketingController extends Controller
         } catch (Exception $e) {
             Log::error('Error updating template:', ['error' => $e->getMessage()]);
             return response()->json(['success' => false, 'message' => 'Cập nhật trạng thái thất bại', 'error' => $e->getMessage()]);
+        }
+    }
+
+    public function updateRateStartTime(Request $request)
+    {
+
+        try {
+            $automationRate = AutomationRate::where('user_id', Auth::user()->id)->first();
+            $automationRate->start_time = $request->input('start_time');
+            $automationRate->save();
+
+            return response()->json(['success' => true]);
+        } catch (Exception $e) {
+            Log::error('Error updating start_time: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Cập nhật giờ gửi thất bại']);
         }
     }
 
@@ -181,4 +194,20 @@ class AutomationMarketingController extends Controller
             return response()->json(['success' => false, 'message' => 'Cập nhật chu kỳ gửi thất bại']);
         }
     }
+
+
+    public function updateRateSendingCycle(Request $request)
+    {
+        try {
+            $automationReminder = AutomationRate::where('user_id', Auth::user()->id)->first();
+            $automationReminder->numbertime = $request->input('numbertime');
+            $automationReminder->save();
+
+            return response()->json(['success' => true]);
+        } catch (Exception $e) {
+            Log::error('Error updating sending cycle: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Cập nhật chu kỳ gửi thất bại']);
+        }
+    }
+
 }

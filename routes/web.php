@@ -122,6 +122,8 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
         Route::post('/update-reminder-start-time', [AutomationMarketingController::class, 'updateReminderStartTime'])->name('updateReminderStartTime');
         Route::post('/update-reminder-template', [AutomationMarketingController::class, 'updateReminderTemplate'])->name('updateReminderTemplate');
         Route::post('/update-reminder-status', [AutomationMarketingController::class, 'updateReminderStatus'])->name('updateReminderStatus');
+        Route::post('/update-rate-start-time', [AutomationMarketingController::class, 'updateRateStartTime'])->name('updateRateStartTime');
+        Route::post('/update-rate-sendingcycle', [AutomationMarketingController::class, 'updateRateSendingCycle'])->name('updateRateSendingCycle');
         // Route::get('/user', [AutomationController::class, 'user'])->name('user');
         // Route::post('/user', [AutomationController::class, 'userupdate'])->name('user.update');
 

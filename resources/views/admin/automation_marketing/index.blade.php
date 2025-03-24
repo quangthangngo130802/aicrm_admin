@@ -333,8 +333,16 @@
                                                             <span class="slider round"></span>
                                                         </label>
                                                     </td>
-                                                    <td></td>
-                                                    <td></td>
+                                                    <td>
+                                                        <input type="time" class="form-control sent-time-input-rate"
+                                                            value="{{ $rate->start_time }}"
+                                                            data-id="{{ $rate->id }}">
+                                                    </td>
+
+                                                    <td>
+                                                        <input type="number" class="form-control numbertime-input-rate"
+                                                            value="{{ $rate->numbertime }}">
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>3</td>
@@ -955,6 +963,110 @@
             $('.numbertime-input').on('blur', function(e) {
                 updateReminderSendingCycle($(this));
             });
+
+
+///////update _rate
+            var isRequestingRate = false; // Cờ kiểm tra xem có đang gửi yêu cầu AJAX hay không
+
+            $('.sent-time-input-rate').on('blur', function() {
+                // Khi mất focus (click chuột ra ngoài), lưu thời gian và kiểm tra cờ
+                if (!isRequestingRate) {
+                    isRequestingRate = true; // Đặt cờ là đang gửi yêu cầu
+                    saveRateStartTime($(this).val());
+                }
+            });
+
+            function saveRateStartTime(newStartTime) {
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateRateStartTime', ['username' => Auth::user()->username]) }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        start_time: newStartTime
+                    },
+                    success: function(response) {
+                        isRequestingRate = false; // Đặt cờ là không còn yêu cầu
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật giờ gửi thành công',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại',
+                                text: 'Cập nhật giờ gửi thất bại',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        isRequesting = false; // Đặt cờ là không còn yêu cầu
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            }
+
+
+            function updateRateSendingCycle(inputElement) {
+                let numbertime = inputElement.val();
+                let reminderId = inputElement.data('id');
+
+                $.ajax({
+                    url: '{{ route('admin.{username}.automation.updateRateSendingCycle', ['username' => Auth::user()->id]) }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        numbertime: numbertime,
+                        reminder_id: reminderId,
+                    },
+
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thành công',
+                                text: 'Cập nhật chu kỳ gửi thành công',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Thất bại',
+                                text: 'Cập nhật chu kỳ gửi thất bại',
+                                timer: 1500,
+                                showConfirmButton: false,
+                            });
+                        }
+                    },
+                    error: function() {
+                        isRequesting = false; // Đặt cờ là không còn yêu cầu
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra, vui lòng thử lại',
+                            timer: 1500,
+                            showConfirmButton: false,
+                        });
+                    }
+                });
+            }
+
+            $('.numbertime-input-rate').on('blur', function(e) {
+                updateRateSendingCycle($(this));
+            });
+
         });
     </script>
 @endsection
