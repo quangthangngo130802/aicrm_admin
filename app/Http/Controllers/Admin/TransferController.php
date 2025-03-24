@@ -22,6 +22,7 @@ class TransferController extends Controller
     public function index(Request $request)
     {
         try {
+            $title = "Giao dịch nhận tiền";
             $user_id = Auth::user()->id;
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
@@ -32,7 +33,7 @@ class TransferController extends Controller
                     'pagination' => $transfers->links('pagination::custom')->render(),
                 ]);
             }
-            return view('admin.transfer.index', compact('transfers'));
+            return view('admin.transfer.index', compact('transfers', 'title'));
         } catch (Exception $e) {
             Log::error('Failed to get Paginated transfer list for admin: ' . $e->getMessage());
             throw new Exception('Failed to get Paginated transfer list for admin');

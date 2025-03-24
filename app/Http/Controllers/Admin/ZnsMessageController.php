@@ -32,7 +32,7 @@ class ZnsMessageController extends Controller
     public function znsMessage(Request $request)
     {
         try {
-            $title = 'Danh sách tin nhắn đã gửi';
+            $title = 'Hạn mức tin nhắn';
             // Lấy tất cả các OA đang hoạt động
             $activeOas = ZaloOa::where('user_id', Auth::user()->id)->where('is_active', 1)->first()->id;
             // Lấy tất cả các tin nhắn từ các OA đang hoạt động
@@ -88,6 +88,7 @@ class ZnsMessageController extends Controller
 
     public function templateIndex()
     {
+        $title = 'Thông tin ZNS Template';
         $templates = $this->oaTemplateService->getAllTemplateByOaID();
         $initialTemplateData = null;
 
@@ -95,7 +96,7 @@ class ZnsMessageController extends Controller
             $initialTemplateData = $this->oaTemplateService->getTemplateById($templates->first()->template_id, $templates->first()->oa_id);
         }
 
-        return view('admin.message.template', compact('templates', 'initialTemplateData'));
+        return view('admin.message.template', compact('templates', 'initialTemplateData', 'title'));
     }
 
     public function getTemplateDetail(Request $request)
@@ -210,7 +211,8 @@ class ZnsMessageController extends Controller
 
     public function params()
     {
-        return view('admin.message.template_parameter');
+        $title = "Định dạng tham số khi tạo mẫu ZNS";
+        return view('admin.message.template_parameter', compact('title'));
     }
 
     public function export(Request $request)

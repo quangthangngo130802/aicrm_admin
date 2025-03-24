@@ -21,13 +21,14 @@ class ProductController extends Controller
     public function index()
     {
         try {
+            $title = 'Danh sách sản phẩm và dịch vụ';
             $products = $this->productService->getPaginatedProduct();
 
             if (request()->ajax()) {
                 $view = view('admin.product.table', compact('products'))->render(); // Thay $campaigns bằng $products
                 return response()->json(['success' => true, 'table' => $view]);
             }
-            return view('admin.product.index', compact('products'));
+            return view('admin.product.index', compact('products', 'title'));
         } catch (Exception $e) {
             Log::error('Failed to get Paginated product list: ' . $e->getMessage());
             return ApiResponse::error('Failed to get paginated product list', 500);

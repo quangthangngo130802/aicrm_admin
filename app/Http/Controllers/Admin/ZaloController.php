@@ -26,9 +26,10 @@ class ZaloController extends Controller
     }
     public function index()
     {
+        $title = 'Cấu hình Oa-Zns';
         $connectedApps = ZaloOa::where('user_id', Auth::user()->id)->get();
 
-        return view('admin.zalo.oa', compact('connectedApps'));
+        return view('admin.zalo.oa', compact('connectedApps', 'title'));
     }
     public function store(Request $request)
     {

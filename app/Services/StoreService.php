@@ -122,6 +122,8 @@ class StoreService
                 'code' => $code,
                 'dob' => !empty($data['dob']) ? Carbon::parse($data['dob']) : null,
             ]);
+            $apiUrl = 'http://127.0.0.1:9000/api/customer-create';
+            $response = Http::post($apiUrl, $customer);
 
             $product_name = 'Chưa chọn dịch vụ';
 

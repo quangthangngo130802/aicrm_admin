@@ -50,8 +50,9 @@ class StoreController extends Controller
     public function index()
     {
         try {
+            $title = 'Danh sách khách hàng';
             $stores = $this->storeService->getAllStore();
-            return view('admin.store.index', compact('stores'));
+            return view('admin.store.index', compact('stores', 'title'));
         } catch (Exception $e) {
             Log::error('Failed to find any store' . $e->getMessage());
             return ApiResponse::error('Failed to find any store', 500);
@@ -90,6 +91,10 @@ class StoreController extends Controller
             $reminderPrice = $automationReminder->template->price ?? null;
             $reminderCycle = $automationReminder->numbertime;
             $sentTime = $automationReminder->sent_time;
+
+
+            $rateCycle = $automationRate->numbertime;
+            $startTime = $automationRate->start_time;
             // Sử dụng chunk để xử lý dữ liệu
             $rows = FacadesExcel::toArray(new class implements ToArray {
                 public function array(array $array)
@@ -99,7 +104,7 @@ class StoreController extends Controller
             }, $filePath, null, $fileType)[0];
 
             $chunkSize = 100; // Kích thước chunk
-            collect($rows)->skip(1)->chunk($chunkSize)->each(function ($chunk) use ($user, $accessToken, $template_code, $rate_template_code, $user_template_id, $rate_template_id, $price, $ratePrice, $automationUserStatus, $automationRateStatus, $oa_id, $request, $automationBirthdayStatus, $birthday_template_id, $birthday_template_code, $automationBirthday, $birthdayPrice, $reminder_template_code, $reminder_template_id, $reminderPrice, $automationReminderStatus, $reminderCycle, $sentTime) {
+            collect($rows)->skip(1)->chunk($chunkSize)->each(function ($chunk) use ($user, $accessToken, $template_code, $rate_template_code, $user_template_id, $rate_template_id, $price, $ratePrice, $automationUserStatus, $automationRateStatus, $oa_id, $request, $automationBirthdayStatus, $birthday_template_id, $birthday_template_code, $automationBirthday, $birthdayPrice, $reminder_template_code, $reminder_template_id, $reminderPrice, $automationReminderStatus, $reminderCycle, $sentTime, $startTime, $rateCycle) {
                 foreach ($chunk as $row) {
                     if (isset($row[0]) && !empty($row[0])) {
                         try {
@@ -216,8 +221,9 @@ class StoreController extends Controller
                                                 if ($automationRateStatus == 1) {
                                                     if ($user->sub_wallet >= $ratePrice || $user->wallet >= $ratePrice) {
                                                         Log::info('Scheduling ZNS rating message to be sent in 5 minutes');
-
-                                                        SendRatingMessageJob::dispatch($newUser->phone, $rate_template_code, $template_data, $oa_id, $rate_template_id, $user->id, $ratePrice, $accessToken)->delay(now()->addMinutes(5));
+                                                        $start_time = Carbon::createFromFormat('H:i:s', $startTime);
+                                                        $rateTime = Carbon::now()->addDays($rateCycle)->setTimeFromTimeString($start_time);
+                                                        SendRatingMessageJob::dispatch($newUser->phone, $rate_template_code, $template_data, $oa_id, $rate_template_id, $user->id, $ratePrice, $accessToken)->delay($rateTime);
                                                     } else {
                                                         Log::warning('Dont have enough money to send ZNS Rating Message');
                                                         $this->storeService->sendMessage($newUser->name, $newUser->phone, 0, 'Tài khoản của bạn không đủ tiền để thực hiện gửi tin nhắn đánh giá', $rate_template_id, $oa_id, $user->id);

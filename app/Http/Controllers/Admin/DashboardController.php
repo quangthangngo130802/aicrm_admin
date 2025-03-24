@@ -21,7 +21,7 @@ class DashboardController extends Controller
     //
     public function index()
     {
-        $title = 'Dashboard';
+        $title = 'Bảng thống kê hệ thống gửi tin nhắn Zalo ZNS';
         // $toleprice = Transaction::sum('amount');
 
         $toleprice = ZnsMessage::where('user_id', Auth::user()->id)->where('status', 1)

@@ -15,7 +15,9 @@ class AutomationRate extends Model
         'name',
         'template_id',
         'user_id',
-        'status'
+        'status',
+        'start_time',
+        'numbertime'
     ];
 
     public function template()
