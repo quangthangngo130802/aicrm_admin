@@ -51,7 +51,7 @@ class StoreController extends Controller
     {
         try {
             $title = 'Danh sách khách hàng';
-            $stores = $this->storeService->getAllStore();
+            $stores = Customer::where('user_id', Auth::id())->orderByDesc('created_at')->paginate(10);
             return view('admin.store.index', compact('stores', 'title'));
         } catch (Exception $e) {
             Log::error('Failed to find any store' . $e->getMessage());

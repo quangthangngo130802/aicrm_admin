@@ -122,7 +122,7 @@ class StoreService
                 'code' => $code,
                 'dob' => !empty($data['dob']) ? Carbon::parse($data['dob']) : null,
             ]);
-            $apiUrl = 'http://127.0.0.1:9000/api/customer-create';
+            $apiUrl = 'https://sgovn.dev/api/customer-create';
             $response = Http::post($apiUrl, $customer);
 
             $product_name = 'Chưa chọn dịch vụ';
@@ -134,6 +134,7 @@ class StoreService
                     $product_name = $product->name;
                 }
             }
+            // dd($product_name);
             Log::info('Customer created successfully: ' . json_encode($customer));
 
             // Lấy token và thông tin cần thiết từ API Zalo
@@ -298,8 +299,9 @@ class StoreService
             if (!empty($data['product_id'])) {
                 $product = Product::find($data['product_id']);
                 $product_name = $product ? $product->name : $product_name;
-            }
 
+            }
+            // dd($product_name);
             $accessToken = $this->zaloOaService->getAccessToken();
             $oa_id = ZaloOa::where('user_id', Auth::user()->id)->where('is_active', 1)->first()->id;
             $automationUser = AutomationUser::where('user_id', Auth::user()->id)->first();
@@ -319,7 +321,7 @@ class StoreService
             $birthdayPrice = $automationBirthday->template->price ?? null;
             $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name);
 
-            $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name);
+            // $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name);
             if ($automationUserStatus == 1) {
                 if ($user->sub_wallet >= $price || $user->wallet >= $price) {
                     try {
