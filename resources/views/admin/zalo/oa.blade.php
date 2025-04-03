@@ -78,9 +78,12 @@
                     @endforelse
                 </select>
             </div>
-            <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold" id="connectOaBtn" @disabled($app->is_active != 1)>
-                <i class="bi bi-link"></i> Kết nối Zalo OA
-            </button>
+           @if (isset($app->is_active))
+           <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold" id="connectOaBtn" @disabled($app->is_active != 1)>
+            <i class="bi bi-link"></i> Kết nối Zalo OA
+        </button>
+           @endif
+
         </div>
     </div>
 

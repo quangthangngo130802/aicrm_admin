@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SuperAdminController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\BaoHanhController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,3 +38,11 @@ Route::post('automation-rate', [AutomationRateController::class, 'automationRate
 Route::post('automation-birthday', [AutomationBirthdayController::class, 'automationBirthday']);
 Route::post('automation-reminder', [AutomationReminderController::class, 'automationReminder']);
 Route::post('/update-super-admin',  [SuperAdminController::class, 'updateSuperAdmin']);
+
+Route::post('bao-hanh-san-pham', [BaoHanhController::class, 'update']);
+Route::get('messages', function (){
+    return response()->json([
+        'status' => 200,
+        'message' => 'Thành công'
+    ]);
+});
