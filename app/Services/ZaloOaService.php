@@ -149,4 +149,30 @@ class ZaloOaService
             throw new Exception('Failed to refresh access token');
         }
     }
+
+    public function getAccessTokenUser($id)
+    {
+        //Lấy OA từ database
+        $oa = ZaloOa::where('user_id', $id)->where('is_active', 1)->first();
+        Log::info($oa);
+        // die();
+        if (!$oa) {
+            Log::error('Không tìm thấy OA nào có trạng thái là is_active');
+            throw new Exception('Không tìm thấy OA đang hoạt động ');
+        }
+
+        $accessToken = $oa->access_token;
+        $accessTokenExpiration = $oa->access_token_expiration;
+
+        //Nếu không có access token hoặc access token đã hết hạnn
+        if (!$accessToken || now()->greaterThan($accessTokenExpiration)) {
+            Log::info('Access token hết hạn hoặc không tồn tại, đang refresh access token');
+
+            //Làm mói access token bằng refresh token từ db
+            $accessToken = $this->refreshAccessToken($oa->refresh_token, $oa);
+        }
+
+        Log::info('Đang lấy Access Token: ' . $accessToken);
+        return $accessToken;
+    }
 }
