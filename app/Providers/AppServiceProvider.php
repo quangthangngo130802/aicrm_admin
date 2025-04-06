@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Http\View\Composers\NotificationComposer;
+use App\Models\OaTemplate;
 use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\Transfer;
+use App\Models\ZaloOa;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -44,9 +46,12 @@ class AppServiceProvider extends ServiceProvider
                     })
                     ->where('user_id', $id)
                     ->get();
+                $id = Auth::id();
+                $templateUser = ZaloOa::where('user_id', $id)->with('template')->first();
+                // dd($templateUser);
 
                 // Truyền biến vào view
-                $view->with('adminNotifications', $adminNotifications);
+                $view->with('adminNotifications', $adminNotifications)->with('templateUser', $templateUser);;
             }
         });
 

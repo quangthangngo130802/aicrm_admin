@@ -13,6 +13,7 @@ use App\Models\AutomationReminder;
 use App\Models\AutomationUser;
 use App\Models\Config;
 use App\Models\Customer;
+use App\Models\OaTemplate;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\ZaloOa;
@@ -134,6 +135,8 @@ class StoreService
                     $product_name = $product->name;
                 }
             }
+
+            $template_new = OaTemplate::find($data['template_id']);
             // dd($product_name);
             Log::info('Customer created successfully: ' . json_encode($customer));
 
@@ -144,7 +147,8 @@ class StoreService
             $automationRate = AutomationRate::where('user_id', Auth::user()->id)->first();
             $automationBirthday = AutomationBirthday::where('user_id', Auth::user()->id)->first();
             $automationReminder = AutomationReminder::where('user_id', Auth::user()->id)->first();
-            $template_code = $automationUser->template->template_id ?? null;
+            $template_code = $template_new ? $template_new->template_id : $automationUser->template->template_id ?? null;
+            // $template_code = $automationUser->template->template_id ?? null;
             $rate_template_code = $automationRate->template->template_id ?? null;
             $birthday_template_code = $automationBirthday->template->template_id ?? null;
             $reminder_template_code = $automationReminder->template->template_id ?? null;
@@ -301,16 +305,18 @@ class StoreService
                 $product_name = $product ? $product->name : $product_name;
 
             }
+
+            $template_new = OaTemplate::find($data['template_id']);
             // dd($product_name);
             $accessToken = $this->zaloOaService->getAccessToken();
             $oa_id = ZaloOa::where('user_id', Auth::user()->id)->where('is_active', 1)->first()->id;
             $automationUser = AutomationUser::where('user_id', Auth::user()->id)->first();
             $automationRate = AutomationRate::where('user_id', Auth::user()->id)->first();
             $automationBirthday = AutomationBirthday::where('user_id', Auth::user()->id)->first();
-            $template_code = $automationUser->template->template_id ?? null;
+            $template_code = $template_new ? $template_new->template_id : $automationUser->template->template_id ?? null;
             $rate_template_code = $automationRate->template->template_id ?? null;
             $birthday_template_code = $automationBirthday->template->template_id ?? null;
-            $user_template_id = $automationUser->template_id ?? null;
+            $user_template_id = $data['template_id'] ?? $automationUser->template_id;
             $rate_template_id = $automationRate->template_id ?? null;
             $birthday_template_id = $automationBirthday->template_id ?? null;
             $automationUserStatus = $automationUser->status ?? null;

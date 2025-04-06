@@ -31,4 +31,9 @@ class ZaloOa extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function template()
+    {
+        return $this->hasMany(OaTemplate::class, 'oa_id', 'id');
+    }
 }

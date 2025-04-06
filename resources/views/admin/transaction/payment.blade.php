@@ -91,7 +91,7 @@
                 <div class="row mt-3">
                     <div class="form-group col-12">
                         <input type="text" id="amount" class="form-control" name="amount"
-                            placeholder="Tối thiểu 5 triệu đồng" />
+                            placeholder="Tối thiểu 3 triệu đồng" />
                     </div>
 
                     <div class="form-group col-12 mt-3">
@@ -100,7 +100,7 @@
                     </div>
                 </div>
                 <div class="invoice mt-3">
-                    <p class="fw-bold mb-2" style="color: gray">Yêu cầu hóa đơn</p>
+                    <p class=" mb-2" style="color: gray">Yêu cầu hóa đơn</p>
                     <div class="d-flex gap-3">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" value="5" name="flexRadioDefault"
@@ -121,7 +121,7 @@
 
                 <div class="card bg-white mt-3 d-none" id="invoiceDetails">
                     <div class="card-header">
-                        <p class="fw-bold my-2" style="color: gray">
+                        <p class=" my-2" style="color: gray">
                             Thông tin xuất hóa đơn
                         </p>
 
@@ -189,73 +189,72 @@
     <!--Modal cập nhật thông tin người dùng-->
     <div class="modal fade" id="editInvoiceModal" tabindex="-1" aria-labelledby="editInvoiceModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editInvoiceModalLabel">Chỉnh sửa thông tin xuất hóa đơn</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form
-                        action="{{ route('admin.{username}.update', ['username' => Auth::user()->username, 'id' => $authUser->id]) }}"
+                    <form action="{{ route('admin.{username}.update', ['username' => Auth::user()->username, 'id' => $authUser->id]) }}"
                         method="POST">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="companyName" class="form-label">Tên công ty</label>
-                                    <input type="text" value="{{ $authUser->company_name ?? '' }}"
-                                        class="form-control" id="companyName" name="company_name"
-                                        placeholder="Nhập tên công ty">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="taxCode" class="form-label">Mã số thuế</label>
-                                    <input type="text" value="{{ $authUser->tax_code ?? '' }}"
-                                        class="form-control" id="taxCode" name="tax_code"
-                                        placeholder="Nhập mã số thuế">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="name" class="form-label">Họ tên</label>
-                                    <input type="text" value="{{ $authUser->name ?? '' }}" class="form-control"
-                                        id="name" name="name" placeholder="Nhập họ tên người nhận hoá đơn"
-                                        required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label for="phone" class="form-label">Số điện thoại</label>
-                                    <input type="text" value="{{ $authUser->phone ?? '' }}" class="form-control"
-                                        id="phone" name="phone"
-                                        placeholder="Nhập số điện thoại nhận hoá đơn của doanh nghiệp" required>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group mb-3">
-                                    <label for="email" class="form-label">Email nhận hoá đơn điện tử</label>
-                                    <input type="email" value="{{ $authUser->email ?? '' }}" class="form-control"
-                                        id="email" name="email"
-                                        placeholder="Nhập email nhận hoá đơn của doanh nghiệp" required>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group mb-3">
-                                    <label for="address" class="form-label">Địa chỉ công ty</label>
-                                    <input type="text" value="{{ $authUser->address ?? '' }}"
-                                        class="form-control" id="address" name="address"
-                                        placeholder="Nhập địa chỉ công ty" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between mt-3">
-                            <button type="button" class="btn btn-secondary cancel-btn" data-bs-dismiss="modal">Hủy
-                                bỏ</button>
-                            <button type="submit" class="btn btn-primary save-btn">Lưu thông tin này</button>
-                        </div>
-                    </form>
+                      @csrf
+                      <div class="row g-4">
+                          <!-- Tên công ty -->
+                          <div class="col-md-6">
+                              <label for="companyName" class="form-label ">Tên công ty</label>
+                              <input type="text" value="{{ $authUser->company_name ?? '' }}"
+                                     class="form-control " id="companyName" name="company_name"
+                                     placeholder="Nhập tên công ty">
+                          </div>
+
+                          <!-- Mã số thuế -->
+                          <div class="col-md-6">
+                              <label for="taxCode" class="form-label ">Mã số thuế</label>
+                              <input type="text" value="{{ $authUser->tax_code ?? '' }}"
+                                     class="form-control " id="taxCode" name="tax_code"
+                                     placeholder="Nhập mã số thuế">
+                          </div>
+
+                          <!-- Họ tên -->
+                          <div class="col-md-6">
+                              <label for="name" class="form-label ">Họ tên</label>
+                              <input type="text" value="{{ $authUser->name ?? '' }}"
+                                     class="form-control " id="name" name="name"
+                                     placeholder="Nhập họ tên người nhận hoá đơn" required>
+                          </div>
+
+                          <!-- Số điện thoại -->
+                          <div class="col-md-6">
+                              <label for="phone" class="form-label ">Số điện thoại</label>
+                              <input type="text" value="{{ $authUser->phone ?? '' }}"
+                                     class="form-control " id="phone" name="phone"
+                                     placeholder="Nhập số điện thoại nhận hoá đơn của doanh nghiệp" required>
+                          </div>
+
+                          <!-- Email -->
+                          <div class="col-md-12">
+                              <label for="email" class="form-label ">Email nhận hoá đơn điện tử</label>
+                              <input type="email" value="{{ $authUser->email ?? '' }}"
+                                     class="form-control " id="email" name="email"
+                                     placeholder="Nhập email nhận hoá đơn của doanh nghiệp" required>
+                          </div>
+
+                          <!-- Địa chỉ công ty -->
+                          <div class="col-md-12">
+                              <label for="address" class="form-label ">Địa chỉ công ty</label>
+                              <textarea class="form-control " id="address" name="address"
+                                        rows="2" placeholder="Nhập địa chỉ công ty" required>{{ $authUser->address ?? '' }}</textarea>
+                          </div>
+                      </div>
+
+                      <!-- Buttons -->
+                      <div class="d-flex justify-content-end mt-4">
+                          <button type="button" class="btn btn-secondary me-2 cancel-btn" data-bs-dismiss="modal">Hủy bỏ</button>
+                          <button type="submit" class="btn btn-primary save-btn">Lưu thông tin này</button>
+                      </div>
+                  </form>
+
                 </div>
             </div>
         </div>
@@ -285,7 +284,7 @@
 
                 //Kiếm tra nếu giá trị >= 5 triệu thì bật nút tiếp tục
                 const amountValue = parseInt(value);
-                if (amountValue >= 5000000) {
+                if (amountValue >= 3000000) {
                     $('.continue-btn').prop('disabled', false);
                 } else {
                     $('.continue-btn').prop('disabled', true);

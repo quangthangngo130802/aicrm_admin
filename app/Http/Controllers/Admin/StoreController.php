@@ -482,11 +482,14 @@ class StoreController extends Controller
                 //         return $query->where('user_id', Auth::user()->id);
                 //     })
                 // ],
+                'template_id' => 'nullable',
                 'dob' => 'nullable',
                 'address' => 'nullable',
                 'source' => 'nullable',
                 'product_id' => 'nullable|exists:sgo_products,id', // Kiểm tra product_id
             ]);
+
+            // dd($validated);
 
             Log::info('Validation passed', $validated);
 
