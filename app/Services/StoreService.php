@@ -484,6 +484,7 @@ class StoreService
             'status' => 'Đăng ký thành công',
             'price' => number_format($price),
             'custom_field' => $custom_field ?? "",
+            'address' => $custom_field,
             'product_name' => $product_name,
             'payment' => 'Chuyển khoản ngân hàng',
             'phone' => $phone,
