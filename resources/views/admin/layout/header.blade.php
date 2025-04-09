@@ -299,9 +299,14 @@
                         <label for="product_id">Template</label>
                         <select class="form-control" id="template_id" name="template_id">
                             <option value="">Chọn template</option>
-                            @foreach ($templateUser->template as $template)
-                                <option value="{{ $template->id }}">{{ $template->template_name }}</option>
-                            @endforeach
+                            @if ($templateUser && $templateUser->template)
+                                @foreach ($templateUser->template as $template)
+                                    <option value="{{ $template->id }}">{{ $template->template_name }}</option>
+                                @endforeach
+                            @else
+                            {{-- <option value="">Chưa có template</option> --}}
+                            @endif
+
                         </select>
                         <div class="invalid-feedback" id="product_id-error"></div>
                     </div>
