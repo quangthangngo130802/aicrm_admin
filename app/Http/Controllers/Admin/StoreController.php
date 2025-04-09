@@ -213,7 +213,7 @@ class StoreController extends Controller
                                             $this->storeService->sendMessage($newUser->name, $newUser->phone, $status, $responseData['message'], $user_template_id, $oa_id, $user->id);
                                             if ($status == 1) {
                                                 Log::info('Gửi ZNS thành công');
-                                                $this->storeService->deductMoneyFromAdminWallet($newUser->id, $price);
+                                                $this->storeService->deductMoneyFromAdminWallet($user->id, $price);
                                                 if ($user->sub_wallet >= $price) {
                                                     $user->sub_wallet -= $price;
                                                 } elseif ($user->wallet >= $price) {
