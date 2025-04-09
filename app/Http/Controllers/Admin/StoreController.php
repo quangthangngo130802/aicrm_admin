@@ -183,7 +183,7 @@ class StoreController extends Controller
                                     $product_name = $product->name; // Lấy tên sản phẩm nếu có
                                 }
                             }
-                            $template_data = $this->storeService->templateData($newUser->name, $newUser->code, $newUser->phone, $price, $newUser->address, $product_name);
+                            $template_data = $this->storeService->templateDataNew($newUser->name, $newUser->code, $newUser->phone, $price, $newUser->address, $row[5], $product_name);
                             // dd($template_data);
                             if ($newUser) {
                                 if ($automationUserStatus == 1) {
@@ -309,7 +309,7 @@ class StoreController extends Controller
                                 'product_id' => $request->product_id,
                                 'dob' => Carbon::parse($dob),
                             ]);
-                            $template_data2 = $this->storeService->templateData($existingUser->name, $existingUser->code, $existingUser->phone, $price, $existingUser->address, $product_name);
+                            $template_data2 = $this->storeService->templateDataNew($existingUser->name, $existingUser->code, $existingUser->phone, $price, $existingUser->address,$row[5], $product_name);
                             if ($automationUserStatus == 1) {
                                 if ($user->sub_wallet >= $price || $user->wallet >= $price) {
                                     try {

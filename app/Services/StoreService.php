@@ -496,4 +496,27 @@ class StoreService
 
         return $template_data;
     }
+
+    public function templateDataNew($name, $order_code, $phone, $price, $address, $custom_field, $product_name)
+    {
+        $template_data = [
+            'date' => Carbon::now()->format('d/m/Y') ?? "",
+            'name' => $name ?? "",
+            'order_code' => $order_code,
+            'phone_number' => $phone,
+            'status' => 'Đăng ký thành công',
+            'price' => number_format($price),
+            'custom_field' => $custom_field ?? "",
+            'address' => $address,
+            'product_name' => $product_name,
+            'payment' => 'Chuyển khoản ngân hàng',
+            'phone' => $phone,
+            'payment_status' => 'Chuyển khoản thành công',
+            'customer_name' => $name ?? '',
+            'time' => Carbon::now()->format('h:i:s d/m/Y') ?? "",
+            'order_date' => Carbon::now()->format('d/m/Y') ?? "",
+        ];
+
+        return $template_data;
+    }
 }
