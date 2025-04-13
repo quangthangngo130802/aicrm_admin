@@ -164,7 +164,7 @@ class StoreService
             $ratePrice = $automationRate->template->price ?? null;
             $birthdayPrice = $automationBirthday->template->price ?? null;
             $reminderPrice = $automationReminder->template->price ?? null;
-            $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name);
+            $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name, $data['custom_field']);
             $reminderCycle = $automationReminder->numbertime ?? null;
             // Kiểm tra trạng thái automation
             if ($automationUserStatus == 1) {
@@ -325,7 +325,7 @@ class StoreService
             $price = $automationUser->template->price ?? null;
             $ratePrice = $automationRate->template->price ?? null;
             $birthdayPrice = $automationBirthday->template->price ?? null;
-            $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name);
+            $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name,$data['custom_field']);
 
             // $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name);
             if ($automationUserStatus == 1) {
@@ -474,7 +474,7 @@ class StoreService
         Log::info('Tin nhắn đã được gửi đến SuperAdmin thành công.');
     }
 
-    public function templateData($name, $order_code, $phone, $price, $custom_field, $product_name)
+    public function templateData($name, $order_code, $phone, $price, $address, $product_name, $custom_field)
     {
         $template_data = [
             'date' => Carbon::now()->format('d/m/Y') ?? "",
@@ -484,7 +484,7 @@ class StoreService
             'status' => 'Đăng ký thành công',
             'price' => number_format($price),
             'custom_field' => $custom_field ?? "",
-            'address' => $custom_field,
+            'address' => $address,
             'product_name' => $product_name,
             'payment' => 'Chuyển khoản ngân hàng',
             'phone' => $phone,

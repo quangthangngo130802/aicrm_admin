@@ -280,15 +280,20 @@
                         <input type="text" class="form-control" id="phone" name="phone" required>
                         <div class="invalid-feedback" id="phone-error"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" >
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" name="email">
                         <div class="invalid-feedback" id="email-error"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="display: none">
                         <label for="dob">Ngày sinh</label>
                         <input type="date" class="form-control" id="dob" name="dob">
                         <div class="invalid-feedback" id="dob-error"></div>
+                    </div>
+                    <div class="form-group" >
+                        <label for="email">Note</label>
+                        <input type="text" class="form-control" id="custom_field" name="custom_field">
+                        <div class="invalid-feedback" id="custom_field-error"></div>
                     </div>
                     <div class="form-group">
                         <label for="address">Địa chỉ</label>

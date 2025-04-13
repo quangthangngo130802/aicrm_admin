@@ -485,6 +485,7 @@ class StoreController extends Controller
                 // ],
                 'template_id' => 'nullable',
                 'dob' => 'nullable',
+                'custom_field' => 'nullable',
                 'address' => 'nullable',
                 'source' => 'nullable',
                 'product_id' => 'nullable|exists:sgo_products,id', // Kiểm tra product_id
