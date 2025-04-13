@@ -28,8 +28,8 @@ class OaTemplateService
     public function getAllTemplateByOaID()
     {
         try {
-            $oa_id = ZaloOa::where('is_active', 1)->where('user_id', Auth::user()->id)->first()->id;
-            return $this->oaTemplate->where('oa_id', $oa_id)->get();
+            $oa_id = ZaloOa::where('is_active', 1)->where('user_id', Auth::user()->id)->first()->id ?? '';
+            return $this->oaTemplate->where('oa_id', $oa_id)->get() ?? '';
         } catch (Exception $e) {
             Log::error('Failed to get templates: ' . $e->getMessage());
             throw new Exception('Failed to get templates');

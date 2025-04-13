@@ -105,6 +105,7 @@ class StoreController extends Controller
 
             $chunkSize = 100; // Kích thước chunk
             collect($rows)->skip(1)->chunk($chunkSize)->each(function ($chunk) use ($user, $accessToken, $template_code, $rate_template_code, $user_template_id, $rate_template_id, $price, $ratePrice, $automationUserStatus, $automationRateStatus, $oa_id, $request, $automationBirthdayStatus, $birthday_template_id, $birthday_template_code, $automationBirthday, $birthdayPrice, $reminder_template_code, $reminder_template_id, $reminderPrice, $automationReminderStatus, $reminderCycle, $sentTime, $startTime, $rateCycle) {
+               Log::info($chunk);
                 foreach ($chunk as $row) {
                     if (isset($row[0]) && !empty($row[0])) {
                         try {
@@ -164,8 +165,8 @@ class StoreController extends Controller
                                 'name' => $row[0],
                                 'phone' => $phone,
                                 'email' => $row[2] ?? null,
-                                'city_id' => $city->id ?? null,
-                                'address' => $row[5] ?? null,
+                                // 'city_id' => $city->id ?? null,
+                                'address' => $row[4] ?? null,
                                 'source' => $request->source,
                                 'user_id' => Auth::user()->id,
                                 'product_id' => $request->product_id,
@@ -182,7 +183,8 @@ class StoreController extends Controller
                                     $product_name = $product->name; // Lấy tên sản phẩm nếu có
                                 }
                             }
-                            $template_data = $this->storeService->templateData($newUser->name, $newUser->code, $newUser->phone, $price, $newUser->address, $product_name);
+                            $template_data = $this->storeService->templateDataNew($newUser->name, $newUser->code, $newUser->phone, $price, $newUser->address, $row[5], $product_name);
+                            // dd($template_data);
                             if ($newUser) {
                                 if ($automationUserStatus == 1) {
                                     if ($user->sub_wallet >= $price || $user->wallet >= $price) {
@@ -211,7 +213,7 @@ class StoreController extends Controller
                                             $this->storeService->sendMessage($newUser->name, $newUser->phone, $status, $responseData['message'], $user_template_id, $oa_id, $user->id);
                                             if ($status == 1) {
                                                 Log::info('Gửi ZNS thành công');
-                                                $this->storeService->deductMoneyFromAdminWallet($newUser->id, $price);
+                                                $this->storeService->deductMoneyFromAdminWallet($user->id, $price);
                                                 if ($user->sub_wallet >= $price) {
                                                     $user->sub_wallet -= $price;
                                                 } elseif ($user->wallet >= $price) {
@@ -300,15 +302,14 @@ class StoreController extends Controller
                             }
                             $existingUser->update([
                                 'name' => $row[0],
-                                'address' => $data['address'] ?? null,
+                                'address' => $row[4] ?? null,
                                 'email' => $row[2] ?? null,
                                 'city_id' => $city->id ?? null,
-                                'address' => $row[5] ?? null,
                                 'source' => $request->source,
                                 'product_id' => $request->product_id,
                                 'dob' => Carbon::parse($dob),
                             ]);
-                            $template_data2 = $this->storeService->templateData($existingUser->name, $existingUser->code, $existingUser->phone, $price, $existingUser->address, $product_name);
+                            $template_data2 = $this->storeService->templateDataNew($existingUser->name, $existingUser->code, $existingUser->phone, $price, $existingUser->address,$row[5], $product_name);
                             if ($automationUserStatus == 1) {
                                 if ($user->sub_wallet >= $price || $user->wallet >= $price) {
                                     try {
@@ -482,11 +483,14 @@ class StoreController extends Controller
                 //         return $query->where('user_id', Auth::user()->id);
                 //     })
                 // ],
+                'template_id' => 'nullable',
                 'dob' => 'nullable',
                 'address' => 'nullable',
                 'source' => 'nullable',
                 'product_id' => 'nullable|exists:sgo_products,id', // Kiểm tra product_id
             ]);
+
+            // dd($validated);
 
             Log::info('Validation passed', $validated);
 

@@ -201,7 +201,7 @@
                                         <button id="open-import-modal" type="button" class="btn btn-primary">
                                             Import danh sách khách hàng
                                         </button>
-                                        <a href="{{ asset('excel/sample.xlsx') }}" class="btn btn-secondary" download>
+                                        <a href="{{ asset('excel/sample1.xlsx') }}" class="btn btn-secondary" download>
                                             Tải file mẫu
                                         </a>
                                     </div>
@@ -408,6 +408,7 @@
                                 text: response.message,
                             });
                             $('#importModal').modal('hide'); // Đóng modal nếu import thành công
+
                         } else {
                             Swal.fire({
                                 icon: 'error',
