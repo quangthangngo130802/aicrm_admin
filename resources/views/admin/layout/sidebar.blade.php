@@ -212,6 +212,51 @@
                         </ul>
                     </div>
                 </li>
+
+                @if (Auth::user()->username == 'sgovn')
+                    <li class="nav-item">
+                        <a data-bs-toggle="collapse" href="#message">
+                            <i class="fas fa-cogs"></i>
+                            <p>Tin nhắn</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse" id="message">
+                            <ul class="nav nav-collapse">
+                                <li>
+                                    <a
+                                        href="{{ route('admin.{username}.message.zalo.text', ['username' => Auth::user()->username]) }}">
+                                        <span class="sub-item">Tin tư vấn</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        href="{{ route('admin.{username}.message.zalo.transaction', ['username' => Auth::user()->username]) }}">
+                                        <span class="sub-item">Tin giao dịch</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.{username}.message.zalo.media', ['username' => Auth::user()->username]) }}"
+                                        class="check-zalo-oa">
+                                        <span class="sub-item">Tin truyền thông</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+
+
+                    <li class="nav-item">
+                        <a
+                            href="{{ route('admin.{username}.articles.list', ['username' => Auth::user()->username]) }}">
+                            <i class="fa-regular fa-file-lines"></i>
+                            <p>Danh sách bài viết</p>
+                        </a>
+                    </li>
+                @endif
+
+
+
             </ul>
         </div>
     </div>

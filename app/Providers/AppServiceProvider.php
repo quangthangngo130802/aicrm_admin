@@ -8,10 +8,15 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\Transfer;
 use App\Models\ZaloOa;
+use App\Models\ZaloUser;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -64,17 +69,80 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        // Composer cho superadmin layout
-        View::composer('superadmin.layout.header', function ($view) {
-            if (Auth::check()) {
-                $id = Auth::id();
-                $superAdminNotifications = Transaction::orderByDesc('created_at')
-                    ->where('notification', 1)
-                    ->get();
-
-                // Truyền biến vào view
-                $view->with('superAdminNotifications', $superAdminNotifications);
-            }
+        View::composer('admin.tinnhan.*', function ($view) {
+            $this->syncZaloUsers();
         });
+        // $this->syncZaloUsers();
+    }
+
+    public function syncZaloUsers()
+    {
+        $offset = 0;
+        $count = 50;
+        $inserted = 0;
+        $accessToken = ZaloOa::where('user_id', Auth::user()->id)->first()->access_token;
+        do {
+            $response = Http::withHeaders([
+                'access_token' => $accessToken,
+            ])->get('https://openapi.zalo.me/v3.0/oa/user/getlist', [
+                'data' => json_encode([
+                    'offset' => $offset,
+                    'count' => $count,
+                    'is_follower' => 'true'
+                ])
+            ]);
+
+            if (!$response->successful()) {
+                break;
+            }
+
+            $data = $response->json();
+            $users = $data['data']['users'] ?? [];
+
+            foreach ($users as $user) {
+                $exists = ZaloUser::where('user_id', $user['user_id'])->where('admin_id', Auth::user()->id )->exists();
+                if (!$exists) {
+                    $result = $this->getZaloUserDetail($user['user_id'], $accessToken);
+                    $data = $result->getData(true);
+                    $userInfo = $data['data'];
+                    ZaloUser::create([
+                        'user_id' => $user['user_id'],
+                        'display_name' => $userInfo['display_name'] ?? null,
+                        'admin_id' => Auth::user()->id
+                    ]);
+                    $inserted++;
+                }
+            }
+
+            $offset += count($users);
+        } while (count($users) === $count);
+
+        return "Đã lưu $inserted người dùng vào cơ sở dữ liệu.";
+    }
+
+    public function getZaloUserDetail($userId, $accessToken)
+    {
+
+        $data = [
+            'data' => json_encode([
+                'user_id' => $userId
+            ])
+        ];
+
+        $response = Http::withHeaders([
+            'access_token' => $accessToken,
+        ])->get('https://openapi.zalo.me/v3.0/oa/user/detail', $data);
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'data' => $response['data'],
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'error' => $response->json(),
+        ]);
     }
 }

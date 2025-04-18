@@ -63,6 +63,7 @@ class StoreController extends Controller
     {
         try {
             $filePath = $request->file('import_file')->getRealPath();
+            
             $fileExtension = $request->file('import_file')->getClientOriginalExtension();
             $fileType = $fileExtension === 'xlsx' ? Excel::XLSX : Excel::XLS;
 

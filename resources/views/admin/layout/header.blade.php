@@ -72,6 +72,16 @@
 
                 @if ((Auth::user()->role_id == 2 && Auth::user()->status == 1) || Auth::user()->role_id == 1)
                     <li class="nav-item topbar-user dropdown hidden-caret">
+                        <a class="dropdown-toggle profile-pic" id="open-import-modal"
+                            style="background-color: white; border-color: white; justify-content: center !important;"
+                            href="javascript:void(0)" aria-expanded="false">
+                            <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
+                                class="fa-solid fa-file-import"></i> Import
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item topbar-user dropdown hidden-caret">
                         <a class="dropdown-toggle profile-pic" id="open-add-modal"
                             style="background-color: white; border-color: white; justify-content: center !important;"
                             href="javascript:void(0)" aria-expanded="false">
@@ -280,7 +290,7 @@
                         <input type="text" class="form-control" id="phone" name="phone" required>
                         <div class="invalid-feedback" id="phone-error"></div>
                     </div>
-                    <div class="form-group" >
+                    <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" class="form-control" id="email" name="email">
                         <div class="invalid-feedback" id="email-error"></div>
@@ -290,7 +300,7 @@
                         <input type="date" class="form-control" id="dob" name="dob">
                         <div class="invalid-feedback" id="dob-error"></div>
                     </div>
-                    <div class="form-group" >
+                    <div class="form-group">
                         <label for="email">Note</label>
                         <input type="text" class="form-control" id="custom_field" name="custom_field">
                         <div class="invalid-feedback" id="custom_field-error"></div>
@@ -309,7 +319,7 @@
                                     <option value="{{ $template->id }}">{{ $template->template_name }}</option>
                                 @endforeach
                             @else
-                            {{-- <option value="">Chưa có template</option> --}}
+                                {{-- <option value="">Chưa có template</option> --}}
                             @endif
 
                         </select>
@@ -373,4 +383,124 @@
         </div>
     </div>
 </div>
-<script></script>
+
+
+<div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importModalLabel">Import Excel File</h5>
+                <button id="close-x" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="importForm" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="source">Nguồn</label>
+                        <input type="text" class="form-control" id="source" name="source"
+                            placeholder="Nhập nguồn">
+                    </div>
+                    <div class="form-group">
+                        <label for="product_id">Chọn sản phẩm</label>
+                        <select class="form-control" id="product_id" name="product_id">
+                            <option value="">Chọn sản phẩm</option>
+                            @foreach ($products as $product)
+                                <option value="{{ $product->id }}">{{ $product->name }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback" id="product_id-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="excelFile">Chọn file Excel</label>
+                        <input type="file" class="form-control-file" id="excelFile" name="import_file"
+                            accept=".xlsx, .xls">
+                    </div>
+                    <div class="form-group">
+                        <small class="text-danger">
+                            Số lượng khách hàng khi thêm mới không được vượt quá 4999 người một ngày
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="importForm" class="btn btn-primary" id="import-btn">
+                    <span id="import-text">Import</span>
+                    <span class="spinner-border spinner-border-sm" id="import-spinner" role="status"
+                        aria-hidden="true" style="display: none;"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#open-import-modal').on('click', function() {
+            $('#importModal').modal('show');
+        });
+
+        $('#close-x').on('click', function() {
+            $('#importModal').modal('hide');
+        });
+
+        $('#importForm').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            // Disable nút, thêm spinner và ẩn chữ "Import"
+            $('#import-btn').prop('disabled', true);
+            $('#import-text').hide();
+            $('#import-spinner').show();
+
+            $.ajax({
+                url: "{{ route('admin.{username}.store.import', ['username' => Auth::user()->username]) }}",
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Enable lại nút, ẩn spinner và hiện lại chữ "Import"
+                    $('#import-btn').prop('disabled', false);
+                    $('#import-text').show();
+                    $('#import-spinner').hide();
+
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: response.message,
+                        });
+                        $('#importModal').modal('hide'); // Đóng modal nếu import thành công
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: response.message,
+                        });
+                    }
+                },
+                error: function(xhr) {
+                    // Enable lại nút, ẩn spinner và hiện lại chữ "Import"
+                    $('#import-btn').prop('disabled', false);
+                    $('#import-text').show();
+                    $('#import-spinner').hide();
+
+                    var errorMessage = 'Có lỗi xảy ra!';
+                    if (xhr.status === 422) {
+                        var errors = xhr.responseJSON.errors;
+                        errorMessage = Object.values(errors).map(error => error.join(', '))
+                            .join('<br>');
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        html: errorMessage,
+                    });
+                }
+            });
+        });
+    })
+</script>
