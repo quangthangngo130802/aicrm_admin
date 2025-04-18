@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\AssociateController;
 use App\Http\Controllers\Admin\AutomationController;
 use App\Http\Controllers\Admin\AutomationMarketingController;
@@ -44,6 +45,8 @@ use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\TransferController as AdminTransferController;
 use App\Http\Controllers\Admin\ZaloController as AdminZaloController;
 use App\Http\Controllers\Admin\ZnsMessageController as AdminZnsMessageController;
+use App\Http\Controllers\Message\AdviseController;
+use App\Http\Controllers\Message\MediaController;
 use App\Http\Controllers\SuperAdmin\CampaignController;
 use App\Http\Controllers\SuperAdmin\TransactionController as SuperAdminTransactionController;
 use App\Http\Controllers\SuperAdmin\TransferController;
@@ -192,67 +195,37 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
         Route::post('store', [AdminZaloController::class, 'store'])->name('store');
         Route::post('/check-oa', [AdminZaloController::class, 'checkOa'])->name('checkOa');
     });
+
+    Route::prefix('{username}/article')->name('{username}.articles.')->group(function () {
+        Route::get('', [ArticleController::class, 'index'])->name('list');
+        Route::get('broadcast', [ArticleController::class, 'broadcast'])->name('broadcast');
+    });
+    Route::get('/zalo/articles', [ArticleController::class, 'fetchAllArticles']);
     Route::get('{username}/detail/{id}', [AdminController::class, 'getAdminInfor'])->name('{username}.detail');
     Route::post('{username}/update/{id}', [AdminController::class, 'updateAdminInfor'])->name('{username}.update');
     Route::post('{username}/changePassword', [AdminController::class, 'changePassword'])->name('{username}.changePassword');
 
     Route::get('{username}/dashboard', [DashboardController::class, 'index'])->name('{username}.dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::prefix('{username}/message-zalo')->name('{username}.message.zalo.')->group(function () {
+
+        Route::get('text', [AdviseController::class, 'text'])->name('text');
+        Route::post('text', [AdviseController::class, 'sendMessage'])->name('text');
+
+        Route::get('image', [AdviseController::class, 'images'])->name('image');
+        Route::post('image', [AdviseController::class, 'sendImageMessage'])->name('image');
+
+        Route::get('broadcast', [AdviseController::class, 'messageDocument'])->name('broadcast');
+        Route::post('broadcast', [AdviseController::class, 'sendZaloBroadcast'])->name('broadcast');
+
+        Route::get('transaction', [\App\Http\Controllers\Message\TransactionController::class, 'transaction'])->name('transaction');
+        Route::post('transaction', [\App\Http\Controllers\Message\TransactionController::class, 'sendTransactionMessage'])->name('transaction');
+
+        Route::get('media', [MediaController::class, 'media'])->name('media');
+        Route::post('media', [MediaController::class, 'sendMediaMessage'])->name('media');
+
+    });
 })->middleware('checkRole:1');
 
-// Route::get('super-dang-nhap', [SuperAdminController::class, 'loginForm'])->name('super.dang.nhap');
-// Route::post('super-dang-nhap', [SuperAdminController::class, 'login'])->name('super.login.submit');
-// Route::middleware(CheckLoginSuperAdmin::class)->prefix('super-admin')->name('super.')->group(function () {
-//     Route::prefix('user')->name('user.')->group(function () {
-//         Route::get('', [SuperAdminUserController::class, 'index'])->name('index');
-//         Route::get('search', [SuperAdminUserController::class, 'search'])->name('search');
-//         Route::post('store', [SuperAdminUserController::class, 'store'])->name('store');
-//         Route::get('detail/{id}', [SuperAdminUserController::class, 'detail'])->name('detail');
-//     });
-//     Route::prefix('transaction')->name('transaction.')->group(function () {
-//         Route::get('', [SuperAdminTransactionController::class, 'index'])->name('index');
-//         Route::get('search', [SuperAdminTransactionController::class, 'search'])->name('search');
-//         Route::put('confirm/{id}', [SuperAdminTransactionController::class, 'confirmTransaction'])->name('confirm');
-//         Route::put('reject/{id}', [SuperAdminTransactionController::class, 'rejectTransaction'])->name('reject');
-//         Route::get('update-notification/{id}', [SuperAdminTransactionController::class, 'updateNotification'])->name('updateNotification');
-//     });
-//     Route::prefix('transfer')->name('transfer.')->group(function () {
-//         Route::get('', [TransferController::class, 'index'])->name('index');
-//         Route::get('list', [TransferController::class, 'list'])->name('list');
-//         Route::get('search', [TransferController::class, 'search'])->name('search');
-//         Route::post('store/{id}', [TransferController::class, 'store'])->name('store');
-//     });
-//     // Route::prefix('campaign')->name('campaign.')->group(function () {
-//     //     Route::get('add', [CampaignController::class, 'add'])->name('add');
-//     //     Route::get('', [CampaignController::class, 'index'])->name('index');
-//     //     Route::get('fetch', [CampaignController::class, 'fetch'])->name('fetch');
-//     //     Route::post('store', [CampaignController::class, 'store'])->name('store');
-//     //     Route::get('detail/{id}', [CampaignController::class, 'edit'])->name('detail');
-//     //     Route::post('update/{id}', [CampaignController::class, 'update'])->name('update');
-//     //     Route::delete('delete/{id}', [CampaignController::class, 'delete'])->name('delete');
-//     //     Route::post('update-status/{id}', [CampaignController::class, 'updateStatus'])->name('updateStatus');
-//     // });
-//     Route::prefix('zalo')->name('zalo.')->group(function () {
-//         Route::get('zns', [ZaloController::class, 'index'])->name('zns');
-//         Route::get('/get-active-oa-name', [ZaloController::class, 'getActiveOaName'])->name('getActiveOaName');
-//         Route::post('/update-oa-status/{oaId}', [ZaloController::class, 'updateOaStatus'])->name('updateOaStatus');
-//         Route::post('/refresh-access-token', [ZaloController::class, 'refreshAccessToken'])->name('refreshAccessToken');
-//     });
-//     Route::prefix('message')->name('message.')->group(function () {
-//         Route::get('', [ZnsMessageController::class, 'znsMessage'])->name('znsMessage');
-//         Route::get('/quota', [ZnsMessageController::class, 'znsQuota'])->name('znsQuota');
-//         Route::get('template', [ZnsMessageController::class, 'templateIndex'])->name('znsTemplate');
-//         Route::get('refresh', [ZnsMessageController::class, 'refreshTemplates'])->name('znsTemplateRefresh');
-//         Route::get('detail', [ZnsMessageController::class, 'getTemplateDetail'])->name('znsTemplateDetail');
-//         Route::get('test', [ZnsMessageController::class, 'test'])->name('test');
-//     });
-//     Route::get('/detail/{id}', [SuperAdminController::class, 'getSuperAdminInfor'])->name('detail');
-//     Route::post('/update/{id}', [SuperAdminController::class, 'updateSuperAdminInfo'])->name('update');
-//     Route::post('logout', [SuperAdminController::class, 'logout'])->name('logout');
-//     // Route::prefix('store')->name('store.')->group(function () {
-//     //     Route::get('/index', [StoreController::class, 'index'])->name('index');
-//     //     Route::get('/detail/{id}', [StoreController::class, 'detail'])->name('detail');
-//     //     Route::get('/findByPhone', [StoreController::class, 'findByPhone'])->name('findByPhone');
-//     //     Route::get('/delete/{id}', [StoreController::class, 'delete'])->name('delete');
-//     // });
-// });
+

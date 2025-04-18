@@ -198,7 +198,7 @@
                             <div id="basic-datatables_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
                                 <div class="row">
                                     <div class="col-sm-12 col-md-5">
-                                        <button id="open-import-modal" type="button" class="btn btn-primary">
+                                        <button id="open-import-modal1" type="button" class="btn btn-primary">
                                             Import danh sách khách hàng
                                         </button>
                                         <a href="{{ asset('excel/sample1.xlsx') }}" class="btn btn-secondary" download>
@@ -234,17 +234,17 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+    <div class="modal fade" id="importModal1" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="importModalLabel">Import Excel File</h5>
-                    <button id="close-x" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button id="close-x1" type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="importForm" method="post" enctype="multipart/form-data">
+                    <form id="importForm1" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="source">Nguồn</label>
@@ -274,9 +274,9 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" form="importForm" class="btn btn-primary" id="import-btn">
-                        <span id="import-text">Import</span>
-                        <span class="spinner-border spinner-border-sm" id="import-spinner" role="status" aria-hidden="true"
+                    <button type="submit" form="importForm1" class="btn btn-primary" id="import-btn1">
+                        <span id="import-text1">Import</span>
+                        <span class="spinner-border spinner-border-sm" id="import-spinner1" role="status" aria-hidden="true"
                             style="display: none;"></span>
                     </button>
                 </div>
@@ -371,23 +371,23 @@
                     });
                 }
             });
-            $('#open-import-modal').on('click', function() {
-                $('#importModal').modal('show');
+            $('#open-import-modal1').on('click', function() {
+                $('#importModal1').modal('show');
             });
 
-            $('#close-x').on('click', function() {
-                $('#importModal').modal('hide');
+            $('#close-x1').on('click', function() {
+                $('#importModal1').modal('hide');
             });
 
-            $('#importForm').on('submit', function(e) {
+            $('#importForm1').on('submit', function(e) {
                 e.preventDefault();
 
                 var formData = new FormData(this);
 
                 // Disable nút, thêm spinner và ẩn chữ "Import"
-                $('#import-btn').prop('disabled', true);
-                $('#import-text').hide();
-                $('#import-spinner').show();
+                $('#import-btn1').prop('disabled', true);
+                $('#import-text1').hide();
+                $('#import-spinner1').show();
 
                 $.ajax({
                     url: "{{ route('admin.{username}.store.import', ['username' => Auth::user()->username]) }}",
@@ -397,9 +397,9 @@
                     processData: false,
                     success: function(response) {
                         // Enable lại nút, ẩn spinner và hiện lại chữ "Import"
-                        $('#import-btn').prop('disabled', false);
-                        $('#import-text').show();
-                        $('#import-spinner').hide();
+                        $('#import-btn1').prop('disabled', false);
+                        $('#import-text1').show();
+                        $('#import-spinner1').hide();
 
                         if (response.success) {
                             Swal.fire({
@@ -407,7 +407,7 @@
                                 title: 'Thành công',
                                 text: response.message,
                             });
-                            $('#importModal').modal('hide'); // Đóng modal nếu import thành công
+                            $('#importModal1').modal('hide'); // Đóng modal nếu import thành công
 
                         } else {
                             Swal.fire({
@@ -419,9 +419,9 @@
                     },
                     error: function(xhr) {
                         // Enable lại nút, ẩn spinner và hiện lại chữ "Import"
-                        $('#import-btn').prop('disabled', false);
-                        $('#import-text').show();
-                        $('#import-spinner').hide();
+                        $('#import-btn1').prop('disabled', false);
+                        $('#import-text1').show();
+                        $('#import-spinner1').hide();
 
                         var errorMessage = 'Có lỗi xảy ra!';
                         if (xhr.status === 422) {
