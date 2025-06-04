@@ -91,7 +91,7 @@
                 <div class="row mt-3">
                     <div class="form-group col-12">
                         <input type="text" id="amount" class="form-control" name="amount"
-                            placeholder="Tối thiểu 3 triệu đồng" />
+                            placeholder="Tối thiểu 2 triệu đồng" />
                     </div>
 
                     <div class="form-group col-12 mt-3">
@@ -284,7 +284,7 @@
 
                 //Kiếm tra nếu giá trị >= 5 triệu thì bật nút tiếp tục
                 const amountValue = parseInt(value);
-                if (amountValue >= 3000000) {
+                if (amountValue >= 2000000) {
                     $('.continue-btn').prop('disabled', false);
                 } else {
                     $('.continue-btn').prop('disabled', true);

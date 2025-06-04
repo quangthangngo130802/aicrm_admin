@@ -22,52 +22,42 @@ class AuthController extends Controller
     }
     public function login(LoginRequest $request, $username)
     {
-        try {
-            Log::info('Bắt đầu quá trình đăng nhập', ['username' => $username]);
 
-            // Lấy thông tin đăng nhập từ request
-            $credentials = $request->only(['email', 'password']);
-            // dd($credentials);
-            Log::info('Lấy thông tin đăng nhập', ['credentials' => $credentials]);
+        // dd($username);
+            $loginField = filter_var($request->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+            $credentials = [
+                $loginField => $request->input('email'),
+                'password'  => $request->input('password'),
+            ];
+            $remember = $request->boolean('remember');
 
-            // Gọi tới service để xác thực
-            $remember = $request->has('remember');
-            $result = $this->userService->authenticateUser($credentials, $remember);
-            Log::info('Kết quả xác thực từ service', ['result' => $result]);
+            $user = User::where($loginField, $credentials[$loginField])->first();
 
-            // So sánh username
-            if ($result['user']['username'] === $username) {
-                Log::info('Username hợp lệ', ['username' => $username]);
-
-                // return redirect()->route('admin.{username}.dashboard', ['username' => $username]);
-                // Kiểm tra role_id
-                if ($result['user']->role_id == 1 || $result['user']->role_id == 2) {
-                    session()->put('authUser', $result['user']);
-                    // session()->put('userName', Auth::user()->username);
-                    session()->save();
-                    Log::info('Đăng nhập thành công với role admin', ['username' => $username]);
-                    return redirect()->route('admin.{username}.dashboard', ['username' => $username]);
-                }
-                // elseif ($result['user']->role_id == 2) {
-                //     session()->put('authUser', $result['user']);
-                //     session()->save();
-                //     Log::info('Đăng nhập thành công với role staff', ['username' => $username]);
-                //     return redirect()->route('staff.index');
-                // }
-                elseif ($result['user']->role_id == 3) {
-                    session()->put('authUser', $result['user']);
-                    session()->save();
-                    Log::info('Đăng nhập thành công với role sa', ['username' => $username]);
-                    return redirect()->route('sa.store.index');
-                }
+            // Kiểm tra nếu tài khoản không tồn tại
+            if (!$user) {
+                toastr()->error('Tài khoản hoặc mật khẩu không chính xác!');
+                return back();
             }
 
-            Log::warning('Username không khớp', ['username' => $username, 'resultUsername' => $result['user']['username']]);
-            return back();
-        } catch (\Exception $e) {
-            Log::error('Lỗi trong quá trình đăng nhập', ['error' => $e->getMessage()]);
-            return $this->handleLoginError($request, $e);
-        }
+            logger('Username mismatch: entered = ' . $username . ', user = ' . $user->username);
+            if($user->username != $username){
+                logger('Username mismatch: entered = ' . $username . ', user = ' . $user->username);
+                toastr()->error('Username không chính xác!');
+                return back();
+            }
+
+
+            // Thực hiện đăng nhập
+            if (auth()->attempt($credentials, $remember)) {
+                // dd( $username);
+
+                toastr()->success('Đăng nhập thành công.');
+                return  redirect()->route('admin.dashboard');
+            } else {
+                toastr()->error('Tài khoản hoặc mật khẩu không chính xác!');
+                return back();
+            }
+
     }
 
 

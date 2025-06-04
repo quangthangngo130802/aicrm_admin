@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AutomationRateController;
 use App\Http\Controllers\Api\AutomationReminderController;
 use App\Http\Controllers\Api\AutomationUserController;
 use App\Http\Controllers\Api\SuperAdminController;
+use App\Http\Controllers\Api\TemplateController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
@@ -46,3 +47,5 @@ Route::get('messages', function (){
         'message' => 'Thành công'
     ]);
 });
+
+Route::get('template', [TemplateController::class, 'listtemplate']);

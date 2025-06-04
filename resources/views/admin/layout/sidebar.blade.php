@@ -45,7 +45,7 @@
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
                 <li class="nav-item active">
-                    <a href="{{ route('admin.{username}.dashboard', ['username' => Auth::user()->username]) }}">
+                    <a href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>

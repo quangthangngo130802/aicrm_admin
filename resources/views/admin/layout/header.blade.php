@@ -72,6 +72,16 @@
 
                 @if ((Auth::user()->role_id == 2 && Auth::user()->status == 1) || Auth::user()->role_id == 1)
                     <li class="nav-item topbar-user dropdown hidden-caret">
+                        <a class="dropdown-toggle profile-pic" style="justify-content: center !important;"
+                            href="{{ route('admin.{username}.message.znsMessage', ['username' => Auth::user()->username]) }}"
+                            aria-expanded="false">
+                            <i style="font-size: 18px; padding: 0px 5px; color: rgb(138, 135, 135)"
+                                class="fas fa-comment"></i> Report
+
+                        </a>
+                    </li>
+
+                    <li class="nav-item topbar-user dropdown hidden-caret">
                         <a class="dropdown-toggle profile-pic" id="open-import-modal"
                             style="background-color: white; border-color: white; justify-content: center !important;"
                             href="javascript:void(0)" aria-expanded="false">
@@ -228,25 +238,26 @@
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                         aria-expanded="false" style="justify-content: center !important;">
                         <div class="avatar-sm">
-                            <img src="{{ isset(session('authUser')->user_info->img_url) && !empty(session('authUser')->user_info->img_url) ? asset(session('authUser')->user_info->img_url) : asset('images/avatar2.jpg') }}"
+                            <img src="{{ Auth::user()->user_info->img_url ?? false ? asset(Auth::user()->user_info->img_url) : asset('images/avatar2.jpg') }}"
                                 alt="image profile" class="avatar-img rounded-circle">
+
                         </div>
                         <span class="profile-username">
                             <span class="op-7">Hi,</span>
-                            <span class="fw-bold">{{ session('authUser')->name }}</span>
+                            <span class="fw-bold">{{ Auth::user()->name }}</span>
                         </span>
                     </a>
                     <ul class="dropdown-menu dropdown-user animated fadeIn">
                         <li>
                             <div class="user-box">
                                 <div class="avatar-lg">
-                                    <img src="{{ isset(session('authUser')->user_info->img_url) && !empty(session('authUser')->user_info->img_url) ? asset(session('authUser')->user_info->img_url) : asset('images/avatar2.jpg') }}"
+                                    <img src="{{ Auth::user()->user_info->img_url ?? false ? asset(Auth::user()->user_info->img_url) : asset('images/avatar2.jpg') }}"
                                         alt="image profile" class="avatar-img rounded-circle">
                                 </div>
                                 <div class="u-text">
-                                    <h4>{{ session('authUser')->name }}</h4>
-                                    <p class="text-muted">{{ session('authUser')->email }}</p>
-                                    <a href="{{ route('admin.{username}.detail', ['username' => Auth::user()->username, 'id' => session('authUser')->id]) }}"
+                                    <h4>{{ Auth::user()->name }}</h4>
+                                    <p class="text-muted">{{ Auth::user()->email }}</p>
+                                    <a href="{{ route('admin.{username}.detail', ['username' => Auth::user()->username, 'id' => Auth::user()->id]) }}"
                                         class="btn btn-xs btn-secondary btn-sm">Trang cá nhân</a>
                                     <a href="#" class="btn btn-xs  btn-sm"
                                         style="background: red; color: #ffff"

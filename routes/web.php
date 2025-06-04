@@ -38,6 +38,7 @@ use App\Http\Controllers\Staff\CheckInventoryController as staffcheckController;
 use App\Http\Controllers\Staff\WareHomeController;
 use App\Http\Controllers\SuperAdmin\StoreController;
 use App\Http\Controllers\SuperAdmin\SuperAdminController;
+use App\Http\Controllers\Topcv\WebhookController;
 use App\Models\Categories;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\SupportController;
@@ -68,9 +69,7 @@ Route::post('/check-account', [SignUpController::class, 'checkAccount'])->name('
 // Route::get('/check-email-exists', [SignUpController::class, 'checkEmailExists'])->name('check-email-exists');
 Route::get('/dang-ky', [SignUpController::class, 'index'])->name('register.index');
 Route::post('/register_account', [SignUpController::class, 'store'])->name('register.signup');
-Route::get('/{username}', function ($username) {
-    return view('auth.login', compact('username'));
-})->name('formlogin');
+
 Route::get('', [DashboardController::class, 'default'])->name('default');
 Route::post('/{username}/login', [AuthController::class, 'login'])->name('login');
 // Route::get('/', function () {
@@ -79,10 +78,12 @@ Route::post('/{username}/login', [AuthController::class, 'login'])->name('login'
 // Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/verify-otp', [AuthController::class, 'showVerifyOtp'])->name('verify-otp');
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify_otp_confirm');
-Route::middleware(['auth'])->group(function () {
-    Route::get('/home', function () {
-        return view('home');
-    })->name('home');
+Route::middleware(['guest'])->group(function () {
+    Route::get('/{username}', function ($username) {
+        // dd($username);
+        return view('auth.login', compact('username'));
+    })->name('formlogin');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/payment', [PaymentController::class, 'showPaymentForm'])->name('payment.form');
     Route::post('/payment', [PaymentController::class, 'processPayment'])->name('payment.process');
@@ -102,7 +103,12 @@ Route::get('/product', function () {
 Route::get('/employee', function () {
     return view('Themes.pages.employee.index');
 })->name('employee');
-Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(function () {
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/home', function () {
+        // dd(1);
+        return view('home');
+    })->name('home');
+
     Route::prefix('{username}/associate')->name('{username}.associate.')->group(function () {
         Route::get('', [AssociateController::class, 'index'])->name('index');
         Route::get('search', [AssociateController::class, 'search'])->name('search');
@@ -205,7 +211,7 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
     Route::post('{username}/update/{id}', [AdminController::class, 'updateAdminInfor'])->name('{username}.update');
     Route::post('{username}/changePassword', [AdminController::class, 'changePassword'])->name('{username}.changePassword');
 
-    Route::get('{username}/dashboard', [DashboardController::class, 'index'])->name('{username}.dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::prefix('{username}/message-zalo')->name('{username}.message.zalo.')->group(function () {
@@ -224,8 +230,7 @@ Route::middleware(CheckLogin::class)->prefix('admin')->name('admin.')->group(fun
 
         Route::get('media', [MediaController::class, 'media'])->name('media');
         Route::post('media', [MediaController::class, 'sendMediaMessage'])->name('media');
-
     });
-})->middleware('checkRole:1');
+});
 
-
+Route::get('/webhook', [WebhookController::class, 'handle']);
