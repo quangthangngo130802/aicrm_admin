@@ -2520,7 +2520,7 @@ label {
   font-size: 1rem;
   border-color: #ebedf2;
   padding: 0.6rem 1rem;
-  height: inherit !important;
+  /* height: inherit !important; */
   border-width: 2px; }
   .form-control:focus {
     border-color: #3e93ff; }

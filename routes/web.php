@@ -42,12 +42,14 @@ use App\Http\Controllers\Topcv\WebhookController;
 use App\Models\Categories;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\SupportController;
+use App\Http\Controllers\Admin\TemplateController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\TransferController as AdminTransferController;
 use App\Http\Controllers\Admin\ZaloController as AdminZaloController;
 use App\Http\Controllers\Admin\ZnsMessageController as AdminZnsMessageController;
 use App\Http\Controllers\Message\AdviseController;
 use App\Http\Controllers\Message\MediaController;
+use App\Http\Controllers\SheetController;
 use App\Http\Controllers\SuperAdmin\CampaignController;
 use App\Http\Controllers\SuperAdmin\TransactionController as SuperAdminTransactionController;
 use App\Http\Controllers\SuperAdmin\TransferController;
@@ -231,6 +233,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::get('media', [MediaController::class, 'media'])->name('media');
         Route::post('media', [MediaController::class, 'sendMediaMessage'])->name('media');
     });
+
+    Route::prefix('{username}/template')->name('{username}.template.')->controller(TemplateController::class)->group(function () {
+        Route::get('', 'index')->name('template');
+        Route::post('', 'storeTemplate')->name('template.store');
+    });
 });
 
 Route::get('/webhook', [WebhookController::class, 'handle']);
+Route::get('test/sheet', [SheetController::class, 'index']);

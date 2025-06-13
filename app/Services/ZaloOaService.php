@@ -87,7 +87,7 @@ class ZaloOaService
             Log::info('Access token hết hạn hoặc không tồn tại, đang refresh access token');
 
             //Làm mói access token bằng refresh token từ db
-            $accessToken = $this->refreshAccessToken($oa->refresh_token, $oa);
+            // $accessToken = $this->refreshAccessToken($oa->refresh_token, $oa);
         }
 
         Log::info('Đang lấy Access Token: ' . $accessToken);
@@ -97,8 +97,11 @@ class ZaloOaService
     public function refreshAccessToken($refreshToken, $oa)
     {
         $client = new Client();
-        $secretKey = env('ZALO_APP_SECRET');
-        $appId = env('ZALO_APP_ID');
+        // $secretKey = env('ZALO_APP_SECRET');
+        // $appId = env('ZALO_APP_ID');
+        $appId = config('app.zalo.app_id');
+        $secretKey = config('app.zalo.app_secret');
+        Log::info(config('app.zalo.app_id'));
 
         try {
             $response = $client->post('https://oauth.zaloapp.com/v4/oa/access_token', [

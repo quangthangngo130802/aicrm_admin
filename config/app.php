@@ -188,4 +188,10 @@ return [
         'PDF' => Barryvdh\DomPDF\Facade::class,
     ])->toArray(),
 
+    'zalo' => [
+        'app_id' => env('ZALO_APP_ID'),
+        'app_secret' => env('ZALO_APP_SECRET'),
+        'oa_id' => env('ZALO_OA_ID'), // nếu bạn cần dùng
+    ],
+
 ];
