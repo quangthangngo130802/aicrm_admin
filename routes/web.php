@@ -25,6 +25,7 @@ use App\Http\Controllers\Admin\DailyReportController;
 use App\Http\Controllers\Admin\DebtClientController;
 use App\Http\Controllers\Admin\DebtNccController;
 use App\Http\Controllers\Admin\ExpenseController;
+use App\Http\Controllers\Admin\GgSheetController;
 use App\Http\Controllers\Admin\importCouponController;
 use App\Http\Controllers\Admin\ImportProductController;
 use App\Http\Controllers\Admin\NotificationController;
@@ -219,24 +220,29 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::prefix('{username}/message-zalo')->name('{username}.message.zalo.')->group(function () {
 
         Route::get('text', [AdviseController::class, 'text'])->name('text');
-        Route::post('text', [AdviseController::class, 'sendMessage'])->name('text');
+        Route::post('text', [AdviseController::class, 'sendMessage'])->name('text.send');
 
         Route::get('image', [AdviseController::class, 'images'])->name('image');
-        Route::post('image', [AdviseController::class, 'sendImageMessage'])->name('image');
+        Route::post('image', [AdviseController::class, 'sendImageMessage'])->name('image.send');
 
         Route::get('broadcast', [AdviseController::class, 'messageDocument'])->name('broadcast');
-        Route::post('broadcast', [AdviseController::class, 'sendZaloBroadcast'])->name('broadcast');
+        Route::post('broadcast', [AdviseController::class, 'sendZaloBroadcast'])->name('broadcast.send');
 
         Route::get('transaction', [\App\Http\Controllers\Message\TransactionController::class, 'transaction'])->name('transaction');
-        Route::post('transaction', [\App\Http\Controllers\Message\TransactionController::class, 'sendTransactionMessage'])->name('transaction');
+        Route::post('transaction', [\App\Http\Controllers\Message\TransactionController::class, 'sendTransactionMessage'])->name('transaction.send');
 
         Route::get('media', [MediaController::class, 'media'])->name('media');
-        Route::post('media', [MediaController::class, 'sendMediaMessage'])->name('media');
+        Route::post('media', [MediaController::class, 'sendMediaMessage'])->name('media.send');
     });
 
     Route::prefix('{username}/template')->name('{username}.template.')->controller(TemplateController::class)->group(function () {
         Route::get('', 'index')->name('template');
         Route::post('', 'storeTemplate')->name('template.store');
+    });
+
+    Route::prefix('{username}/ggsheet')->name('{username}.ggsheet.')->group(function () {
+        Route::get('', [GgSheetController::class, 'index'])->name('index');
+        Route::post('/save', [GgSheetController::class, 'save'])->name('save');
     });
 });
 

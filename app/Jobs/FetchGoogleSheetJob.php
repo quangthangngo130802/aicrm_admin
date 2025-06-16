@@ -41,7 +41,7 @@ class FetchGoogleSheetJob implements ShouldQueue
                 $service = new Google_Service_Sheets($client);
 
                 $spreadsheetId = $value->api_code;
-                $sheetName = 'Trang tính1';
+                $sheetName = $value->name_sheet;
                 $range = "'$sheetName'!A1:Z1000";
 
                 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
@@ -57,25 +57,28 @@ class FetchGoogleSheetJob implements ShouldQueue
                 Log::info($dataRows);
                 foreach ($dataRows as $index => $row) {
                     $rowIndex = $index + 2; // vì dòng tiêu đề là dòng 1
+
+                    if (empty($row[1]) || empty($row[2]) || empty($row[3])) {
+                        continue;
+                    }
+
+                    if (isset($row[4]) && $row[4] == 1) {
+                        continue;
+                    }
+
                     $data = [
                         'name' => $row[1],
                         'phone' => $row[2],
                         'address' => $row[3],
                     ];
-                  $storeService->zns($value->user_id, $data);
-                    // Kiểm tra nếu cột thứ 5 (index 4) đã là 1 thì bỏ qua
-                    if (isset($row[4]) && $row[4] == 1) {
-                        continue;
-                    }
 
+                    $storeService->zns($value->user_id, $data);
                     // Cập nhật cột E thành 1
                     $updateRange = "$sheetName!E$rowIndex";
 
                     $body = new Google_Service_Sheets_ValueRange([
                         'values' => [[1]]
                     ]);
-
-                  
 
                     $params = ['valueInputOption' => 'RAW'];
 

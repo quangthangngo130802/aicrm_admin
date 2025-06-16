@@ -253,6 +253,14 @@
                             <p>Danh sách bài viết</p>
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a
+                            href="{{ route('admin.{username}.ggsheet.index', ['username' => Auth::user()->username]) }}">
+                            <i class="fa-regular fa-file-excel"></i>
+                            <p>Google Sheet</p>
+                        </a>
+                    </li>
                 @endif
 
 
