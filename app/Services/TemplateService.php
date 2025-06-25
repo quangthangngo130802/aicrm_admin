@@ -30,7 +30,7 @@ class TemplateService
             Log::info($template);
             $template_id = $template->id;
             $template_code = $automation->template->template_id;
-            $template_data = $this->templateData($data['name'], $data['phone'], $data['address']);
+            $template_data = $this->templateData($data['name'], $data['phone'], $data['address'],  $data['order_code'],  $data['product_name']);
 
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
@@ -58,7 +58,7 @@ class TemplateService
 
     }
 
-    public function templateData($customer_name, $phone_number, $address, )
+    public function templateData($customer_name, $phone_number, $address, $order_code , $product_name)
     {
         $template_data = [
             'name' => $customer_name,
@@ -73,7 +73,8 @@ class TemplateService
             'customer_name' => $customer_name ?? '',
             'time' => Carbon::now()->format('h:i:s d/m/Y') ?? "",
             'order_date' => Carbon::now()->format('d/m/Y') ?? "",
-            'product_name' => $customer_name,
+            'product_name' => $product_name ?? '',
+            'order_code' => $order_code?? ''
         ];
 
         Log::info($template_data);

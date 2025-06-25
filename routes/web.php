@@ -44,6 +44,7 @@ use App\Models\Categories;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\SupportController;
 use App\Http\Controllers\Admin\TemplateController;
+use App\Http\Controllers\Admin\TokenController;
 use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\TransferController as AdminTransferController;
 use App\Http\Controllers\Admin\ZaloController as AdminZaloController;
@@ -243,6 +244,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::prefix('{username}/ggsheet')->name('{username}.ggsheet.')->group(function () {
         Route::get('', [GgSheetController::class, 'index'])->name('index');
         Route::post('/save', [GgSheetController::class, 'save'])->name('save');
+    });
+
+    Route::prefix('{username}/token')->name('{username}.token.')->group(function () {
+        Route::get('', [TokenController::class, 'index'])->name('index');
+        Route::post('/save', [TokenController::class, 'save'])->name('save');
     });
 });
 

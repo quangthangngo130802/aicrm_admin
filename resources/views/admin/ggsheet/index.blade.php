@@ -102,6 +102,10 @@
                             * Vui lòng cấp quyền chỉnh sửa Google Sheet cho email:
                             <strong>thangngo130802@thangngo130802.iam.gserviceaccount.com</strong>
                         </p>
+
+                        <div>
+                            <a href="https://docs.google.com/spreadsheets/d/1_KOscd6Cd7RISEEBCShmkdOqKfraKAZHGvVXA1EYEIw/edit?hl=vi&gid=0#gid=0">Link tham khảo</a>
+                        </div>
                     </div>
                 </div>
             </div>

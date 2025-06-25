@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\ZaloOa;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -46,6 +47,11 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
             $user->delete();
+
+            $zaloOa = ZaloOa::where('user_id', $id)->get();
+            if($zaloOa){
+                
+            }
 
             return response()->json(['success' => 'User deleted successfully']);
         } catch (ModelNotFoundException $e) {

@@ -6,7 +6,7 @@
             <h4 class="card-title" style="text-align: center;">Tin giao dịch</h4>
         </div>
         <form id="orderForm" class="p-4 border rounded bg-light" method="POST"
-            action="{{ route('admin.{username}admin.{username}.message.zalo.transaction.send', ['username' => Auth::user()->username]) }}">
+            action="{{ route('admin.{username}.message.zalo.transaction.send', ['username' => Auth::user()->username]) }}">
             @csrf
             <div class="mb-3">
                 <label class="form-label fw-bold">Người dùng</label>
