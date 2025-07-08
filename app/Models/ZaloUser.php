@@ -13,7 +13,9 @@ class ZaloUser extends Model
     protected $fillable = [
         'user_id',
         'display_name',
-        'admin_id'
+        'admin_id',
+        'phone',
+        'address'
     ];
 
     public $timestamps = true;

@@ -25,7 +25,7 @@
                         <div class="card-body">
 
                             <form id="postForm" enctype="multipart/form-data" method="POST"
-                                action="{{ route('admin.{username}.message.zalo.broadcast', ['username' => Auth::user()->username]) }}">
+                                action="{{ route('admin.{username}.message.zalo.broadcast.send', ['username' => Auth::user()->username]) }}">
                                 @csrf
                                 <div class="row mb-3">
                                     <div class="col-md-12">

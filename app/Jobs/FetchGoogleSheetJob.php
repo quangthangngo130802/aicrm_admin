@@ -41,7 +41,7 @@ class FetchGoogleSheetJob implements ShouldQueue
                 $service = new Google_Service_Sheets($client);
 
                 $spreadsheetId = $value->api_code;
-                $sheetName = 'Trang tính1';
+                $sheetName = $value->name_sheet;
                 $range = "'$sheetName'!A1:Z1000";
 
                 $response = $service->spreadsheets_values->get($spreadsheetId, $range);
@@ -52,40 +52,63 @@ class FetchGoogleSheetJob implements ShouldQueue
                     continue;
                 }
 
-                // Bỏ qua dòng tiêu đề
+                $rawHeaders = array_map('trim', $values[0]);
+                $headers = array_map(function ($header) {
+                    return Str::slug($header, '_'); // "Địa chỉ" => "dia_chi"
+                }, $rawHeaders);
+
                 $dataRows = array_slice($values, 1);
-                Log::info($dataRows);
+
                 foreach ($dataRows as $index => $row) {
                     $rowIndex = $index + 2; // vì dòng tiêu đề là dòng 1
-                    $data = [
-                        'name' => $row[1],
-                        'phone' => $row[2],
-                        'address' => $row[3],
-                    ];
-                  $storeService->zns($value->user_id, $data);
-                    // Kiểm tra nếu cột thứ 5 (index 4) đã là 1 thì bỏ qua
-                    if (isset($row[4]) && $row[4] == 1) {
+
+                    // Tạo mảng ánh xạ header => value
+                    $rowData = [];
+                    foreach ($headers as $i => $header) {
+                        $rowData[$header] = $row[$i] ?? null;
+                    }
+
+                    Log::info($rowData);
+                    // Kiểm tra nếu các trường cần thiết không tồn tại hoặc rỗng
+                    if ( empty($rowData['so_dien_thoai'])) {
                         continue;
                     }
 
-                    // Cập nhật cột E thành 1
-                    $updateRange = "$sheetName!E$rowIndex";
+                    // Kiểm tra nếu đã xử lý
+                    if (isset($rowData['status']) && $rowData['status'] == 1) {
+                        continue;
+                    }
 
-                    $body = new Google_Service_Sheets_ValueRange([
-                        'values' => [[1]]
-                    ]);
+                    $data = [
+                        'name'    => $rowData['ho_va_ten'],
+                        'phone'   => $rowData['so_dien_thoai'],
+                        'address' => $rowData['dia_chi'],
+                        'order_code' => $rowData['ma_khach_hang'],
+                        'product_name' => $rowData['ten_san_pham'],
+                    ];
 
-                  
+                    // Gửi ZNS hoặc xử lý
+                    $storeService->zns($value->user_id, $data);
 
-                    $params = ['valueInputOption' => 'RAW'];
+                    // Cập nhật status = 1
+                    $statusColumnIndex = array_search('status', $headers);
+                    if ($statusColumnIndex !== false) {
+                        $colLetter = chr(65 + $statusColumnIndex); // A=65, B=66...
+                        $updateRange = "$sheetName!{$colLetter}{$rowIndex}";
 
-                    $result = $service->spreadsheets_values->update(
-                        $spreadsheetId,
-                        $updateRange,
-                        $body,
-                        $params
-                    );
+                        $body = new Google_Service_Sheets_ValueRange([
+                            'values' => [[1]]
+                        ]);
 
+                        $params = ['valueInputOption' => 'RAW'];
+
+                        $service->spreadsheets_values->update(
+                            $spreadsheetId,
+                            $updateRange,
+                            $body,
+                            $params
+                        );
+                    }
                 }
 
             }

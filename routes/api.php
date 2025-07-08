@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\BaoHanhController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,3 +50,9 @@ Route::get('messages', function (){
 });
 
 Route::get('template', [TemplateController::class, 'listtemplate']);
+
+Route::post('/google-sheet-webhook', function (Request $request) {
+    Log::info('Webhook từ Google Sheets:', $request->all());
+
+    return response()->json(['success' => true]);
+});

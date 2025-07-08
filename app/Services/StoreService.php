@@ -101,6 +101,7 @@ class StoreService
     }
     public function addNewStore(array $data)
     {
+        Log::info('Thành công');
         DB::beginTransaction();
 
         try {
@@ -147,7 +148,8 @@ class StoreService
             $automationRate = AutomationRate::where('user_id', Auth::user()->id)->first();
             $automationBirthday = AutomationBirthday::where('user_id', Auth::user()->id)->first();
             $automationReminder = AutomationReminder::where('user_id', Auth::user()->id)->first();
-            $template_code = $template_new ? $template_new->template_id : $automationUser->template->template_id ?? null;
+            $template_code = $template_new ? $template_new->template_id : $automationUser->template->template_id;
+            Log::info($template_code);
             // $template_code = $automationUser->template->template_id ?? null;
             $rate_template_code = $automationRate->template->template_id ?? null;
             $birthday_template_code = $automationBirthday->template->template_id ?? null;

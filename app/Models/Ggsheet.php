@@ -16,6 +16,7 @@ class Ggsheet extends Model
     protected $fillable = [
         'user_id',
         'api_code',
+        'name_sheet'
     ];
 
     public function user(): BelongsTo

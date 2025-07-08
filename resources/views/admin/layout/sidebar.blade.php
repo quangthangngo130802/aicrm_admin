@@ -198,6 +198,12 @@
                             </li>
                             <li>
                                 <a
+                                    href="{{ route('admin.{username}.rate.index', ['username' => Auth::user()->username]) }}">
+                                    <span class="sub-item">Report RATE</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a
                                     href="{{ route('admin.{username}.message.znsQuota', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Hạn mức ZNS</span>
                                 </a>
@@ -251,6 +257,22 @@
                             href="{{ route('admin.{username}.articles.list', ['username' => Auth::user()->username]) }}">
                             <i class="fa-regular fa-file-lines"></i>
                             <p>Danh sách bài viết</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a
+                            href="{{ route('admin.{username}.ggsheet.index', ['username' => Auth::user()->username]) }}">
+                            <i class="fa-regular fa-file-excel"></i>
+                            <p>Google Sheet</p>
+                        </a>
+                    </li>
+
+                     <li class="nav-item">
+                        <a
+                            href="{{ route('admin.{username}.token.index', ['username' => Auth::user()->username]) }}">
+                            <i class="fa-solid fa-key"></i>
+                            <p>Token</p>
                         </a>
                     </li>
                 @endif

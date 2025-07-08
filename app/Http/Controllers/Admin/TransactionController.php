@@ -30,7 +30,7 @@ class TransactionController extends Controller
             $status = $request->input('status');
             $startDate = $request->input('start_date');
             $endDate = $request->input('end_date');
-            $authUser = session('authUser');
+            $authUser = Auth::user();
             $userId = $authUser->id;
 
             $transactions = $this->transactionService->getPaginatedTransactionsForAdmin($userId, $status, $startDate, $endDate);

@@ -6,7 +6,7 @@
             <h4 class="card-title" style="text-align: center;">Tin truyền thông</h4>
         </div>
         <form method="POST" id="zaloForm"
-            action="{{ route('admin.{username}.message.zalo.media', ['username' => Auth::user()->username]) }}"
+            action="{{ route('admin.{username}.message.zalo.media.send', ['username' => Auth::user()->username]) }}"
             class="p-4 border rounded bg-light">
             @csrf
 
