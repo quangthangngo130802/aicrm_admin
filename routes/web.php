@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\GgSheetController;
 use App\Http\Controllers\Admin\importCouponController;
 use App\Http\Controllers\Admin\ImportProductController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\RateController;
 use App\Http\Controllers\Admin\ReceiptController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\ReportdebtController;
@@ -249,6 +250,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::prefix('{username}/token')->name('{username}.token.')->group(function () {
         Route::get('', [TokenController::class, 'index'])->name('index');
         Route::post('/save', [TokenController::class, 'save'])->name('save');
+    });
+
+    Route::prefix('{username}/rate')->name('{username}.rate.')->group(function () {
+        Route::get('', [RateController::class, 'index'])->name('index');
     });
 });
 

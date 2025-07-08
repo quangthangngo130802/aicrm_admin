@@ -198,6 +198,12 @@
                             </li>
                             <li>
                                 <a
+                                    href="{{ route('admin.{username}.rate.index', ['username' => Auth::user()->username]) }}">
+                                    <span class="sub-item">Report RATE</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a
                                     href="{{ route('admin.{username}.message.znsQuota', ['username' => Auth::user()->username]) }}">
                                     <span class="sub-item">Hạn mức ZNS</span>
                                 </a>

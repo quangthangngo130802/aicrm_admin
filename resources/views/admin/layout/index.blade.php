@@ -259,7 +259,7 @@
     <script src="{{ asset('asset/js/setting-demo.js') }}"></script>
     <script src="{{ asset('asset/js/demo.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    @stack('scripts')
     <script>
         $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
             type: "line",
