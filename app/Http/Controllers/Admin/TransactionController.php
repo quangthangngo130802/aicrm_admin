@@ -79,7 +79,7 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        $authUser = session('authUser');
+        $authUser = Auth::user();
         $transaction = $this->transactionService->createNewTransaction($request->all(), $authUser->id);
 
         if ($request->has('requestInvoice') && $request->input('requestInvoice') === 'true') {

@@ -116,6 +116,17 @@ class OaTemplateService
                             ['template_id' => $template['templateId'], 'oa_id' => $zaloOa->id],
                             ['price' => $templateDetailData['price'] ?? null] // Giả sử `price` nằm trong `templateDetailData`
                         );
+                        $sendMessageApiUrl = config('app.api_url') . '/api/add-template-idsgo';
+
+                        $client = new Client();
+                        $response = $client->post($sendMessageApiUrl, [
+                            'form_params' => [
+                                'oa_id' => $zaloOa->id,
+                                'template_id' => $template['templateId'],
+                                'template_name' => $template['templateName'],
+                                'price' => $templateDetailData['price']
+                            ]
+                        ]);
                     } else {
                         Log::warning('Template missing required fields: ' . print_r($template, true));
                     }

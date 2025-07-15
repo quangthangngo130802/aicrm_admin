@@ -14,6 +14,7 @@ class TransactionController extends Controller
 {
     public function confirmTransaction(Request $request, $id)
     {
+        Log::info($request->all());
         DB::beginTransaction();
         try {
             $transaction = Transaction::find($id);
@@ -29,9 +30,11 @@ class TransactionController extends Controller
             if (!$user) {
                 throw new Exception('Người dùng không tồn tại');
             }
+            if ($request->input('status') == 0) {
+                $user->wallet += $request->input('amount');
+                $user->save();
+            }
 
-            $user->wallet += $request->input('amount');
-            $user->save();
 
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Giao dịch đã được xác nhận']);
@@ -45,10 +48,9 @@ class TransactionController extends Controller
     public function rejectTransaction(Request $request, $id)
     {
         DB::beginTransaction();
-        try{
+        try {
             $transaction = Transaction::find($id);
-            if(!$transaction)
-            {
+            if (!$transaction) {
                 throw new Exception('Giao dịch không tồn tại');
             }
 
@@ -57,11 +59,9 @@ class TransactionController extends Controller
             $transaction->save();
             DB::commit();
             return response()->json(['success' => true, 'message' => 'Từ chối giao dịch thành công']);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Failed to reject transaction: ' .$e->getMessage());
+            Log::error('Failed to reject transaction: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Từ chối giao dịch thất bại'], 500);
         }
     }

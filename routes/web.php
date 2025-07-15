@@ -257,5 +257,5 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     });
 });
 
-Route::get('/webhook', [WebhookController::class, 'handle']);
+Route::post('/webhook', [WebhookController::class, 'handle']);
 Route::get('test/sheet', [SheetController::class, 'index']);

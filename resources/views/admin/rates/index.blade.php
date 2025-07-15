@@ -1,7 +1,7 @@
 @extends('admin.layout.index')
 
 @section('content')
-    <div class="container">
+    <div class="container" style="padding: 20px">
         <h4 class="mb-3">{{ $title }}</h4>
 
         {{-- Bộ lọc --}}

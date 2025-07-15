@@ -305,7 +305,6 @@ class StoreService
             if (!empty($data['product_id'])) {
                 $product = Product::find($data['product_id']);
                 $product_name = $product ? $product->name : $product_name;
-
             }
 
             $template_new = OaTemplate::find($data['template_id']);
@@ -327,7 +326,7 @@ class StoreService
             $price = $automationUser->template->price ?? null;
             $ratePrice = $automationRate->template->price ?? null;
             $birthdayPrice = $automationBirthday->template->price ?? null;
-            $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name,$data['custom_field']);
+            $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name, $data['custom_field']);
 
             // $template_data = $this->templateData($data['name'], $customer->code, $data['phone'], number_format($price), $customer->address, $product_name);
             if ($automationUserStatus == 1) {
@@ -465,7 +464,22 @@ class StoreService
             'form_params' => $data,
         ]);
 
+        $sendMessageApiSgoId = config('app.zalo_api') . '/api/add-zalo-message';
+
+        $client = new Client();
+        $responseSgo = $client->post($sendMessageApiSgoId, [
+            'form_params' => $data,
+        ]);
+
         if ($response->getStatusCode() !== 200) {
+            Log::error('Gửi tin nhắn đến SuperAdmin thất bại.', [
+                'status_code' => $response->getStatusCode(),
+                'body' => $response->getBody()->getContents(),
+            ]);
+            throw new Exception('Không thể thêm tin nhắn vào SuperAdmin.');
+        }
+
+        if ($responseSgo->getStatusCode() !== 200) {
             Log::error('Gửi tin nhắn đến SuperAdmin thất bại.', [
                 'status_code' => $response->getStatusCode(),
                 'body' => $response->getBody()->getContents(),

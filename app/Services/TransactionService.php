@@ -112,6 +112,23 @@ class TransactionService
             if ($response->getStatusCode() !== 200) {
                 throw new Exception('Failed to add transaction to SuperAdmin');
             }
+
+
+            $transactionUrlSgo = config('app.zalo_api') . '/api/add-transaction-idsgo';
+            $responseSgo = $client->post($transactionUrlSgo, [
+                'form_params' => [
+                    'amount' => $transaction->amount,
+                    'status' => $transaction->status,
+                    'user_id' => $transaction->user_id,
+                    'notification' => $transaction->notification,
+                    'description' => $transaction->description,
+                ],
+            ]);
+
+            if ($responseSgo->getStatusCode() !== 200) {
+                throw new Exception('Failed to add transaction to SuperAdmin');
+            }
+
             DB::commit();
             return $transaction;
         } catch (Exception $e) {

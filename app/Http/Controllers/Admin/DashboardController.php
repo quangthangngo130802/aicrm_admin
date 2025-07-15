@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Rate;
 use App\Models\SuperAdmin;
 use App\Models\Transaction;
 use App\Models\ZaloOa;
@@ -11,6 +12,7 @@ use Aws\Token\Token;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -38,6 +40,19 @@ class DashboardController extends Controller
         $response = $client->get($getBannerApiUrl);
         $responseBody =  json_decode($response->getBody()->getContents());
         $banners = json_decode($responseBody->banner);
-        return view("admin.dashboard.index", compact('title', 'toleprice', 'success', 'fail', 'oa', 'banners'));
+
+        $rate =  Rate::where('user_id', Auth::user()->id)->count();
+
+        $ratingCounts = Rate::where('user_id', Auth::user()->id)->select('rate', DB::raw('count(*) as total'))
+            ->groupBy('rate')
+            ->pluck('total', 'rate') // kết quả: [1 => 5, 2 => 8, ...]
+            ->toArray();
+
+        // Đảm bảo đủ từ 1 đến 5 sao, nếu thiếu thì thêm 0
+        $chartData = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $chartData[] = $ratingCounts[$i] ?? 0;
+        }
+        return view("admin.dashboard.index", compact('title', 'toleprice', 'success', 'fail', 'oa', 'banners', 'rate', 'chartData'));
     }
 }

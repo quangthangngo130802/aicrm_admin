@@ -268,13 +268,13 @@
                         </a>
                     </li>
 
-                     <li class="nav-item">
+                     {{-- <li class="nav-item">
                         <a
                             href="{{ route('admin.{username}.token.index', ['username' => Auth::user()->username]) }}">
                             <i class="fa-solid fa-key"></i>
                             <p>Token</p>
                         </a>
-                    </li>
+                    </li> --}}
                 @endif
 
 

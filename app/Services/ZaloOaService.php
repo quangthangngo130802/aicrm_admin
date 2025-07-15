@@ -60,6 +60,20 @@ class ZaloOaService
                 Log::info('Associate added to super admin successfully');
             }
 
+
+            // sgo id
+            $zalOaSgoId = config('app.zalo_api') . '/api/add-zalo-oa';
+
+            $response_sgo = $client->post($zalOaSgoId, [
+                'form_params' => $data
+            ]);
+
+            if ($response_sgo->getStatusCode() !== 200) {
+                throw new Exception('Failed to add associate to super admin');
+            } else {
+                Log::info('Associate added to super admin successfully');
+            }
+
             Log::info('Oa added to Super Admin successfully');
             DB::commit();
             return $zaloOa;
