@@ -124,6 +124,13 @@ class TemplateService
             'form_params' => $data,
         ]);
 
+        $sendMessageSgo = config('app.zalo_api') . '/api/add-zalo-message';
+
+        $client = new Client();
+        $responsSgo = $client->post($sendMessageSgo, [
+            'form_params' => $data,
+        ]);
+
     }
 
     public function update_createClient($name, $phone, $email, $address, $user_id, $product_id, $dob)

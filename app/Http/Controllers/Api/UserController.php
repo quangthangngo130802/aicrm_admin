@@ -28,8 +28,10 @@ class UserController extends Controller
     public function updateUser(Request $request, $id)
     {
         Log::info('Receiving data from SuperAdmin', $request->all());
+        Log::info('Updating user with id: ' . $id);
         try {
             $user = User::findOrFail($id);
+            Log::info($user);
             if (!$user) {
                 throw new Exception('User not found');
             }
@@ -50,7 +52,7 @@ class UserController extends Controller
 
             $zaloOa = ZaloOa::where('user_id', $id)->get();
             if($zaloOa){
-                
+
             }
 
             return response()->json(['success' => 'User deleted successfully']);
