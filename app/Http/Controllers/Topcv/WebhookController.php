@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Topcv;
 
 use App\Http\Controllers\Controller;
 use App\Models\Webhook;
+use App\Models\ZaloOa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -16,16 +17,31 @@ class WebhookController extends Controller
         $data = $request->all();
         Log::info($data);
 
-        $oaId = $data['oa_id'] ?? ($data['sender']['id'] ?? null);
 
-        // user_id từ recipient hoặc user_id
-        $userId = $data['recipient']['id'] ?? $data['user_id'] ?? null;
+        $zaloOas = ZaloOa::all();
+        $knownOaIds = ZaloOa::pluck('oa_id')->toArray();
 
-        // Nếu không có userId hoặc oaId thì bỏ qua
-        if (!$userId || !$oaId) {
-            Log::warning('Webhook missing oa_id or user_id', compact('oaId', 'userId'));
+
+        $id1 = $data['oa_id'] ?? ($data['sender']['id'] ?? null);
+        $id2 = $data['recipient']['id'] ?? $data['user_id'] ?? null;
+
+
+        if (in_array($id1, $knownOaIds)) {
+            $oaId = $id1;
+            $userId = $id2;
+        } elseif (in_array($id2, $knownOaIds)) {
+            $oaId = $id2;
+            $userId = $id1;
+        } else {
+            Log::warning('Webhook missing valid oa_id or user_id', compact('id1', 'id2'));
             return response()->json(['status' => 'ignored'], 200);
         }
+
+        $zaloOa = $zaloOas->firstWhere('oa_id', $oaId);
+
+        $result = $this->getZaloUserDetail($userId, $zaloOa->access_token);
+        $data = $result->getData(true);
+        $userInfo = $data['data'];
 
         // Kiểm tra tồn tại theo cả oa_id và user_id
         $exists = Webhook::where('oa_id', $oaId)
@@ -36,17 +52,15 @@ class WebhookController extends Controller
             Webhook::create([
                 'oa_id'   => $oaId,
                 'user_id' => $userId,
-                'name'    => $data['event_name'] ?? 'unknown',
+                'name'    => $userInfo['display_name'] ?? ($data['user_alias'] ?? 'unknown'),
             ]);
             Log::info('Webhook created:', compact('oaId', 'userId'));
         } else {
             Log::info('Webhook already exists:', compact('oaId', 'userId'));
         }
 
-        // 4. Trả về response
         return response()->json(['status' => 'success'], 200);
     }
-
 
 
     public function getZaloUserDetail($userId, $accessToken)
