@@ -15,4 +15,5 @@ class Webhook extends Model
         'user_id',
         'name',
     ];
+    public $timestamps = true;
 }
