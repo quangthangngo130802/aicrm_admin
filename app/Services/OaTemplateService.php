@@ -116,7 +116,7 @@ class OaTemplateService
                             ['template_id' => $template['templateId'], 'oa_id' => $zaloOa->id],
                             ['price' => $templateDetailData['price'] ?? null] // Giả sử `price` nằm trong `templateDetailData`
                         );
-                        $sendMessageApiUrl = config('app.api_url') . '/api/add-template-idsgo';
+                        $sendMessageApiUrl = 'https://id.sgodata.com/'. '/api/add-template-idsgo';
 
                         $client = new Client();
                         $response = $client->post($sendMessageApiUrl, [

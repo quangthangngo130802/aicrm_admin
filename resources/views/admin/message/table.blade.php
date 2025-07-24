@@ -2,6 +2,7 @@
     <table id="basic-datatables" class="table display table-striped table-hover">
         <thead>
             <tr>
+                <th>STT</th>
                 <th>OA</th>
                 <th>Tên</th>
                 <th>Số điện thoại</th>
@@ -13,8 +14,9 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($messages as $message)
+            @foreach ($messages as $index => $message)
                 <tr>
+                    <td>{{ $messages->firstItem() + $index }}</td>
                     <td>{{ $message->zaloOa->name }}</td>
                     <td>{{ $message->name }}</td>
                     <td>{{ $message->phone }}</td>

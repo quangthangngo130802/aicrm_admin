@@ -23,7 +23,7 @@ class WebhookController extends Controller
 
 
         $id1 = $data['oa_id'] ?? ($data['sender']['id'] ?? null);
-        $id2 = $data['recipient']['id'] ?? $data['user_id'] ?? null;
+        $id2 = $data['recipient']['id'] ?? ($data['user_id'] ?? null);
 
 
         if (in_array($id1, $knownOaIds)) {
@@ -33,7 +33,7 @@ class WebhookController extends Controller
             $oaId = $id2;
             $userId = $id1;
         } else {
-            Log::warning('Webhook missing valid oa_id or user_id', compact('id1', 'id2'));
+            // Log::warning('Webhook missing valid oa_id or user_id', compact('id1', 'id2'));
             return response()->json(['status' => 'ignored'], 200);
         }
 
@@ -41,7 +41,7 @@ class WebhookController extends Controller
 
         $result = $this->getZaloUserDetail($userId, $zaloOa->access_token);
         $data = $result->getData(true);
-        $userInfo = $data['data'];
+        $userInfo = $data['data'] ?? [];
 
         // Kiểm tra tồn tại theo cả oa_id và user_id
         $exists = Webhook::where('oa_id', $oaId)
@@ -65,7 +65,7 @@ class WebhookController extends Controller
 
     public function getZaloUserDetail($userId, $accessToken)
     {
-
+        Log::info($userId.'-'.$accessToken);
         $data = [
             'data' => json_encode([
                 'user_id' => $userId
