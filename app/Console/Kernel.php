@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\FetchGoogleSheetJob;
+use App\Jobs\ResherTokenZalo;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,6 +16,9 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->job(new FetchGoogleSheetJob())->everyMinute();
+        $schedule->job(new ResherTokenZalo())->dailyAt('22:00');
+        // $schedule->job(new ResherTokenZalo())->everyMinute();
+
     }
 
     /**
