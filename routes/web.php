@@ -242,6 +242,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::post('', 'storeTemplate')->name('template.store');
     });
 
+    Route::prefix('{username}/customers')->name('{username}.customers.')->group(function () {
+        Route::get('', [WebhookController::class, 'index'])->name('index');
+    });
+
     Route::prefix('{username}/ggsheet')->name('{username}.ggsheet.')->group(function () {
         Route::get('', [GgSheetController::class, 'index'])->name('index');
         Route::post('/save', [GgSheetController::class, 'save'])->name('save');

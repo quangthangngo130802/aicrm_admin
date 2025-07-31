@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ZaloOa;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,4 +17,9 @@ class Webhook extends Model
         'name',
     ];
     public $timestamps = true;
+
+    public function referencedOa()
+    {
+        return $this->belongsTo(ZaloOa::class, 'oa_id', 'oa_id');
+    }
 }

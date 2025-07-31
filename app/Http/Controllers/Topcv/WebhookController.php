@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Topcv;
 use App\Http\Controllers\Controller;
 use App\Models\Webhook;
 use App\Models\ZaloOa;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -65,7 +67,7 @@ class WebhookController extends Controller
 
     public function getZaloUserDetail($userId, $accessToken)
     {
-        Log::info($userId.'-'.$accessToken);
+        Log::info($userId . '-' . $accessToken);
         $data = [
             'data' => json_encode([
                 'user_id' => $userId
@@ -87,5 +89,30 @@ class WebhookController extends Controller
             'success' => false,
             'error' => $response->json(),
         ]);
+    }
+
+
+    public function index()
+    {
+        try {
+            $title = 'Danh sách khách hàng tương tác';
+
+            $activeOas = ZaloOa::where('user_id', Auth::user()->id)->where('is_active', 1)->first()->oa_id;
+
+            // Lấy tất cả các tin nhắn từ các OA đang hoạt động
+            $messages = Webhook::where('oa_id', $activeOas)
+                ->orderByDesc('created_at')
+                ->paginate(10);
+
+
+            if (request()->ajax()) {
+                $view = view('admin.webhook.table', compact('messages'))->render();
+                return response()->json(['success' => true, 'table' => $view]);
+            }
+            return view('admin.webhook.index', compact('messages', 'title'));
+        } catch (Exception $e) {
+            Log::error('Failed to get Messages: ' . $e->getMessage());
+
+        }
     }
 }

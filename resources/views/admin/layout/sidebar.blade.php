@@ -184,7 +184,7 @@
                 </li>
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#sidebarzns">
-                        <i class="fas fa-cogs"></i>
+                        <i class="fas fa-file-alt"></i>
                         <p>Truy vấn ZNS</p>
                         <span class="caret"></span>
                     </a>
@@ -222,7 +222,7 @@
                 @if (Auth::user()->username == 'sgovn')
                     <li class="nav-item">
                         <a data-bs-toggle="collapse" href="#message">
-                            <i class="fas fa-cogs"></i>
+                            <i class="fas fa-comment-dots"></i>
                             <p>Tin nhắn</p>
                             <span class="caret"></span>
                         </a>
@@ -268,16 +268,14 @@
                         </a>
                     </li>
 
-                     {{-- <li class="nav-item">
+                     <li class="nav-item">
                         <a
-                            href="{{ route('admin.{username}.token.index', ['username' => Auth::user()->username]) }}">
-                            <i class="fa-solid fa-key"></i>
-                            <p>Token</p>
+                            href="{{ route('admin.{username}.customers.index', ['username' => Auth::user()->username]) }}">
+                            <i class="fas fa-handshake"></i>
+                            <p>Khách hàng tương tác</p>
                         </a>
-                    </li> --}}
+                    </li>
                 @endif
-
-
 
             </ul>
         </div>
