@@ -220,45 +220,14 @@
                 </li>
 
                 @if (Auth::user()->username == 'sgovn')
-                    <li class="nav-item">
-                        <a data-bs-toggle="collapse" href="#message">
-                            <i class="fas fa-comment-dots"></i>
-                            <p>Tin nhắn</p>
-                            <span class="caret"></span>
-                        </a>
-                        <div class="collapse" id="message">
-                            <ul class="nav nav-collapse">
-                                <li>
-                                    <a
-                                        href="{{ route('admin.{username}.message.zalo.text', ['username' => Auth::user()->username]) }}">
-                                        <span class="sub-item">Tin tư vấn</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        href="{{ route('admin.{username}.message.zalo.transaction', ['username' => Auth::user()->username]) }}">
-                                        <span class="sub-item">Tin giao dịch</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="{{ route('admin.{username}.message.zalo.media', ['username' => Auth::user()->username]) }}"
-                                        class="check-zalo-oa">
-                                        <span class="sub-item">Tin truyền thông</span>
-                                    </a>
-                                </li>
 
-                            </ul>
-                        </div>
-                    </li>
-
-
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a
                             href="{{ route('admin.{username}.articles.list', ['username' => Auth::user()->username]) }}">
                             <i class="fa-regular fa-file-lines"></i>
                             <p>Danh sách bài viết</p>
                         </a>
-                    </li>
+                    </li> --}}
 
                     <li class="nav-item">
                         <a
@@ -268,13 +237,63 @@
                         </a>
                     </li>
 
-                     <li class="nav-item">
-                        <a
-                            href="{{ route('admin.{username}.customers.index', ['username' => Auth::user()->username]) }}">
-                            <i class="fas fa-handshake"></i>
-                            <p>Khách hàng tương tác</p>
+                    <li class="nav-item">
+                        <a data-bs-toggle="collapse" href="#openApiMenu" aria-expanded="false">
+                            <i class="fas fa-comment-dots fa-2x mb-1"></i>
+                            <p>Open API</p>
+                            <span class="caret"></span>
                         </a>
+                        <div class="collapse" id="openApiMenu">
+                            <ul class="nav nav-collapse" style="padding: 0px 0px 0px 20px">
+
+                                <!-- Danh sách bài viết -->
+                                <li>
+                                    <a href="{{ route('admin.{username}.articles.list', ['username' => Auth::user()->username]) }}">
+                                        <p>Danh sách bài viết</p>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ route('admin.{username}.customers.index', ['username' => Auth::user()->username]) }}">
+                                        <p>Khách hàng tương tác</p>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a data-bs-toggle="collapse" href="#messageMenu" aria-expanded="false">
+                                        <p>Tin nhắn</p>
+                                        <span class="caret"></span>
+                                    </a>
+                                    <div class="collapse" id="messageMenu">
+                                        <ul class="nav nav-collapse" >
+
+                                            <li>
+                                                <a href="{{ route('admin.{username}.message.zalo.text', ['username' => Auth::user()->username]) }}">
+                                                    <span class="sub-item">Tin tư vấn</span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ route('admin.{username}.message.zalo.transaction', ['username' => Auth::user()->username]) }}">
+                                                    <span class="sub-item">Tin giao dịch</span>
+                                                </a>
+                                            </li>
+
+                                            <li>
+                                                <a href="{{ route('admin.{username}.message.zalo.media', ['username' => Auth::user()->username]) }}"
+                                                   class="check-zalo-oa">
+                                                    <span class="sub-item">Tin truyền thông</span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        </div>
                     </li>
+
                 @endif
 
             </ul>

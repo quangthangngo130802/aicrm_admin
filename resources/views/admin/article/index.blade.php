@@ -75,7 +75,7 @@
                 <div class="card">
                     <div class="card-header ">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="card-title mb-0">Danh sách bài viết</h4>
+                            <h4 class="card-title mb-0">Danh sách tin tưc Zalo Oa</h4>
                             <a class="btn btn_line border border-primary text-primary fw-bold px-2"
                                 href="{{ route('admin.{username}.articles.broadcast', ['username' => Auth::user()->username]) }}"
                                 style="padding: 6px;">
